@@ -16,7 +16,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "title", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "content", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
 		{Name: "channels", Type: field.TypeJSON, Nullable: true},
 		{Name: "email_send", Type: field.TypeBool, Nullable: true, Default: true},
 	}
@@ -39,7 +39,7 @@ var (
 		{Name: "event_type", Type: field.TypeString, Nullable: true, Default: "DefaultEventType"},
 		{Name: "use_template", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "title", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "content", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
 		{Name: "channels", Type: field.TypeJSON, Nullable: true},
 		{Name: "email_send", Type: field.TypeBool, Nullable: true, Default: true},
 	}

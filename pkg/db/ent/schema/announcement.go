@@ -34,7 +34,7 @@ func (Announcement) Fields() []ent.Field {
 			Optional().
 			Default(""),
 		field.
-			String("content").
+			Text("content").
 			Optional().
 			Default(""),
 		field.
