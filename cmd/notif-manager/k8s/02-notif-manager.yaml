@@ -58,16 +58,16 @@ metadata:
 spec:
   ports:
     - name: http
-      port: 50590
-      targetPort: 50590
+      port: 50680
+      targetPort: 50680
     - name: grpc
-      port: 50591
-      targetPort: 50591
+      port: 50681
+      targetPort: 50681
     - name: healthz
-      port: 50592
-      targetPort: 50592
+      port: 50682
+      targetPort: 50682
     - name: prometheus
-      port: 50593
-      targetPort: 50593
+      port: 50683
+      targetPort: 50683
   selector:
     app: notif-manager

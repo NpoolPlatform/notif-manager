@@ -7,10 +7,10 @@ data:
   service-conf: |
     config:
       hostname: "notif-manager.npool.top"
-      http_port: 50590
-      grpc_port: 50591
-      healthz_port: 50592
-      prometheus_port: 50593
+      http_port: 50680
+      grpc_port: 50681
+      healthz_port: 50682
+      prometheus_port: 50683
       appid: "89089012783789789719823798127398"
       serviceid: "66e7e032-7558-11ed-a71d-1e0b0807e20c"
       logdir: "./"
