@@ -21,7 +21,7 @@ spec:
           imagePullPolicy: Always
           volumeMounts:
             - name: service-config
-              mountPath: /etc/G11nManager
+              mountPath: /etc/NotifManager
           env:
             - name: ENV_ENVIRONMENT_TARGET
               valueFrom:
@@ -48,7 +48,7 @@ spec:
             name: notif-manager-config
             items:
               - key: service-conf
-                path: G11nManager.viper.yaml
+                path: NotifManager.viper.yaml
 ---
 apiVersion: v1
 kind: Service
