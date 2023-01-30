@@ -35,9 +35,9 @@ func CreateSet(c *ent.NotifCreate, in *npool.NotifReq) (*ent.NotifCreate, error)
 	if in.UserID != nil {
 		c.SetUserID(uuid.MustParse(in.GetUserID()))
 	}
-	if in.AlreadyRead != nil {
-		c.SetAlreadyRead(in.GetAlreadyRead())
-	}
+
+	c.SetAlreadyRead(false)
+
 	if in.LangID != nil {
 		c.SetLangID(uuid.MustParse(in.GetLangID()))
 	}
@@ -149,6 +149,9 @@ func UpdateSet(u *ent.NotifUpdateOne, in *npool.NotifReq) (*ent.NotifUpdateOne, 
 	}
 	if in.EmailSend != nil {
 		u.SetEmailSend(in.GetEmailSend())
+	}
+	if in.AlreadyRead != nil {
+		u.SetAlreadyRead(in.GetAlreadyRead())
 	}
 	return u, nil
 }

@@ -30,12 +30,11 @@ func validate(in *npool.NotifReq) error {
 	}
 
 	switch in.GetEventType() {
-	case npool.EventType_KycReviewApproved:
-	case npool.EventType_KycReviewRejected:
-	case npool.EventType_WithdrawReviewApproved:
-	case npool.EventType_WithdrawReviewRejected:
-	case npool.EventType_WithdrawAddressReviewApproved:
-	case npool.EventType_WithdrawAddressReviewRejected:
+	case npool.EventType_WithdrawalRequest:
+	case npool.EventType_WithdrawalCompleted:
+	case npool.EventType_DepositReceived:
+	case npool.EventType_KYCApproved:
+	case npool.EventType_KYCRejected:
 	default:
 		return fmt.Errorf("EventType is invalid")
 	}
@@ -83,12 +82,11 @@ func validateConds(in *npool.Conds) error {
 	}
 	if in.EventType != nil {
 		switch in.GetEventType().GetValue() {
-		case uint32(npool.EventType_KycReviewApproved):
-		case uint32(npool.EventType_KycReviewRejected):
-		case uint32(npool.EventType_WithdrawReviewApproved):
-		case uint32(npool.EventType_WithdrawReviewRejected):
-		case uint32(npool.EventType_WithdrawAddressReviewApproved):
-		case uint32(npool.EventType_WithdrawAddressReviewRejected):
+		case uint32(npool.EventType_WithdrawalRequest):
+		case uint32(npool.EventType_WithdrawalCompleted):
+		case uint32(npool.EventType_DepositReceived):
+		case uint32(npool.EventType_KYCApproved):
+		case uint32(npool.EventType_KYCRejected):
 		default:
 			return fmt.Errorf("EventType is invalid")
 		}
