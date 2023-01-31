@@ -39,7 +39,7 @@ var data = &npool.Notif{
 	ID:          uuid.NewString(),
 	AppID:       uuid.NewString(),
 	UserID:      uuid.NewString(),
-	AlreadyRead: true,
+	AlreadyRead: false,
 	LangID:      uuid.NewString(),
 	EventType:   npool.EventType_KYCApproved,
 	UseTemplate: true,
