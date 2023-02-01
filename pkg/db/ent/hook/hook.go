@@ -48,6 +48,19 @@ func (f ReadAnnouncementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.V
 	return f(ctx, mv)
 }
 
+// The SendAnnouncementFunc type is an adapter to allow the use of ordinary
+// function as SendAnnouncement mutator.
+type SendAnnouncementFunc func(context.Context, *ent.SendAnnouncementMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SendAnnouncementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.SendAnnouncementMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SendAnnouncementMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, ent.Mutation) bool
 

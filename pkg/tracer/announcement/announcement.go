@@ -15,7 +15,7 @@ func trace(span trace1.Span, in *npool.AnnouncementReq, index int) trace1.Span {
 		attribute.String(fmt.Sprintf("AppID.%v", index), in.GetAppID()),
 		attribute.String(fmt.Sprintf("Title.%v", index), in.GetTitle()),
 		attribute.String(fmt.Sprintf("Content.%v", index), in.GetContent()),
-		attribute.Bool(fmt.Sprintf("EmailSend.%v", index), in.GetEmailSend()),
+		attribute.Int(fmt.Sprintf("EndAt.%v", index), int(in.GetEndAt())),
 	)
 	return span
 }
@@ -32,8 +32,8 @@ func TraceConds(span trace1.Span, in *npool.Conds) trace1.Span {
 		attribute.String("AppID.Value", in.GetAppID().GetValue()),
 		attribute.String("Channels.Op", in.GetChannels().GetOp()),
 		attribute.StringSlice("Channels.Value", in.GetChannels().GetValue()),
-		attribute.String("EmailSend.Op", in.GetEmailSend().GetOp()),
-		attribute.Bool("EmailSend.Value", in.GetEmailSend().GetValue()),
+		attribute.String("EndAt.Op", in.GetEndAt().GetOp()),
+		attribute.Int("EndAt.Value", int(in.GetEndAt().GetValue())),
 	)
 	return span
 }

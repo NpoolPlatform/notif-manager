@@ -18,7 +18,7 @@ var (
 		{Name: "title", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
 		{Name: "channels", Type: field.TypeJSON, Nullable: true},
-		{Name: "email_send", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
 	}
 	// AnnouncementsTable holds the schema information for the "announcements" table.
 	AnnouncementsTable = &schema.Table{
@@ -65,11 +65,29 @@ var (
 		Columns:    ReadAnnouncementsColumns,
 		PrimaryKey: []*schema.Column{ReadAnnouncementsColumns[0]},
 	}
+	// SendAnnouncementsColumns holds the columns for the "send_announcements" table.
+	SendAnnouncementsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "announcement_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "channel", Type: field.TypeString, Nullable: true, Default: "DefaultChannel"},
+	}
+	// SendAnnouncementsTable holds the schema information for the "send_announcements" table.
+	SendAnnouncementsTable = &schema.Table{
+		Name:       "send_announcements",
+		Columns:    SendAnnouncementsColumns,
+		PrimaryKey: []*schema.Column{SendAnnouncementsColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AnnouncementsTable,
 		NotifsTable,
 		ReadAnnouncementsTable,
+		SendAnnouncementsTable,
 	}
 )
 

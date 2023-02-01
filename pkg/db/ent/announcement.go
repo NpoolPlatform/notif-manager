@@ -31,8 +31,8 @@ type Announcement struct {
 	Content string `json:"content,omitempty"`
 	// Channels holds the value of the "channels" field.
 	Channels []string `json:"channels,omitempty"`
-	// EmailSend holds the value of the "email_send" field.
-	EmailSend bool `json:"email_send,omitempty"`
+	// EndAt holds the value of the "end_at" field.
+	EndAt uint32 `json:"end_at,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -42,9 +42,7 @@ func (*Announcement) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case announcement.FieldChannels:
 			values[i] = new([]byte)
-		case announcement.FieldEmailSend:
-			values[i] = new(sql.NullBool)
-		case announcement.FieldCreatedAt, announcement.FieldUpdatedAt, announcement.FieldDeletedAt:
+		case announcement.FieldCreatedAt, announcement.FieldUpdatedAt, announcement.FieldDeletedAt, announcement.FieldEndAt:
 			values[i] = new(sql.NullInt64)
 		case announcement.FieldTitle, announcement.FieldContent:
 			values[i] = new(sql.NullString)
@@ -115,11 +113,11 @@ func (a *Announcement) assignValues(columns []string, values []interface{}) erro
 					return fmt.Errorf("unmarshal field channels: %w", err)
 				}
 			}
-		case announcement.FieldEmailSend:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field email_send", values[i])
+		case announcement.FieldEndAt:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field end_at", values[i])
 			} else if value.Valid {
-				a.EmailSend = value.Bool
+				a.EndAt = uint32(value.Int64)
 			}
 		}
 	}
@@ -170,8 +168,8 @@ func (a *Announcement) String() string {
 	builder.WriteString("channels=")
 	builder.WriteString(fmt.Sprintf("%v", a.Channels))
 	builder.WriteString(", ")
-	builder.WriteString("email_send=")
-	builder.WriteString(fmt.Sprintf("%v", a.EmailSend))
+	builder.WriteString("end_at=")
+	builder.WriteString(fmt.Sprintf("%v", a.EndAt))
 	builder.WriteByte(')')
 	return builder.String()
 }

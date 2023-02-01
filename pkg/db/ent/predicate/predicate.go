@@ -14,3 +14,6 @@ type Notif func(*sql.Selector)
 
 // ReadAnnouncement is the predicate function for readannouncement builders.
 type ReadAnnouncement func(*sql.Selector)
+
+// SendAnnouncement is the predicate function for sendannouncement builders.
+type SendAnnouncement func(*sql.Selector)

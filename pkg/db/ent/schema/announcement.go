@@ -42,9 +42,9 @@ func (Announcement) Fields() []ent.Field {
 			Optional().
 			Default([]string{}),
 		field.
-			Bool("email_send").
+			Uint32("end_at").
 			Optional().
-			Default(true),
+			Default(0),
 	}
 }
 

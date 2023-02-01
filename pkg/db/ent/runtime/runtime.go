@@ -9,6 +9,7 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/schema"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
 	"github.com/google/uuid"
 
 	"entgo.io/ent"
@@ -63,10 +64,10 @@ func init() {
 	announcementDescChannels := announcementFields[4].Descriptor()
 	// announcement.DefaultChannels holds the default value on creation for the channels field.
 	announcement.DefaultChannels = announcementDescChannels.Default.([]string)
-	// announcementDescEmailSend is the schema descriptor for email_send field.
-	announcementDescEmailSend := announcementFields[5].Descriptor()
-	// announcement.DefaultEmailSend holds the default value on creation for the email_send field.
-	announcement.DefaultEmailSend = announcementDescEmailSend.Default.(bool)
+	// announcementDescEndAt is the schema descriptor for end_at field.
+	announcementDescEndAt := announcementFields[5].Descriptor()
+	// announcement.DefaultEndAt holds the default value on creation for the end_at field.
+	announcement.DefaultEndAt = announcementDescEndAt.Default.(uint32)
 	// announcementDescID is the schema descriptor for id field.
 	announcementDescID := announcementFields[0].Descriptor()
 	// announcement.DefaultID holds the default value on creation for the id field.
@@ -187,6 +188,54 @@ func init() {
 	readannouncementDescID := readannouncementFields[0].Descriptor()
 	// readannouncement.DefaultID holds the default value on creation for the id field.
 	readannouncement.DefaultID = readannouncementDescID.Default.(func() uuid.UUID)
+	sendannouncementMixin := schema.SendAnnouncement{}.Mixin()
+	sendannouncement.Policy = privacy.NewPolicies(sendannouncementMixin[0], schema.SendAnnouncement{})
+	sendannouncement.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := sendannouncement.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	sendannouncementMixinFields0 := sendannouncementMixin[0].Fields()
+	_ = sendannouncementMixinFields0
+	sendannouncementFields := schema.SendAnnouncement{}.Fields()
+	_ = sendannouncementFields
+	// sendannouncementDescCreatedAt is the schema descriptor for created_at field.
+	sendannouncementDescCreatedAt := sendannouncementMixinFields0[0].Descriptor()
+	// sendannouncement.DefaultCreatedAt holds the default value on creation for the created_at field.
+	sendannouncement.DefaultCreatedAt = sendannouncementDescCreatedAt.Default.(func() uint32)
+	// sendannouncementDescUpdatedAt is the schema descriptor for updated_at field.
+	sendannouncementDescUpdatedAt := sendannouncementMixinFields0[1].Descriptor()
+	// sendannouncement.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	sendannouncement.DefaultUpdatedAt = sendannouncementDescUpdatedAt.Default.(func() uint32)
+	// sendannouncement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	sendannouncement.UpdateDefaultUpdatedAt = sendannouncementDescUpdatedAt.UpdateDefault.(func() uint32)
+	// sendannouncementDescDeletedAt is the schema descriptor for deleted_at field.
+	sendannouncementDescDeletedAt := sendannouncementMixinFields0[2].Descriptor()
+	// sendannouncement.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	sendannouncement.DefaultDeletedAt = sendannouncementDescDeletedAt.Default.(func() uint32)
+	// sendannouncementDescAppID is the schema descriptor for app_id field.
+	sendannouncementDescAppID := sendannouncementFields[1].Descriptor()
+	// sendannouncement.DefaultAppID holds the default value on creation for the app_id field.
+	sendannouncement.DefaultAppID = sendannouncementDescAppID.Default.(func() uuid.UUID)
+	// sendannouncementDescUserID is the schema descriptor for user_id field.
+	sendannouncementDescUserID := sendannouncementFields[2].Descriptor()
+	// sendannouncement.DefaultUserID holds the default value on creation for the user_id field.
+	sendannouncement.DefaultUserID = sendannouncementDescUserID.Default.(func() uuid.UUID)
+	// sendannouncementDescAnnouncementID is the schema descriptor for announcement_id field.
+	sendannouncementDescAnnouncementID := sendannouncementFields[3].Descriptor()
+	// sendannouncement.DefaultAnnouncementID holds the default value on creation for the announcement_id field.
+	sendannouncement.DefaultAnnouncementID = sendannouncementDescAnnouncementID.Default.(func() uuid.UUID)
+	// sendannouncementDescChannel is the schema descriptor for channel field.
+	sendannouncementDescChannel := sendannouncementFields[4].Descriptor()
+	// sendannouncement.DefaultChannel holds the default value on creation for the channel field.
+	sendannouncement.DefaultChannel = sendannouncementDescChannel.Default.(string)
+	// sendannouncementDescID is the schema descriptor for id field.
+	sendannouncementDescID := sendannouncementFields[0].Descriptor()
+	// sendannouncement.DefaultID holds the default value on creation for the id field.
+	sendannouncement.DefaultID = sendannouncementDescID.Default.(func() uuid.UUID)
 }
 
 const (

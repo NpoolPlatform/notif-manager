@@ -121,10 +121,10 @@ func Content(v string) predicate.Announcement {
 	})
 }
 
-// EmailSend applies equality check predicate on the "email_send" field. It's identical to EmailSendEQ.
-func EmailSend(v bool) predicate.Announcement {
+// EndAt applies equality check predicate on the "end_at" field. It's identical to EndAtEQ.
+func EndAt(v uint32) predicate.Announcement {
 	return predicate.Announcement(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEmailSend), v))
+		s.Where(sql.EQ(s.C(FieldEndAt), v))
 	})
 }
 
@@ -638,31 +638,81 @@ func ChannelsNotNil() predicate.Announcement {
 	})
 }
 
-// EmailSendEQ applies the EQ predicate on the "email_send" field.
-func EmailSendEQ(v bool) predicate.Announcement {
+// EndAtEQ applies the EQ predicate on the "end_at" field.
+func EndAtEQ(v uint32) predicate.Announcement {
 	return predicate.Announcement(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEmailSend), v))
+		s.Where(sql.EQ(s.C(FieldEndAt), v))
 	})
 }
 
-// EmailSendNEQ applies the NEQ predicate on the "email_send" field.
-func EmailSendNEQ(v bool) predicate.Announcement {
+// EndAtNEQ applies the NEQ predicate on the "end_at" field.
+func EndAtNEQ(v uint32) predicate.Announcement {
 	return predicate.Announcement(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldEmailSend), v))
+		s.Where(sql.NEQ(s.C(FieldEndAt), v))
 	})
 }
 
-// EmailSendIsNil applies the IsNil predicate on the "email_send" field.
-func EmailSendIsNil() predicate.Announcement {
+// EndAtIn applies the In predicate on the "end_at" field.
+func EndAtIn(vs ...uint32) predicate.Announcement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.Announcement(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldEmailSend)))
+		s.Where(sql.In(s.C(FieldEndAt), v...))
 	})
 }
 
-// EmailSendNotNil applies the NotNil predicate on the "email_send" field.
-func EmailSendNotNil() predicate.Announcement {
+// EndAtNotIn applies the NotIn predicate on the "end_at" field.
+func EndAtNotIn(vs ...uint32) predicate.Announcement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.Announcement(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldEmailSend)))
+		s.Where(sql.NotIn(s.C(FieldEndAt), v...))
+	})
+}
+
+// EndAtGT applies the GT predicate on the "end_at" field.
+func EndAtGT(v uint32) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEndAt), v))
+	})
+}
+
+// EndAtGTE applies the GTE predicate on the "end_at" field.
+func EndAtGTE(v uint32) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEndAt), v))
+	})
+}
+
+// EndAtLT applies the LT predicate on the "end_at" field.
+func EndAtLT(v uint32) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEndAt), v))
+	})
+}
+
+// EndAtLTE applies the LTE predicate on the "end_at" field.
+func EndAtLTE(v uint32) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEndAt), v))
+	})
+}
+
+// EndAtIsNil applies the IsNil predicate on the "end_at" field.
+func EndAtIsNil() predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEndAt)))
+	})
+}
+
+// EndAtNotNil applies the NotNil predicate on the "end_at" field.
+func EndAtNotNil() predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEndAt)))
 	})
 }
 

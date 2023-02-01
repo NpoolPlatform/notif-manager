@@ -14,6 +14,7 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/announcement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -30,6 +31,8 @@ type Client struct {
 	Notif *NotifClient
 	// ReadAnnouncement is the client for interacting with the ReadAnnouncement builders.
 	ReadAnnouncement *ReadAnnouncementClient
+	// SendAnnouncement is the client for interacting with the SendAnnouncement builders.
+	SendAnnouncement *SendAnnouncementClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -46,6 +49,7 @@ func (c *Client) init() {
 	c.Announcement = NewAnnouncementClient(c.config)
 	c.Notif = NewNotifClient(c.config)
 	c.ReadAnnouncement = NewReadAnnouncementClient(c.config)
+	c.SendAnnouncement = NewSendAnnouncementClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -82,6 +86,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Announcement:     NewAnnouncementClient(cfg),
 		Notif:            NewNotifClient(cfg),
 		ReadAnnouncement: NewReadAnnouncementClient(cfg),
+		SendAnnouncement: NewSendAnnouncementClient(cfg),
 	}, nil
 }
 
@@ -104,6 +109,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Announcement:     NewAnnouncementClient(cfg),
 		Notif:            NewNotifClient(cfg),
 		ReadAnnouncement: NewReadAnnouncementClient(cfg),
+		SendAnnouncement: NewSendAnnouncementClient(cfg),
 	}, nil
 }
 
@@ -136,6 +142,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Announcement.Use(hooks...)
 	c.Notif.Use(hooks...)
 	c.ReadAnnouncement.Use(hooks...)
+	c.SendAnnouncement.Use(hooks...)
 }
 
 // AnnouncementClient is a client for the Announcement schema.
@@ -409,4 +416,95 @@ func (c *ReadAnnouncementClient) GetX(ctx context.Context, id uuid.UUID) *ReadAn
 func (c *ReadAnnouncementClient) Hooks() []Hook {
 	hooks := c.hooks.ReadAnnouncement
 	return append(hooks[:len(hooks):len(hooks)], readannouncement.Hooks[:]...)
+}
+
+// SendAnnouncementClient is a client for the SendAnnouncement schema.
+type SendAnnouncementClient struct {
+	config
+}
+
+// NewSendAnnouncementClient returns a client for the SendAnnouncement from the given config.
+func NewSendAnnouncementClient(c config) *SendAnnouncementClient {
+	return &SendAnnouncementClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `sendannouncement.Hooks(f(g(h())))`.
+func (c *SendAnnouncementClient) Use(hooks ...Hook) {
+	c.hooks.SendAnnouncement = append(c.hooks.SendAnnouncement, hooks...)
+}
+
+// Create returns a builder for creating a SendAnnouncement entity.
+func (c *SendAnnouncementClient) Create() *SendAnnouncementCreate {
+	mutation := newSendAnnouncementMutation(c.config, OpCreate)
+	return &SendAnnouncementCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SendAnnouncement entities.
+func (c *SendAnnouncementClient) CreateBulk(builders ...*SendAnnouncementCreate) *SendAnnouncementCreateBulk {
+	return &SendAnnouncementCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SendAnnouncement.
+func (c *SendAnnouncementClient) Update() *SendAnnouncementUpdate {
+	mutation := newSendAnnouncementMutation(c.config, OpUpdate)
+	return &SendAnnouncementUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SendAnnouncementClient) UpdateOne(sa *SendAnnouncement) *SendAnnouncementUpdateOne {
+	mutation := newSendAnnouncementMutation(c.config, OpUpdateOne, withSendAnnouncement(sa))
+	return &SendAnnouncementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SendAnnouncementClient) UpdateOneID(id uuid.UUID) *SendAnnouncementUpdateOne {
+	mutation := newSendAnnouncementMutation(c.config, OpUpdateOne, withSendAnnouncementID(id))
+	return &SendAnnouncementUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SendAnnouncement.
+func (c *SendAnnouncementClient) Delete() *SendAnnouncementDelete {
+	mutation := newSendAnnouncementMutation(c.config, OpDelete)
+	return &SendAnnouncementDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SendAnnouncementClient) DeleteOne(sa *SendAnnouncement) *SendAnnouncementDeleteOne {
+	return c.DeleteOneID(sa.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *SendAnnouncementClient) DeleteOneID(id uuid.UUID) *SendAnnouncementDeleteOne {
+	builder := c.Delete().Where(sendannouncement.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SendAnnouncementDeleteOne{builder}
+}
+
+// Query returns a query builder for SendAnnouncement.
+func (c *SendAnnouncementClient) Query() *SendAnnouncementQuery {
+	return &SendAnnouncementQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a SendAnnouncement entity by its id.
+func (c *SendAnnouncementClient) Get(ctx context.Context, id uuid.UUID) (*SendAnnouncement, error) {
+	return c.Query().Where(sendannouncement.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SendAnnouncementClient) GetX(ctx context.Context, id uuid.UUID) *SendAnnouncement {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SendAnnouncementClient) Hooks() []Hook {
+	hooks := c.hooks.SendAnnouncement
+	return append(hooks[:len(hooks):len(hooks)], sendannouncement.Hooks[:]...)
 }

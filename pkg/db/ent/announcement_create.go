@@ -113,16 +113,16 @@ func (ac *AnnouncementCreate) SetChannels(s []string) *AnnouncementCreate {
 	return ac
 }
 
-// SetEmailSend sets the "email_send" field.
-func (ac *AnnouncementCreate) SetEmailSend(b bool) *AnnouncementCreate {
-	ac.mutation.SetEmailSend(b)
+// SetEndAt sets the "end_at" field.
+func (ac *AnnouncementCreate) SetEndAt(u uint32) *AnnouncementCreate {
+	ac.mutation.SetEndAt(u)
 	return ac
 }
 
-// SetNillableEmailSend sets the "email_send" field if the given value is not nil.
-func (ac *AnnouncementCreate) SetNillableEmailSend(b *bool) *AnnouncementCreate {
-	if b != nil {
-		ac.SetEmailSend(*b)
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (ac *AnnouncementCreate) SetNillableEndAt(u *uint32) *AnnouncementCreate {
+	if u != nil {
+		ac.SetEndAt(*u)
 	}
 	return ac
 }
@@ -260,9 +260,9 @@ func (ac *AnnouncementCreate) defaults() error {
 		v := announcement.DefaultChannels
 		ac.mutation.SetChannels(v)
 	}
-	if _, ok := ac.mutation.EmailSend(); !ok {
-		v := announcement.DefaultEmailSend
-		ac.mutation.SetEmailSend(v)
+	if _, ok := ac.mutation.EndAt(); !ok {
+		v := announcement.DefaultEndAt
+		ac.mutation.SetEndAt(v)
 	}
 	if _, ok := ac.mutation.ID(); !ok {
 		if announcement.DefaultID == nil {
@@ -378,13 +378,13 @@ func (ac *AnnouncementCreate) createSpec() (*Announcement, *sqlgraph.CreateSpec)
 		})
 		_node.Channels = value
 	}
-	if value, ok := ac.mutation.EmailSend(); ok {
+	if value, ok := ac.mutation.EndAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeUint32,
 			Value:  value,
-			Column: announcement.FieldEmailSend,
+			Column: announcement.FieldEndAt,
 		})
-		_node.EmailSend = value
+		_node.EndAt = value
 	}
 	return _node, _spec
 }
@@ -566,21 +566,27 @@ func (u *AnnouncementUpsert) ClearChannels() *AnnouncementUpsert {
 	return u
 }
 
-// SetEmailSend sets the "email_send" field.
-func (u *AnnouncementUpsert) SetEmailSend(v bool) *AnnouncementUpsert {
-	u.Set(announcement.FieldEmailSend, v)
+// SetEndAt sets the "end_at" field.
+func (u *AnnouncementUpsert) SetEndAt(v uint32) *AnnouncementUpsert {
+	u.Set(announcement.FieldEndAt, v)
 	return u
 }
 
-// UpdateEmailSend sets the "email_send" field to the value that was provided on create.
-func (u *AnnouncementUpsert) UpdateEmailSend() *AnnouncementUpsert {
-	u.SetExcluded(announcement.FieldEmailSend)
+// UpdateEndAt sets the "end_at" field to the value that was provided on create.
+func (u *AnnouncementUpsert) UpdateEndAt() *AnnouncementUpsert {
+	u.SetExcluded(announcement.FieldEndAt)
 	return u
 }
 
-// ClearEmailSend clears the value of the "email_send" field.
-func (u *AnnouncementUpsert) ClearEmailSend() *AnnouncementUpsert {
-	u.SetNull(announcement.FieldEmailSend)
+// AddEndAt adds v to the "end_at" field.
+func (u *AnnouncementUpsert) AddEndAt(v uint32) *AnnouncementUpsert {
+	u.Add(announcement.FieldEndAt, v)
+	return u
+}
+
+// ClearEndAt clears the value of the "end_at" field.
+func (u *AnnouncementUpsert) ClearEndAt() *AnnouncementUpsert {
+	u.SetNull(announcement.FieldEndAt)
 	return u
 }
 
@@ -781,24 +787,31 @@ func (u *AnnouncementUpsertOne) ClearChannels() *AnnouncementUpsertOne {
 	})
 }
 
-// SetEmailSend sets the "email_send" field.
-func (u *AnnouncementUpsertOne) SetEmailSend(v bool) *AnnouncementUpsertOne {
+// SetEndAt sets the "end_at" field.
+func (u *AnnouncementUpsertOne) SetEndAt(v uint32) *AnnouncementUpsertOne {
 	return u.Update(func(s *AnnouncementUpsert) {
-		s.SetEmailSend(v)
+		s.SetEndAt(v)
 	})
 }
 
-// UpdateEmailSend sets the "email_send" field to the value that was provided on create.
-func (u *AnnouncementUpsertOne) UpdateEmailSend() *AnnouncementUpsertOne {
+// AddEndAt adds v to the "end_at" field.
+func (u *AnnouncementUpsertOne) AddEndAt(v uint32) *AnnouncementUpsertOne {
 	return u.Update(func(s *AnnouncementUpsert) {
-		s.UpdateEmailSend()
+		s.AddEndAt(v)
 	})
 }
 
-// ClearEmailSend clears the value of the "email_send" field.
-func (u *AnnouncementUpsertOne) ClearEmailSend() *AnnouncementUpsertOne {
+// UpdateEndAt sets the "end_at" field to the value that was provided on create.
+func (u *AnnouncementUpsertOne) UpdateEndAt() *AnnouncementUpsertOne {
 	return u.Update(func(s *AnnouncementUpsert) {
-		s.ClearEmailSend()
+		s.UpdateEndAt()
+	})
+}
+
+// ClearEndAt clears the value of the "end_at" field.
+func (u *AnnouncementUpsertOne) ClearEndAt() *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.ClearEndAt()
 	})
 }
 
@@ -1165,24 +1178,31 @@ func (u *AnnouncementUpsertBulk) ClearChannels() *AnnouncementUpsertBulk {
 	})
 }
 
-// SetEmailSend sets the "email_send" field.
-func (u *AnnouncementUpsertBulk) SetEmailSend(v bool) *AnnouncementUpsertBulk {
+// SetEndAt sets the "end_at" field.
+func (u *AnnouncementUpsertBulk) SetEndAt(v uint32) *AnnouncementUpsertBulk {
 	return u.Update(func(s *AnnouncementUpsert) {
-		s.SetEmailSend(v)
+		s.SetEndAt(v)
 	})
 }
 
-// UpdateEmailSend sets the "email_send" field to the value that was provided on create.
-func (u *AnnouncementUpsertBulk) UpdateEmailSend() *AnnouncementUpsertBulk {
+// AddEndAt adds v to the "end_at" field.
+func (u *AnnouncementUpsertBulk) AddEndAt(v uint32) *AnnouncementUpsertBulk {
 	return u.Update(func(s *AnnouncementUpsert) {
-		s.UpdateEmailSend()
+		s.AddEndAt(v)
 	})
 }
 
-// ClearEmailSend clears the value of the "email_send" field.
-func (u *AnnouncementUpsertBulk) ClearEmailSend() *AnnouncementUpsertBulk {
+// UpdateEndAt sets the "end_at" field to the value that was provided on create.
+func (u *AnnouncementUpsertBulk) UpdateEndAt() *AnnouncementUpsertBulk {
 	return u.Update(func(s *AnnouncementUpsert) {
-		s.ClearEmailSend()
+		s.UpdateEndAt()
+	})
+}
+
+// ClearEndAt clears the value of the "end_at" field.
+func (u *AnnouncementUpsertBulk) ClearEndAt() *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.ClearEndAt()
 	})
 }
 

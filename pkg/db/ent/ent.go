@@ -13,6 +13,7 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/announcement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -36,6 +37,7 @@ func columnChecker(table string) func(string) error {
 		announcement.Table:     announcement.ValidColumn,
 		notif.Table:            notif.ValidColumn,
 		readannouncement.Table: readannouncement.ValidColumn,
+		sendannouncement.Table: sendannouncement.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {

@@ -156,23 +156,30 @@ func (au *AnnouncementUpdate) ClearChannels() *AnnouncementUpdate {
 	return au
 }
 
-// SetEmailSend sets the "email_send" field.
-func (au *AnnouncementUpdate) SetEmailSend(b bool) *AnnouncementUpdate {
-	au.mutation.SetEmailSend(b)
+// SetEndAt sets the "end_at" field.
+func (au *AnnouncementUpdate) SetEndAt(u uint32) *AnnouncementUpdate {
+	au.mutation.ResetEndAt()
+	au.mutation.SetEndAt(u)
 	return au
 }
 
-// SetNillableEmailSend sets the "email_send" field if the given value is not nil.
-func (au *AnnouncementUpdate) SetNillableEmailSend(b *bool) *AnnouncementUpdate {
-	if b != nil {
-		au.SetEmailSend(*b)
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (au *AnnouncementUpdate) SetNillableEndAt(u *uint32) *AnnouncementUpdate {
+	if u != nil {
+		au.SetEndAt(*u)
 	}
 	return au
 }
 
-// ClearEmailSend clears the value of the "email_send" field.
-func (au *AnnouncementUpdate) ClearEmailSend() *AnnouncementUpdate {
-	au.mutation.ClearEmailSend()
+// AddEndAt adds u to the "end_at" field.
+func (au *AnnouncementUpdate) AddEndAt(u int32) *AnnouncementUpdate {
+	au.mutation.AddEndAt(u)
+	return au
+}
+
+// ClearEndAt clears the value of the "end_at" field.
+func (au *AnnouncementUpdate) ClearEndAt() *AnnouncementUpdate {
+	au.mutation.ClearEndAt()
 	return au
 }
 
@@ -368,17 +375,24 @@ func (au *AnnouncementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: announcement.FieldChannels,
 		})
 	}
-	if value, ok := au.mutation.EmailSend(); ok {
+	if value, ok := au.mutation.EndAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeUint32,
 			Value:  value,
-			Column: announcement.FieldEmailSend,
+			Column: announcement.FieldEndAt,
 		})
 	}
-	if au.mutation.EmailSendCleared() {
+	if value, ok := au.mutation.AddedEndAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldEndAt,
+		})
+	}
+	if au.mutation.EndAtCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: announcement.FieldEmailSend,
+			Type:   field.TypeUint32,
+			Column: announcement.FieldEndAt,
 		})
 	}
 	_spec.Modifiers = au.modifiers
@@ -529,23 +543,30 @@ func (auo *AnnouncementUpdateOne) ClearChannels() *AnnouncementUpdateOne {
 	return auo
 }
 
-// SetEmailSend sets the "email_send" field.
-func (auo *AnnouncementUpdateOne) SetEmailSend(b bool) *AnnouncementUpdateOne {
-	auo.mutation.SetEmailSend(b)
+// SetEndAt sets the "end_at" field.
+func (auo *AnnouncementUpdateOne) SetEndAt(u uint32) *AnnouncementUpdateOne {
+	auo.mutation.ResetEndAt()
+	auo.mutation.SetEndAt(u)
 	return auo
 }
 
-// SetNillableEmailSend sets the "email_send" field if the given value is not nil.
-func (auo *AnnouncementUpdateOne) SetNillableEmailSend(b *bool) *AnnouncementUpdateOne {
-	if b != nil {
-		auo.SetEmailSend(*b)
+// SetNillableEndAt sets the "end_at" field if the given value is not nil.
+func (auo *AnnouncementUpdateOne) SetNillableEndAt(u *uint32) *AnnouncementUpdateOne {
+	if u != nil {
+		auo.SetEndAt(*u)
 	}
 	return auo
 }
 
-// ClearEmailSend clears the value of the "email_send" field.
-func (auo *AnnouncementUpdateOne) ClearEmailSend() *AnnouncementUpdateOne {
-	auo.mutation.ClearEmailSend()
+// AddEndAt adds u to the "end_at" field.
+func (auo *AnnouncementUpdateOne) AddEndAt(u int32) *AnnouncementUpdateOne {
+	auo.mutation.AddEndAt(u)
+	return auo
+}
+
+// ClearEndAt clears the value of the "end_at" field.
+func (auo *AnnouncementUpdateOne) ClearEndAt() *AnnouncementUpdateOne {
+	auo.mutation.ClearEndAt()
 	return auo
 }
 
@@ -771,17 +792,24 @@ func (auo *AnnouncementUpdateOne) sqlSave(ctx context.Context) (_node *Announcem
 			Column: announcement.FieldChannels,
 		})
 	}
-	if value, ok := auo.mutation.EmailSend(); ok {
+	if value, ok := auo.mutation.EndAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
+			Type:   field.TypeUint32,
 			Value:  value,
-			Column: announcement.FieldEmailSend,
+			Column: announcement.FieldEndAt,
 		})
 	}
-	if auo.mutation.EmailSendCleared() {
+	if value, ok := auo.mutation.AddedEndAt(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeUint32,
+			Value:  value,
+			Column: announcement.FieldEndAt,
+		})
+	}
+	if auo.mutation.EndAtCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: announcement.FieldEmailSend,
+			Type:   field.TypeUint32,
+			Column: announcement.FieldEndAt,
 		})
 	}
 	_spec.Modifiers = auo.modifiers

@@ -1,16 +1,14 @@
-package announcement
+package sendstate
 
 import (
 	"context"
 	"fmt"
 
-	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqljson"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
 
 	"time"
 
-	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/announcement"
-	tracer "github.com/NpoolPlatform/notif-manager/pkg/tracer/announcement"
+	tracer "github.com/NpoolPlatform/notif-manager/pkg/tracer/announcement/sendstate"
 
 	constant "github.com/NpoolPlatform/notif-manager/pkg/message/const"
 	commontracer "github.com/NpoolPlatform/notif-manager/pkg/tracer"
@@ -18,42 +16,35 @@ import (
 	"go.opentelemetry.io/otel/codes"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/announcement"
+	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/announcement/sendstate"
 	"github.com/NpoolPlatform/notif-manager/pkg/db"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent"
 
 	"github.com/google/uuid"
 )
 
-func CreateSet(c *ent.AnnouncementCreate, in *npool.AnnouncementReq) (*ent.AnnouncementCreate, error) {
+func CreateSet(c *ent.SendAnnouncementCreate, in *npool.SendStateReq) (*ent.SendAnnouncementCreate, error) {
 	if in.ID != nil {
 		c.SetID(uuid.MustParse(in.GetID()))
 	}
 	if in.AppID != nil {
 		c.SetAppID(uuid.MustParse(in.GetAppID()))
 	}
-	if in.Title != nil {
-		c.SetTitle(in.GetTitle())
+	if in.UserID != nil {
+		c.SetUserID(uuid.MustParse(in.GetUserID()))
 	}
-	if in.Content != nil {
-		c.SetContent(in.GetContent())
+	if in.AnnouncementID != nil {
+		c.SetAnnouncementID(uuid.MustParse(in.GetAnnouncementID()))
 	}
-	if in.Channels != nil {
-		channels := []string{}
-		for _, m := range in.GetChannels() {
-			channels = append(channels, m.String())
-		}
-		c.SetChannels(channels)
-	}
-	if in.EndAt != nil {
-		c.SetEndAt(in.GetEndAt())
+	if in.Channel != nil {
+		c.SetChannel(in.GetChannel().String())
 	}
 
 	return c, nil
 }
 
-func Create(ctx context.Context, in *npool.AnnouncementReq) (*ent.Announcement, error) {
-	var info *ent.Announcement
+func Create(ctx context.Context, in *npool.SendStateReq) (*ent.SendAnnouncement, error) {
+	var info *ent.SendAnnouncement
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Create")
@@ -69,7 +60,7 @@ func Create(ctx context.Context, in *npool.AnnouncementReq) (*ent.Announcement, 
 	span = tracer.Trace(span, in)
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		c := cli.Announcement.Create()
+		c := cli.SendAnnouncement.Create()
 		stm, err := CreateSet(c, in)
 		if err != nil {
 			return err
@@ -84,7 +75,7 @@ func Create(ctx context.Context, in *npool.AnnouncementReq) (*ent.Announcement, 
 	return info, nil
 }
 
-func CreateBulk(ctx context.Context, in []*npool.AnnouncementReq) ([]*ent.Announcement, error) {
+func CreateBulk(ctx context.Context, in []*npool.SendStateReq) ([]*ent.SendAnnouncement, error) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CreateBulk")
@@ -99,17 +90,17 @@ func CreateBulk(ctx context.Context, in []*npool.AnnouncementReq) ([]*ent.Announ
 
 	span = tracer.TraceMany(span, in)
 
-	rows := []*ent.Announcement{}
+	rows := []*ent.SendAnnouncement{}
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		bulk := make([]*ent.AnnouncementCreate, len(in))
+		bulk := make([]*ent.SendAnnouncementCreate, len(in))
 		for i, info := range in {
-			bulk[i] = tx.Announcement.Create()
+			bulk[i] = tx.SendAnnouncement.Create()
 			bulk[i], err = CreateSet(bulk[i], info)
 			if err != nil {
 				return err
 			}
 		}
-		rows, err = tx.Announcement.CreateBulk(bulk...).Save(_ctx)
+		rows, err = tx.SendAnnouncement.CreateBulk(bulk...).Save(_ctx)
 		return err
 	})
 	if err != nil {
@@ -118,28 +109,12 @@ func CreateBulk(ctx context.Context, in []*npool.AnnouncementReq) ([]*ent.Announ
 	return rows, nil
 }
 
-func UpdateSet(u *ent.AnnouncementUpdateOne, in *npool.AnnouncementReq) (*ent.AnnouncementUpdateOne, error) {
-	if in.Title != nil {
-		u.SetTitle(in.GetTitle())
-	}
-	if in.Content != nil {
-		u.SetContent(in.GetContent())
-	}
-	if in.Channels != nil {
-		channels := []string{}
-		for _, m := range in.GetChannels() {
-			channels = append(channels, m.String())
-		}
-		u.SetChannels(channels)
-	}
-	if in.EndAt != nil {
-		u.SetEndAt(in.GetEndAt())
-	}
+func UpdateSet(u *ent.SendAnnouncementUpdateOne, in *npool.SendStateReq) (*ent.SendAnnouncementUpdateOne, error) {
 	return u, nil
 }
 
-func Update(ctx context.Context, in *npool.AnnouncementReq) (*ent.Announcement, error) {
-	var info *ent.Announcement
+func Update(ctx context.Context, in *npool.SendStateReq) (*ent.SendAnnouncement, error) {
+	var info *ent.SendAnnouncement
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Update")
@@ -155,7 +130,7 @@ func Update(ctx context.Context, in *npool.AnnouncementReq) (*ent.Announcement, 
 	span = tracer.Trace(span, in)
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		info, err = tx.Announcement.Query().Where(announcement.ID(uuid.MustParse(in.GetID()))).ForUpdate().Only(_ctx)
+		info, err = tx.SendAnnouncement.Query().Where(sendannouncement.ID(uuid.MustParse(in.GetID()))).ForUpdate().Only(_ctx)
 		if err != nil {
 			return err
 		}
@@ -175,8 +150,8 @@ func Update(ctx context.Context, in *npool.AnnouncementReq) (*ent.Announcement, 
 	return info, nil
 }
 
-func Row(ctx context.Context, id uuid.UUID) (*ent.Announcement, error) {
-	var info *ent.Announcement
+func Row(ctx context.Context, id uuid.UUID) (*ent.SendAnnouncement, error) {
+	var info *ent.SendAnnouncement
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Row")
@@ -192,7 +167,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Announcement, error) {
 	span = commontracer.TraceID(span, id.String())
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Announcement.Query().Where(announcement.ID(id)).Only(_ctx)
+		info, err = cli.SendAnnouncement.Query().Where(sendannouncement.ID(id)).Only(_ctx)
 		return err
 	})
 	if err != nil {
@@ -202,49 +177,48 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Announcement, error) {
 	return info, nil
 }
 
-func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.AnnouncementQuery, error) {
-	stm := cli.Announcement.Query()
+func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.SendAnnouncementQuery, error) {
+	stm := cli.SendAnnouncement.Query()
 	if conds == nil {
 		return stm, nil
 	}
 	if conds.ID != nil {
 		switch conds.GetID().GetOp() {
 		case cruder.EQ:
-			stm.Where(announcement.ID(uuid.MustParse(conds.GetID().GetValue())))
+			stm.Where(sendannouncement.ID(uuid.MustParse(conds.GetID().GetValue())))
 		default:
-			return nil, fmt.Errorf("invalid announcement field")
+			return nil, fmt.Errorf("invalid sendstate field")
 		}
 	}
 	if conds.AppID != nil {
 		switch conds.GetAppID().GetOp() {
 		case cruder.EQ:
-			stm.Where(announcement.AppID(uuid.MustParse(conds.GetAppID().GetValue())))
+			stm.Where(sendannouncement.AppID(uuid.MustParse(conds.GetAppID().GetValue())))
 		default:
-			return nil, fmt.Errorf("invalid announcement field")
+			return nil, fmt.Errorf("invalid sendstate field")
 		}
 	}
-	if conds.EndAt != nil {
-		switch conds.GetEndAt().GetOp() {
-		case cruder.GT:
-			stm.Where(announcement.EndAtGT(conds.GetEndAt().GetValue()))
-		case cruder.LT:
-			stm.Where(announcement.EndAtLT(conds.GetEndAt().GetValue()))
+	if conds.UserID != nil {
+		switch conds.GetUserID().GetOp() {
+		case cruder.EQ:
+			stm.Where(sendannouncement.UserID(uuid.MustParse(conds.GetUserID().GetValue())))
 		default:
-			return nil, fmt.Errorf("invalid announcement field")
+			return nil, fmt.Errorf("invalid sendstate field")
 		}
 	}
-	if len(conds.GetChannels().GetValue()) > 0 {
-		stm.Where(func(selector *sql.Selector) {
-			for _, val := range conds.GetChannels().GetValue() {
-				selector.Or().Where(sqljson.ValueContains(announcement.FieldChannels, val))
-			}
-		})
+	if conds.AnnouncementID != nil {
+		switch conds.GetAnnouncementID().GetOp() {
+		case cruder.EQ:
+			stm.Where(sendannouncement.AnnouncementID(uuid.MustParse(conds.GetAnnouncementID().GetValue())))
+		default:
+			return nil, fmt.Errorf("invalid sendstate field")
+		}
 	}
 
 	return stm, nil
 }
 
-func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.Announcement, int, error) {
+func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.SendAnnouncement, int, error) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Rows")
@@ -260,7 +234,7 @@ func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.An
 	span = tracer.TraceConds(span, conds)
 	span = commontracer.TraceOffsetLimit(span, offset, limit)
 
-	rows := []*ent.Announcement{}
+	rows := []*ent.SendAnnouncement{}
 	var total int
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := SetQueryConds(conds, cli)
@@ -275,7 +249,7 @@ func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.An
 
 		rows, err = stm.
 			Offset(offset).
-			Order(ent.Desc(announcement.FieldUpdatedAt)).
+			Order(ent.Desc(sendannouncement.FieldUpdatedAt)).
 			Limit(limit).
 			All(_ctx)
 		if err != nil {
@@ -290,8 +264,8 @@ func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.An
 	return rows, total, nil
 }
 
-func RowOnly(ctx context.Context, conds *npool.Conds) (*ent.Announcement, error) {
-	var info *ent.Announcement
+func RowOnly(ctx context.Context, conds *npool.Conds) (*ent.SendAnnouncement, error) {
+	var info *ent.SendAnnouncement
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "RowOnly")
@@ -378,7 +352,7 @@ func Exist(ctx context.Context, id uuid.UUID) (bool, error) {
 	span = commontracer.TraceID(span, id.String())
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.Announcement.Query().Where(announcement.ID(id)).Exist(_ctx)
+		exist, err = cli.SendAnnouncement.Query().Where(sendannouncement.ID(id)).Exist(_ctx)
 		return err
 	})
 	if err != nil {
@@ -424,8 +398,8 @@ func ExistConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 	return exist, nil
 }
 
-func Delete(ctx context.Context, id uuid.UUID) (*ent.Announcement, error) {
-	var info *ent.Announcement
+func Delete(ctx context.Context, id uuid.UUID) (*ent.SendAnnouncement, error) {
+	var info *ent.SendAnnouncement
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Delete")
@@ -441,7 +415,7 @@ func Delete(ctx context.Context, id uuid.UUID) (*ent.Announcement, error) {
 	span = commontracer.TraceID(span, id.String())
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Announcement.UpdateOneID(id).
+		info, err = cli.SendAnnouncement.UpdateOneID(id).
 			SetDeletedAt(uint32(time.Now().Unix())).
 			Save(_ctx)
 		return err

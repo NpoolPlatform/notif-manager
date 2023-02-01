@@ -1,4 +1,4 @@
-package announcement
+package sendstate
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	valuedef "github.com/NpoolPlatform/message/npool"
-	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/announcement"
+	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/announcement/sendstate"
 
 	testinit "github.com/NpoolPlatform/notif-manager/pkg/testinit"
 	"github.com/google/uuid"
@@ -31,29 +31,30 @@ func init() {
 	}
 }
 
-var amt = ent.Announcement{
-	ID:       uuid.New(),
-	AppID:    uuid.New(),
-	Title:    uuid.NewString(),
-	Content:  uuid.NewString(),
-	Channels: []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-	EndAt:    9999999,
+var amt = ent.SendAnnouncement{
+	ID:             uuid.New(),
+	AppID:          uuid.New(),
+	UserID:         uuid.New(),
+	AnnouncementID: uuid.New(),
+	Channel:        channel.NotifChannel_ChannelEmail.String(),
 }
 
 var (
-	id    = amt.ID.String()
-	appID = amt.AppID.String()
-	req   = npool.AnnouncementReq{
-		ID:       &id,
-		AppID:    &appID,
-		Title:    &amt.Title,
-		Content:  &amt.Content,
-		Channels: []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
-		EndAt:    &amt.EndAt,
+	id             = amt.ID.String()
+	appID          = amt.AppID.String()
+	userID         = amt.UserID.String()
+	announcementID = amt.AnnouncementID.String()
+	c              = channel.NotifChannel_ChannelEmail
+	req            = npool.SendStateReq{
+		ID:             &id,
+		AppID:          &appID,
+		UserID:         &userID,
+		AnnouncementID: &announcementID,
+		Channel:        &c,
 	}
 )
 
-var info *ent.Announcement
+var info *ent.SendAnnouncement
 
 func create(t *testing.T) {
 	var err error
@@ -66,36 +67,36 @@ func create(t *testing.T) {
 }
 
 func createBulk(t *testing.T) {
-	entities := []*ent.Announcement{
+	entities := []*ent.SendAnnouncement{
 		{
-			ID:       uuid.New(),
-			AppID:    uuid.New(),
-			Title:    uuid.NewString(),
-			Content:  uuid.NewString(),
-			Channels: []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-			EndAt:    9999999,
+			ID:             uuid.New(),
+			AppID:          uuid.New(),
+			UserID:         uuid.New(),
+			AnnouncementID: uuid.New(),
+			Channel:        channel.NotifChannel_ChannelEmail.String(),
 		},
 		{
-			ID:       uuid.New(),
-			AppID:    uuid.New(),
-			Title:    uuid.NewString(),
-			Content:  uuid.NewString(),
-			Channels: []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-			EndAt:    9999999,
+			ID:             uuid.New(),
+			AppID:          uuid.New(),
+			UserID:         uuid.New(),
+			AnnouncementID: uuid.New(),
+			Channel:        channel.NotifChannel_ChannelEmail.String(),
 		},
 	}
 
-	reqs := []*npool.AnnouncementReq{}
+	reqs := []*npool.SendStateReq{}
 	for _, _amt := range entities {
 		_id := _amt.ID.String()
 		_appID := _amt.AppID.String()
-		reqs = append(reqs, &npool.AnnouncementReq{
-			ID:       &_id,
-			AppID:    &_appID,
-			Title:    &_amt.Title,
-			Content:  &_amt.Content,
-			Channels: []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
-			EndAt:    &_amt.EndAt,
+		_userID := _amt.UserID.String()
+		_announcementID := _amt.AnnouncementID.String()
+		_c := channel.NotifChannel_ChannelEmail
+		reqs = append(reqs, &npool.SendStateReq{
+			ID:             &_id,
+			AppID:          &_appID,
+			UserID:         &_userID,
+			AnnouncementID: &_announcementID,
+			Channel:        &_c,
 		})
 	}
 	infos, err := CreateBulk(context.Background(), reqs)

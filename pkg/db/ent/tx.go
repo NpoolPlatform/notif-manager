@@ -20,6 +20,8 @@ type Tx struct {
 	Notif *NotifClient
 	// ReadAnnouncement is the client for interacting with the ReadAnnouncement builders.
 	ReadAnnouncement *ReadAnnouncementClient
+	// SendAnnouncement is the client for interacting with the SendAnnouncement builders.
+	SendAnnouncement *SendAnnouncementClient
 
 	// lazily loaded.
 	client     *Client
@@ -158,6 +160,7 @@ func (tx *Tx) init() {
 	tx.Announcement = NewAnnouncementClient(tx.config)
 	tx.Notif = NewNotifClient(tx.config)
 	tx.ReadAnnouncement = NewReadAnnouncementClient(tx.config)
+	tx.SendAnnouncement = NewSendAnnouncementClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

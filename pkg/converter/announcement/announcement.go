@@ -21,7 +21,7 @@ func Ent2Grpc(row *ent.Announcement) *npool.Announcement {
 		Title:     row.Title,
 		Content:   row.Content,
 		Channels:  channels,
-		EmailSend: row.EmailSend,
+		EndAt:     row.EndAt,
 		CreatedAt: row.CreatedAt,
 		UpdatedAt: row.UpdatedAt,
 	}

@@ -12,6 +12,7 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/predicate"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
 	"github.com/google/uuid"
 
 	"entgo.io/ent"
@@ -29,6 +30,7 @@ const (
 	TypeAnnouncement     = "Announcement"
 	TypeNotif            = "Notif"
 	TypeReadAnnouncement = "ReadAnnouncement"
+	TypeSendAnnouncement = "SendAnnouncement"
 )
 
 // AnnouncementMutation represents an operation that mutates the Announcement nodes in the graph.
@@ -47,7 +49,8 @@ type AnnouncementMutation struct {
 	title         *string
 	content       *string
 	channels      *[]string
-	email_send    *bool
+	end_at        *uint32
+	addend_at     *int32
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Announcement, error)
@@ -522,53 +525,74 @@ func (m *AnnouncementMutation) ResetChannels() {
 	delete(m.clearedFields, announcement.FieldChannels)
 }
 
-// SetEmailSend sets the "email_send" field.
-func (m *AnnouncementMutation) SetEmailSend(b bool) {
-	m.email_send = &b
+// SetEndAt sets the "end_at" field.
+func (m *AnnouncementMutation) SetEndAt(u uint32) {
+	m.end_at = &u
+	m.addend_at = nil
 }
 
-// EmailSend returns the value of the "email_send" field in the mutation.
-func (m *AnnouncementMutation) EmailSend() (r bool, exists bool) {
-	v := m.email_send
+// EndAt returns the value of the "end_at" field in the mutation.
+func (m *AnnouncementMutation) EndAt() (r uint32, exists bool) {
+	v := m.end_at
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldEmailSend returns the old "email_send" field's value of the Announcement entity.
+// OldEndAt returns the old "end_at" field's value of the Announcement entity.
 // If the Announcement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AnnouncementMutation) OldEmailSend(ctx context.Context) (v bool, err error) {
+func (m *AnnouncementMutation) OldEndAt(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldEmailSend is only allowed on UpdateOne operations")
+		return v, errors.New("OldEndAt is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldEmailSend requires an ID field in the mutation")
+		return v, errors.New("OldEndAt requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldEmailSend: %w", err)
+		return v, fmt.Errorf("querying old value for OldEndAt: %w", err)
 	}
-	return oldValue.EmailSend, nil
+	return oldValue.EndAt, nil
 }
 
-// ClearEmailSend clears the value of the "email_send" field.
-func (m *AnnouncementMutation) ClearEmailSend() {
-	m.email_send = nil
-	m.clearedFields[announcement.FieldEmailSend] = struct{}{}
+// AddEndAt adds u to the "end_at" field.
+func (m *AnnouncementMutation) AddEndAt(u int32) {
+	if m.addend_at != nil {
+		*m.addend_at += u
+	} else {
+		m.addend_at = &u
+	}
 }
 
-// EmailSendCleared returns if the "email_send" field was cleared in this mutation.
-func (m *AnnouncementMutation) EmailSendCleared() bool {
-	_, ok := m.clearedFields[announcement.FieldEmailSend]
+// AddedEndAt returns the value that was added to the "end_at" field in this mutation.
+func (m *AnnouncementMutation) AddedEndAt() (r int32, exists bool) {
+	v := m.addend_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearEndAt clears the value of the "end_at" field.
+func (m *AnnouncementMutation) ClearEndAt() {
+	m.end_at = nil
+	m.addend_at = nil
+	m.clearedFields[announcement.FieldEndAt] = struct{}{}
+}
+
+// EndAtCleared returns if the "end_at" field was cleared in this mutation.
+func (m *AnnouncementMutation) EndAtCleared() bool {
+	_, ok := m.clearedFields[announcement.FieldEndAt]
 	return ok
 }
 
-// ResetEmailSend resets all changes to the "email_send" field.
-func (m *AnnouncementMutation) ResetEmailSend() {
-	m.email_send = nil
-	delete(m.clearedFields, announcement.FieldEmailSend)
+// ResetEndAt resets all changes to the "end_at" field.
+func (m *AnnouncementMutation) ResetEndAt() {
+	m.end_at = nil
+	m.addend_at = nil
+	delete(m.clearedFields, announcement.FieldEndAt)
 }
 
 // Where appends a list predicates to the AnnouncementMutation builder.
@@ -612,8 +636,8 @@ func (m *AnnouncementMutation) Fields() []string {
 	if m.channels != nil {
 		fields = append(fields, announcement.FieldChannels)
 	}
-	if m.email_send != nil {
-		fields = append(fields, announcement.FieldEmailSend)
+	if m.end_at != nil {
+		fields = append(fields, announcement.FieldEndAt)
 	}
 	return fields
 }
@@ -637,8 +661,8 @@ func (m *AnnouncementMutation) Field(name string) (ent.Value, bool) {
 		return m.Content()
 	case announcement.FieldChannels:
 		return m.Channels()
-	case announcement.FieldEmailSend:
-		return m.EmailSend()
+	case announcement.FieldEndAt:
+		return m.EndAt()
 	}
 	return nil, false
 }
@@ -662,8 +686,8 @@ func (m *AnnouncementMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldContent(ctx)
 	case announcement.FieldChannels:
 		return m.OldChannels(ctx)
-	case announcement.FieldEmailSend:
-		return m.OldEmailSend(ctx)
+	case announcement.FieldEndAt:
+		return m.OldEndAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Announcement field %s", name)
 }
@@ -722,12 +746,12 @@ func (m *AnnouncementMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetChannels(v)
 		return nil
-	case announcement.FieldEmailSend:
-		v, ok := value.(bool)
+	case announcement.FieldEndAt:
+		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetEmailSend(v)
+		m.SetEndAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Announcement field %s", name)
@@ -746,6 +770,9 @@ func (m *AnnouncementMutation) AddedFields() []string {
 	if m.adddeleted_at != nil {
 		fields = append(fields, announcement.FieldDeletedAt)
 	}
+	if m.addend_at != nil {
+		fields = append(fields, announcement.FieldEndAt)
+	}
 	return fields
 }
 
@@ -760,6 +787,8 @@ func (m *AnnouncementMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedAt()
 	case announcement.FieldDeletedAt:
 		return m.AddedDeletedAt()
+	case announcement.FieldEndAt:
+		return m.AddedEndAt()
 	}
 	return nil, false
 }
@@ -790,6 +819,13 @@ func (m *AnnouncementMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDeletedAt(v)
 		return nil
+	case announcement.FieldEndAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddEndAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Announcement numeric field %s", name)
 }
@@ -810,8 +846,8 @@ func (m *AnnouncementMutation) ClearedFields() []string {
 	if m.FieldCleared(announcement.FieldChannels) {
 		fields = append(fields, announcement.FieldChannels)
 	}
-	if m.FieldCleared(announcement.FieldEmailSend) {
-		fields = append(fields, announcement.FieldEmailSend)
+	if m.FieldCleared(announcement.FieldEndAt) {
+		fields = append(fields, announcement.FieldEndAt)
 	}
 	return fields
 }
@@ -839,8 +875,8 @@ func (m *AnnouncementMutation) ClearField(name string) error {
 	case announcement.FieldChannels:
 		m.ClearChannels()
 		return nil
-	case announcement.FieldEmailSend:
-		m.ClearEmailSend()
+	case announcement.FieldEndAt:
+		m.ClearEndAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Announcement nullable field %s", name)
@@ -871,8 +907,8 @@ func (m *AnnouncementMutation) ResetField(name string) error {
 	case announcement.FieldChannels:
 		m.ResetChannels()
 		return nil
-	case announcement.FieldEmailSend:
-		m.ResetEmailSend()
+	case announcement.FieldEndAt:
+		m.ResetEndAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Announcement field %s", name)
@@ -2933,4 +2969,826 @@ func (m *ReadAnnouncementMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *ReadAnnouncementMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown ReadAnnouncement edge %s", name)
+}
+
+// SendAnnouncementMutation represents an operation that mutates the SendAnnouncement nodes in the graph.
+type SendAnnouncementMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *uuid.UUID
+	created_at      *uint32
+	addcreated_at   *int32
+	updated_at      *uint32
+	addupdated_at   *int32
+	deleted_at      *uint32
+	adddeleted_at   *int32
+	app_id          *uuid.UUID
+	user_id         *uuid.UUID
+	announcement_id *uuid.UUID
+	channel         *string
+	clearedFields   map[string]struct{}
+	done            bool
+	oldValue        func(context.Context) (*SendAnnouncement, error)
+	predicates      []predicate.SendAnnouncement
+}
+
+var _ ent.Mutation = (*SendAnnouncementMutation)(nil)
+
+// sendannouncementOption allows management of the mutation configuration using functional options.
+type sendannouncementOption func(*SendAnnouncementMutation)
+
+// newSendAnnouncementMutation creates new mutation for the SendAnnouncement entity.
+func newSendAnnouncementMutation(c config, op Op, opts ...sendannouncementOption) *SendAnnouncementMutation {
+	m := &SendAnnouncementMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSendAnnouncement,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSendAnnouncementID sets the ID field of the mutation.
+func withSendAnnouncementID(id uuid.UUID) sendannouncementOption {
+	return func(m *SendAnnouncementMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *SendAnnouncement
+		)
+		m.oldValue = func(ctx context.Context) (*SendAnnouncement, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().SendAnnouncement.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSendAnnouncement sets the old SendAnnouncement of the mutation.
+func withSendAnnouncement(node *SendAnnouncement) sendannouncementOption {
+	return func(m *SendAnnouncementMutation) {
+		m.oldValue = func(context.Context) (*SendAnnouncement, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SendAnnouncementMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SendAnnouncementMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SendAnnouncement entities.
+func (m *SendAnnouncementMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SendAnnouncementMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SendAnnouncementMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().SendAnnouncement.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SendAnnouncementMutation) SetCreatedAt(u uint32) {
+	m.created_at = &u
+	m.addcreated_at = nil
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SendAnnouncementMutation) CreatedAt() (r uint32, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the SendAnnouncement entity.
+// If the SendAnnouncement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SendAnnouncementMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// AddCreatedAt adds u to the "created_at" field.
+func (m *SendAnnouncementMutation) AddCreatedAt(u int32) {
+	if m.addcreated_at != nil {
+		*m.addcreated_at += u
+	} else {
+		m.addcreated_at = &u
+	}
+}
+
+// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
+func (m *SendAnnouncementMutation) AddedCreatedAt() (r int32, exists bool) {
+	v := m.addcreated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SendAnnouncementMutation) ResetCreatedAt() {
+	m.created_at = nil
+	m.addcreated_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SendAnnouncementMutation) SetUpdatedAt(u uint32) {
+	m.updated_at = &u
+	m.addupdated_at = nil
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SendAnnouncementMutation) UpdatedAt() (r uint32, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the SendAnnouncement entity.
+// If the SendAnnouncement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SendAnnouncementMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// AddUpdatedAt adds u to the "updated_at" field.
+func (m *SendAnnouncementMutation) AddUpdatedAt(u int32) {
+	if m.addupdated_at != nil {
+		*m.addupdated_at += u
+	} else {
+		m.addupdated_at = &u
+	}
+}
+
+// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
+func (m *SendAnnouncementMutation) AddedUpdatedAt() (r int32, exists bool) {
+	v := m.addupdated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SendAnnouncementMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	m.addupdated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SendAnnouncementMutation) SetDeletedAt(u uint32) {
+	m.deleted_at = &u
+	m.adddeleted_at = nil
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SendAnnouncementMutation) DeletedAt() (r uint32, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the SendAnnouncement entity.
+// If the SendAnnouncement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SendAnnouncementMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// AddDeletedAt adds u to the "deleted_at" field.
+func (m *SendAnnouncementMutation) AddDeletedAt(u int32) {
+	if m.adddeleted_at != nil {
+		*m.adddeleted_at += u
+	} else {
+		m.adddeleted_at = &u
+	}
+}
+
+// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
+func (m *SendAnnouncementMutation) AddedDeletedAt() (r int32, exists bool) {
+	v := m.adddeleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SendAnnouncementMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	m.adddeleted_at = nil
+}
+
+// SetAppID sets the "app_id" field.
+func (m *SendAnnouncementMutation) SetAppID(u uuid.UUID) {
+	m.app_id = &u
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *SendAnnouncementMutation) AppID() (r uuid.UUID, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the SendAnnouncement entity.
+// If the SendAnnouncement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SendAnnouncementMutation) OldAppID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *SendAnnouncementMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[sendannouncement.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *SendAnnouncementMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[sendannouncement.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *SendAnnouncementMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, sendannouncement.FieldAppID)
+}
+
+// SetUserID sets the "user_id" field.
+func (m *SendAnnouncementMutation) SetUserID(u uuid.UUID) {
+	m.user_id = &u
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *SendAnnouncementMutation) UserID() (r uuid.UUID, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the SendAnnouncement entity.
+// If the SendAnnouncement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SendAnnouncementMutation) OldUserID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *SendAnnouncementMutation) ClearUserID() {
+	m.user_id = nil
+	m.clearedFields[sendannouncement.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *SendAnnouncementMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[sendannouncement.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *SendAnnouncementMutation) ResetUserID() {
+	m.user_id = nil
+	delete(m.clearedFields, sendannouncement.FieldUserID)
+}
+
+// SetAnnouncementID sets the "announcement_id" field.
+func (m *SendAnnouncementMutation) SetAnnouncementID(u uuid.UUID) {
+	m.announcement_id = &u
+}
+
+// AnnouncementID returns the value of the "announcement_id" field in the mutation.
+func (m *SendAnnouncementMutation) AnnouncementID() (r uuid.UUID, exists bool) {
+	v := m.announcement_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAnnouncementID returns the old "announcement_id" field's value of the SendAnnouncement entity.
+// If the SendAnnouncement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SendAnnouncementMutation) OldAnnouncementID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAnnouncementID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAnnouncementID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAnnouncementID: %w", err)
+	}
+	return oldValue.AnnouncementID, nil
+}
+
+// ClearAnnouncementID clears the value of the "announcement_id" field.
+func (m *SendAnnouncementMutation) ClearAnnouncementID() {
+	m.announcement_id = nil
+	m.clearedFields[sendannouncement.FieldAnnouncementID] = struct{}{}
+}
+
+// AnnouncementIDCleared returns if the "announcement_id" field was cleared in this mutation.
+func (m *SendAnnouncementMutation) AnnouncementIDCleared() bool {
+	_, ok := m.clearedFields[sendannouncement.FieldAnnouncementID]
+	return ok
+}
+
+// ResetAnnouncementID resets all changes to the "announcement_id" field.
+func (m *SendAnnouncementMutation) ResetAnnouncementID() {
+	m.announcement_id = nil
+	delete(m.clearedFields, sendannouncement.FieldAnnouncementID)
+}
+
+// SetChannel sets the "channel" field.
+func (m *SendAnnouncementMutation) SetChannel(s string) {
+	m.channel = &s
+}
+
+// Channel returns the value of the "channel" field in the mutation.
+func (m *SendAnnouncementMutation) Channel() (r string, exists bool) {
+	v := m.channel
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChannel returns the old "channel" field's value of the SendAnnouncement entity.
+// If the SendAnnouncement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SendAnnouncementMutation) OldChannel(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChannel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChannel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChannel: %w", err)
+	}
+	return oldValue.Channel, nil
+}
+
+// ClearChannel clears the value of the "channel" field.
+func (m *SendAnnouncementMutation) ClearChannel() {
+	m.channel = nil
+	m.clearedFields[sendannouncement.FieldChannel] = struct{}{}
+}
+
+// ChannelCleared returns if the "channel" field was cleared in this mutation.
+func (m *SendAnnouncementMutation) ChannelCleared() bool {
+	_, ok := m.clearedFields[sendannouncement.FieldChannel]
+	return ok
+}
+
+// ResetChannel resets all changes to the "channel" field.
+func (m *SendAnnouncementMutation) ResetChannel() {
+	m.channel = nil
+	delete(m.clearedFields, sendannouncement.FieldChannel)
+}
+
+// Where appends a list predicates to the SendAnnouncementMutation builder.
+func (m *SendAnnouncementMutation) Where(ps ...predicate.SendAnnouncement) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *SendAnnouncementMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (SendAnnouncement).
+func (m *SendAnnouncementMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SendAnnouncementMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, sendannouncement.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, sendannouncement.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, sendannouncement.FieldDeletedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, sendannouncement.FieldAppID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, sendannouncement.FieldUserID)
+	}
+	if m.announcement_id != nil {
+		fields = append(fields, sendannouncement.FieldAnnouncementID)
+	}
+	if m.channel != nil {
+		fields = append(fields, sendannouncement.FieldChannel)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SendAnnouncementMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case sendannouncement.FieldCreatedAt:
+		return m.CreatedAt()
+	case sendannouncement.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case sendannouncement.FieldDeletedAt:
+		return m.DeletedAt()
+	case sendannouncement.FieldAppID:
+		return m.AppID()
+	case sendannouncement.FieldUserID:
+		return m.UserID()
+	case sendannouncement.FieldAnnouncementID:
+		return m.AnnouncementID()
+	case sendannouncement.FieldChannel:
+		return m.Channel()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SendAnnouncementMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case sendannouncement.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case sendannouncement.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case sendannouncement.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case sendannouncement.FieldAppID:
+		return m.OldAppID(ctx)
+	case sendannouncement.FieldUserID:
+		return m.OldUserID(ctx)
+	case sendannouncement.FieldAnnouncementID:
+		return m.OldAnnouncementID(ctx)
+	case sendannouncement.FieldChannel:
+		return m.OldChannel(ctx)
+	}
+	return nil, fmt.Errorf("unknown SendAnnouncement field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SendAnnouncementMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case sendannouncement.FieldCreatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case sendannouncement.FieldUpdatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case sendannouncement.FieldDeletedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case sendannouncement.FieldAppID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	case sendannouncement.FieldUserID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case sendannouncement.FieldAnnouncementID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAnnouncementID(v)
+		return nil
+	case sendannouncement.FieldChannel:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChannel(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SendAnnouncement field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SendAnnouncementMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_at != nil {
+		fields = append(fields, sendannouncement.FieldCreatedAt)
+	}
+	if m.addupdated_at != nil {
+		fields = append(fields, sendannouncement.FieldUpdatedAt)
+	}
+	if m.adddeleted_at != nil {
+		fields = append(fields, sendannouncement.FieldDeletedAt)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SendAnnouncementMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case sendannouncement.FieldCreatedAt:
+		return m.AddedCreatedAt()
+	case sendannouncement.FieldUpdatedAt:
+		return m.AddedUpdatedAt()
+	case sendannouncement.FieldDeletedAt:
+		return m.AddedDeletedAt()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SendAnnouncementMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case sendannouncement.FieldCreatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedAt(v)
+		return nil
+	case sendannouncement.FieldUpdatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedAt(v)
+		return nil
+	case sendannouncement.FieldDeletedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SendAnnouncement numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SendAnnouncementMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(sendannouncement.FieldAppID) {
+		fields = append(fields, sendannouncement.FieldAppID)
+	}
+	if m.FieldCleared(sendannouncement.FieldUserID) {
+		fields = append(fields, sendannouncement.FieldUserID)
+	}
+	if m.FieldCleared(sendannouncement.FieldAnnouncementID) {
+		fields = append(fields, sendannouncement.FieldAnnouncementID)
+	}
+	if m.FieldCleared(sendannouncement.FieldChannel) {
+		fields = append(fields, sendannouncement.FieldChannel)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SendAnnouncementMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SendAnnouncementMutation) ClearField(name string) error {
+	switch name {
+	case sendannouncement.FieldAppID:
+		m.ClearAppID()
+		return nil
+	case sendannouncement.FieldUserID:
+		m.ClearUserID()
+		return nil
+	case sendannouncement.FieldAnnouncementID:
+		m.ClearAnnouncementID()
+		return nil
+	case sendannouncement.FieldChannel:
+		m.ClearChannel()
+		return nil
+	}
+	return fmt.Errorf("unknown SendAnnouncement nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SendAnnouncementMutation) ResetField(name string) error {
+	switch name {
+	case sendannouncement.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case sendannouncement.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case sendannouncement.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case sendannouncement.FieldAppID:
+		m.ResetAppID()
+		return nil
+	case sendannouncement.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case sendannouncement.FieldAnnouncementID:
+		m.ResetAnnouncementID()
+		return nil
+	case sendannouncement.FieldChannel:
+		m.ResetChannel()
+		return nil
+	}
+	return fmt.Errorf("unknown SendAnnouncement field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SendAnnouncementMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SendAnnouncementMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SendAnnouncementMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SendAnnouncementMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SendAnnouncementMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SendAnnouncementMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SendAnnouncementMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown SendAnnouncement unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SendAnnouncementMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown SendAnnouncement edge %s", name)
 }

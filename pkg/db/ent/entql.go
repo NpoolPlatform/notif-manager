@@ -6,6 +6,7 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/announcement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -15,7 +16,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 3)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 4)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   announcement.Table,
@@ -34,7 +35,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			announcement.FieldTitle:     {Type: field.TypeString, Column: announcement.FieldTitle},
 			announcement.FieldContent:   {Type: field.TypeString, Column: announcement.FieldContent},
 			announcement.FieldChannels:  {Type: field.TypeJSON, Column: announcement.FieldChannels},
-			announcement.FieldEmailSend: {Type: field.TypeBool, Column: announcement.FieldEmailSend},
+			announcement.FieldEndAt:     {Type: field.TypeUint32, Column: announcement.FieldEndAt},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -80,6 +81,26 @@ var schemaGraph = func() *sqlgraph.Schema {
 			readannouncement.FieldAppID:          {Type: field.TypeUUID, Column: readannouncement.FieldAppID},
 			readannouncement.FieldUserID:         {Type: field.TypeUUID, Column: readannouncement.FieldUserID},
 			readannouncement.FieldAnnouncementID: {Type: field.TypeUUID, Column: readannouncement.FieldAnnouncementID},
+		},
+	}
+	graph.Nodes[3] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   sendannouncement.Table,
+			Columns: sendannouncement.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUUID,
+				Column: sendannouncement.FieldID,
+			},
+		},
+		Type: "SendAnnouncement",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			sendannouncement.FieldCreatedAt:      {Type: field.TypeUint32, Column: sendannouncement.FieldCreatedAt},
+			sendannouncement.FieldUpdatedAt:      {Type: field.TypeUint32, Column: sendannouncement.FieldUpdatedAt},
+			sendannouncement.FieldDeletedAt:      {Type: field.TypeUint32, Column: sendannouncement.FieldDeletedAt},
+			sendannouncement.FieldAppID:          {Type: field.TypeUUID, Column: sendannouncement.FieldAppID},
+			sendannouncement.FieldUserID:         {Type: field.TypeUUID, Column: sendannouncement.FieldUserID},
+			sendannouncement.FieldAnnouncementID: {Type: field.TypeUUID, Column: sendannouncement.FieldAnnouncementID},
+			sendannouncement.FieldChannel:        {Type: field.TypeString, Column: sendannouncement.FieldChannel},
 		},
 	}
 	return graph
@@ -166,9 +187,9 @@ func (f *AnnouncementFilter) WhereChannels(p entql.BytesP) {
 	f.Where(p.Field(announcement.FieldChannels))
 }
 
-// WhereEmailSend applies the entql bool predicate on the email_send field.
-func (f *AnnouncementFilter) WhereEmailSend(p entql.BoolP) {
-	f.Where(p.Field(announcement.FieldEmailSend))
+// WhereEndAt applies the entql uint32 predicate on the end_at field.
+func (f *AnnouncementFilter) WhereEndAt(p entql.Uint32P) {
+	f.Where(p.Field(announcement.FieldEndAt))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -344,4 +365,79 @@ func (f *ReadAnnouncementFilter) WhereUserID(p entql.ValueP) {
 // WhereAnnouncementID applies the entql [16]byte predicate on the announcement_id field.
 func (f *ReadAnnouncementFilter) WhereAnnouncementID(p entql.ValueP) {
 	f.Where(p.Field(readannouncement.FieldAnnouncementID))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (saq *SendAnnouncementQuery) addPredicate(pred func(s *sql.Selector)) {
+	saq.predicates = append(saq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the SendAnnouncementQuery builder.
+func (saq *SendAnnouncementQuery) Filter() *SendAnnouncementFilter {
+	return &SendAnnouncementFilter{config: saq.config, predicateAdder: saq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *SendAnnouncementMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the SendAnnouncementMutation builder.
+func (m *SendAnnouncementMutation) Filter() *SendAnnouncementFilter {
+	return &SendAnnouncementFilter{config: m.config, predicateAdder: m}
+}
+
+// SendAnnouncementFilter provides a generic filtering capability at runtime for SendAnnouncementQuery.
+type SendAnnouncementFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *SendAnnouncementFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql [16]byte predicate on the id field.
+func (f *SendAnnouncementFilter) WhereID(p entql.ValueP) {
+	f.Where(p.Field(sendannouncement.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *SendAnnouncementFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(sendannouncement.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *SendAnnouncementFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(sendannouncement.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *SendAnnouncementFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(sendannouncement.FieldDeletedAt))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *SendAnnouncementFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(sendannouncement.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *SendAnnouncementFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(sendannouncement.FieldUserID))
+}
+
+// WhereAnnouncementID applies the entql [16]byte predicate on the announcement_id field.
+func (f *SendAnnouncementFilter) WhereAnnouncementID(p entql.ValueP) {
+	f.Where(p.Field(sendannouncement.FieldAnnouncementID))
+}
+
+// WhereChannel applies the entql string predicate on the channel field.
+func (f *SendAnnouncementFilter) WhereChannel(p entql.StringP) {
+	f.Where(p.Field(sendannouncement.FieldChannel))
 }
