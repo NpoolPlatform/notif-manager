@@ -11,6 +11,10 @@ import (
 )
 
 func validate(in *npool.SendStateReq) error {
+	if in == nil {
+		logger.Sugar().Errorw("validate", "ID", in.GetID(), "error", "info is invalid")
+		return fmt.Errorf("info is invalid")
+	}
 	if in.ID != nil {
 		if _, err := uuid.Parse(in.GetID()); err != nil {
 			logger.Sugar().Errorw("validate", "ID", in.GetID(), "error", err)
