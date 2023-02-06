@@ -153,6 +153,9 @@ func UpdateSet(u *ent.NotifUpdateOne, in *npool.NotifReq) (*ent.NotifUpdateOne, 
 	if in.AlreadyRead != nil {
 		u.SetAlreadyRead(in.GetAlreadyRead())
 	}
+	if in.UseTemplate != nil {
+		u.SetUseTemplate(in.GetUseTemplate())
+	}
 	return u, nil
 }
 
