@@ -223,6 +223,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Notif, error) {
 	return info, nil
 }
 
+//nolint:funlen,gocyclo
 func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error) {
 	stm := cli.Notif.Query()
 	if conds == nil {
@@ -244,6 +245,46 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 			return nil, fmt.Errorf("invalid notif field")
 		}
 	}
+	if conds.UserID != nil {
+		switch conds.GetUserID().GetOp() {
+		case cruder.EQ:
+			stm.Where(notif.UserID(uuid.MustParse(conds.GetUserID().GetValue())))
+		default:
+			return nil, fmt.Errorf("invalid notif field")
+		}
+	}
+	if conds.AlreadyRead != nil {
+		switch conds.GetAlreadyRead().GetOp() {
+		case cruder.EQ:
+			stm.Where(notif.AlreadyRead(conds.GetAlreadyRead().GetValue()))
+		default:
+			return nil, fmt.Errorf("invalid notif field")
+		}
+	}
+	if conds.LangID != nil {
+		switch conds.GetLangID().GetOp() {
+		case cruder.EQ:
+			stm.Where(notif.LangID(uuid.MustParse(conds.GetLangID().GetValue())))
+		default:
+			return nil, fmt.Errorf("invalid notif field")
+		}
+	}
+	if conds.EventType != nil {
+		switch conds.GetEventType().GetOp() {
+		case cruder.EQ:
+			stm.Where(notif.EventType(npool.EventType(conds.GetEventType().GetValue()).String()))
+		default:
+			return nil, fmt.Errorf("invalid notif field")
+		}
+	}
+	if conds.UseTemplate != nil {
+		switch conds.GetUseTemplate().GetOp() {
+		case cruder.EQ:
+			stm.Where(notif.UseTemplate(conds.GetUseTemplate().GetValue()))
+		default:
+			return nil, fmt.Errorf("invalid notif field")
+		}
+	}
 	if len(conds.GetChannels().GetValue()) > 0 {
 		stm.Where(func(selector *sql.Selector) {
 			for _, val := range conds.GetChannels().GetValue() {
@@ -251,7 +292,14 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 			}
 		})
 	}
-
+	if conds.EmailSend != nil {
+		switch conds.GetEmailSend().GetOp() {
+		case cruder.EQ:
+			stm.Where(notif.EmailSend(conds.GetEmailSend().GetValue()))
+		default:
+			return nil, fmt.Errorf("invalid notif field")
+		}
+	}
 	return stm, nil
 }
 

@@ -119,6 +119,9 @@ func CreateBulk(ctx context.Context, in []*npool.AnnouncementReq) ([]*ent.Announ
 }
 
 func UpdateSet(u *ent.AnnouncementUpdateOne, in *npool.AnnouncementReq) (*ent.AnnouncementUpdateOne, error) {
+	if in == nil {
+		return nil, fmt.Errorf("invalid request params")
+	}
 	if in.Title != nil {
 		u.SetTitle(in.GetTitle())
 	}
