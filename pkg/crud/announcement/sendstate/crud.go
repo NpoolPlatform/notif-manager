@@ -3,6 +3,7 @@ package sendstate
 import (
 	"context"
 	"fmt"
+	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
 
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
 
@@ -210,6 +211,14 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.SendAnnouncementQu
 		switch conds.GetAnnouncementID().GetOp() {
 		case cruder.EQ:
 			stm.Where(sendannouncement.AnnouncementID(uuid.MustParse(conds.GetAnnouncementID().GetValue())))
+		default:
+			return nil, fmt.Errorf("invalid sendstate field")
+		}
+	}
+	if conds.Channel != nil {
+		switch conds.GetChannel().GetOp() {
+		case cruder.EQ:
+			stm.Where(sendannouncement.Channel(channel.NotifChannel(conds.GetChannel().GetValue()).String()))
 		default:
 			return nil, fmt.Errorf("invalid sendstate field")
 		}
