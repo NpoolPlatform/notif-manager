@@ -3,6 +3,7 @@ package sendstate
 import (
 	"context"
 	"fmt"
+
 	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
 
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
