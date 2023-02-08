@@ -35,6 +35,7 @@ func validate(in *npool.NotifReq) error {
 	case npool.EventType_DepositReceived:
 	case npool.EventType_KYCApproved:
 	case npool.EventType_KYCRejected:
+	case npool.EventType_Announcement:
 	default:
 		return fmt.Errorf("EventType is invalid")
 	}
@@ -87,6 +88,7 @@ func validateConds(in *npool.Conds) error {
 		case uint32(npool.EventType_DepositReceived):
 		case uint32(npool.EventType_KYCApproved):
 		case uint32(npool.EventType_KYCRejected):
+		case uint32(npool.EventType_Announcement):
 		default:
 			return fmt.Errorf("EventType is invalid")
 		}
