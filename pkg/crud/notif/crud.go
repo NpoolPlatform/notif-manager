@@ -303,8 +303,13 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 	}
 	if len(conds.GetChannels().GetValue()) > 0 {
 		stm.Where(func(selector *sql.Selector) {
-			for _, val := range conds.GetChannels().GetValue() {
-				selector.Or().Where(sqljson.ValueContains(notif.FieldChannels, val))
+			channels := conds.GetChannels().GetValue()
+			for i := 0; i < len(channels); i++ {
+				if i == 0 {
+					selector.Where(sqljson.ValueContains(notif.FieldChannels, channels[i]))
+				} else {
+					selector.Or().Where(sqljson.ValueContains(notif.FieldChannels, channels[i]))
+				}
 			}
 		})
 	}
