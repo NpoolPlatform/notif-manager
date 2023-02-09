@@ -16,14 +16,15 @@ func Ent2Grpc(row *ent.Announcement) *npool.Announcement {
 		channels = append(channels, channel.NotifChannel(channel.NotifChannel_value[val]))
 	}
 	return &npool.Announcement{
-		ID:        row.ID.String(),
-		AppID:     row.AppID.String(),
-		Title:     row.Title,
-		Content:   row.Content,
-		Channels:  channels,
-		EndAt:     row.EndAt,
-		CreatedAt: row.CreatedAt,
-		UpdatedAt: row.UpdatedAt,
+		ID:               row.ID.String(),
+		AppID:            row.AppID.String(),
+		Title:            row.Title,
+		Content:          row.Content,
+		Channels:         channels,
+		EndAt:            row.EndAt,
+		AnnouncementType: npool.AnnouncementType(npool.AnnouncementType_value[row.Type]),
+		CreatedAt:        row.CreatedAt,
+		UpdatedAt:        row.UpdatedAt,
 	}
 }
 

@@ -5,6 +5,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/mixin"
 	"github.com/google/uuid"
+
+	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/announcement"
 )
 
 // Announcement holds the schema definition for the Announcement entity.
@@ -45,6 +47,10 @@ func (Announcement) Fields() []ent.Field {
 			Uint32("end_at").
 			Optional().
 			Default(0),
+		field.
+			String("type").
+			Optional().
+			Default(npool.AnnouncementType_DefaultAnnouncementType.String()),
 	}
 }
 

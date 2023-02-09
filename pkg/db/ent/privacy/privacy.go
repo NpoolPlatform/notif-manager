@@ -246,6 +246,30 @@ func (f SendAnnouncementMutationRuleFunc) EvalMutation(ctx context.Context, m en
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SendAnnouncementMutation", m)
 }
 
+// The UserAnnouncementQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type UserAnnouncementQueryRuleFunc func(context.Context, *ent.UserAnnouncementQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f UserAnnouncementQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.UserAnnouncementQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.UserAnnouncementQuery", q)
+}
+
+// The UserAnnouncementMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type UserAnnouncementMutationRuleFunc func(context.Context, *ent.UserAnnouncementMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f UserAnnouncementMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.UserAnnouncementMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserAnnouncementMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -289,6 +313,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.SendAnnouncementQuery:
 		return q.Filter(), nil
+	case *ent.UserAnnouncementQuery:
+		return q.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected query type %T for query filter", q)
 	}
@@ -303,6 +329,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.ReadAnnouncementMutation:
 		return m.Filter(), nil
 	case *ent.SendAnnouncementMutation:
+		return m.Filter(), nil
+	case *ent.UserAnnouncementMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected mutation type %T for mutation filter", m)

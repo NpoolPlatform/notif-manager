@@ -7,6 +7,7 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/userannouncement"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -16,7 +17,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 4)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 5)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   announcement.Table,
@@ -36,6 +37,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			announcement.FieldContent:   {Type: field.TypeString, Column: announcement.FieldContent},
 			announcement.FieldChannels:  {Type: field.TypeJSON, Column: announcement.FieldChannels},
 			announcement.FieldEndAt:     {Type: field.TypeUint32, Column: announcement.FieldEndAt},
+			announcement.FieldType:      {Type: field.TypeString, Column: announcement.FieldType},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -101,6 +103,25 @@ var schemaGraph = func() *sqlgraph.Schema {
 			sendannouncement.FieldUserID:         {Type: field.TypeUUID, Column: sendannouncement.FieldUserID},
 			sendannouncement.FieldAnnouncementID: {Type: field.TypeUUID, Column: sendannouncement.FieldAnnouncementID},
 			sendannouncement.FieldChannel:        {Type: field.TypeString, Column: sendannouncement.FieldChannel},
+		},
+	}
+	graph.Nodes[4] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   userannouncement.Table,
+			Columns: userannouncement.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeUUID,
+				Column: userannouncement.FieldID,
+			},
+		},
+		Type: "UserAnnouncement",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			userannouncement.FieldCreatedAt:      {Type: field.TypeUint32, Column: userannouncement.FieldCreatedAt},
+			userannouncement.FieldUpdatedAt:      {Type: field.TypeUint32, Column: userannouncement.FieldUpdatedAt},
+			userannouncement.FieldDeletedAt:      {Type: field.TypeUint32, Column: userannouncement.FieldDeletedAt},
+			userannouncement.FieldAppID:          {Type: field.TypeUUID, Column: userannouncement.FieldAppID},
+			userannouncement.FieldUserID:         {Type: field.TypeUUID, Column: userannouncement.FieldUserID},
+			userannouncement.FieldAnnouncementID: {Type: field.TypeUUID, Column: userannouncement.FieldAnnouncementID},
 		},
 	}
 	return graph
@@ -190,6 +211,11 @@ func (f *AnnouncementFilter) WhereChannels(p entql.BytesP) {
 // WhereEndAt applies the entql uint32 predicate on the end_at field.
 func (f *AnnouncementFilter) WhereEndAt(p entql.Uint32P) {
 	f.Where(p.Field(announcement.FieldEndAt))
+}
+
+// WhereType applies the entql string predicate on the type field.
+func (f *AnnouncementFilter) WhereType(p entql.StringP) {
+	f.Where(p.Field(announcement.FieldType))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -440,4 +466,74 @@ func (f *SendAnnouncementFilter) WhereAnnouncementID(p entql.ValueP) {
 // WhereChannel applies the entql string predicate on the channel field.
 func (f *SendAnnouncementFilter) WhereChannel(p entql.StringP) {
 	f.Where(p.Field(sendannouncement.FieldChannel))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (uaq *UserAnnouncementQuery) addPredicate(pred func(s *sql.Selector)) {
+	uaq.predicates = append(uaq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the UserAnnouncementQuery builder.
+func (uaq *UserAnnouncementQuery) Filter() *UserAnnouncementFilter {
+	return &UserAnnouncementFilter{config: uaq.config, predicateAdder: uaq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *UserAnnouncementMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the UserAnnouncementMutation builder.
+func (m *UserAnnouncementMutation) Filter() *UserAnnouncementFilter {
+	return &UserAnnouncementFilter{config: m.config, predicateAdder: m}
+}
+
+// UserAnnouncementFilter provides a generic filtering capability at runtime for UserAnnouncementQuery.
+type UserAnnouncementFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *UserAnnouncementFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql [16]byte predicate on the id field.
+func (f *UserAnnouncementFilter) WhereID(p entql.ValueP) {
+	f.Where(p.Field(userannouncement.FieldID))
+}
+
+// WhereCreatedAt applies the entql uint32 predicate on the created_at field.
+func (f *UserAnnouncementFilter) WhereCreatedAt(p entql.Uint32P) {
+	f.Where(p.Field(userannouncement.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql uint32 predicate on the updated_at field.
+func (f *UserAnnouncementFilter) WhereUpdatedAt(p entql.Uint32P) {
+	f.Where(p.Field(userannouncement.FieldUpdatedAt))
+}
+
+// WhereDeletedAt applies the entql uint32 predicate on the deleted_at field.
+func (f *UserAnnouncementFilter) WhereDeletedAt(p entql.Uint32P) {
+	f.Where(p.Field(userannouncement.FieldDeletedAt))
+}
+
+// WhereAppID applies the entql [16]byte predicate on the app_id field.
+func (f *UserAnnouncementFilter) WhereAppID(p entql.ValueP) {
+	f.Where(p.Field(userannouncement.FieldAppID))
+}
+
+// WhereUserID applies the entql [16]byte predicate on the user_id field.
+func (f *UserAnnouncementFilter) WhereUserID(p entql.ValueP) {
+	f.Where(p.Field(userannouncement.FieldUserID))
+}
+
+// WhereAnnouncementID applies the entql [16]byte predicate on the announcement_id field.
+func (f *UserAnnouncementFilter) WhereAnnouncementID(p entql.ValueP) {
+	f.Where(p.Field(userannouncement.FieldAnnouncementID))
 }
