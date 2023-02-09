@@ -36,6 +36,7 @@ var (
 	amt   = ent.Announcement{
 		ID:       uuid.New(),
 		AppID:    uuid.New(),
+		LangID:   uuid.New(),
 		Title:    uuid.NewString(),
 		Content:  uuid.NewString(),
 		Channels: []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
@@ -45,11 +46,13 @@ var (
 )
 
 var (
-	id    = amt.ID.String()
-	appID = amt.AppID.String()
-	req   = npool.AnnouncementReq{
+	id     = amt.ID.String()
+	appID  = amt.AppID.String()
+	langID = amt.LangID.String()
+	req    = npool.AnnouncementReq{
 		ID:               &id,
 		AppID:            &appID,
+		LangID:           &langID,
 		Title:            &amt.Title,
 		Content:          &amt.Content,
 		Channels:         []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
@@ -75,6 +78,7 @@ func createBulk(t *testing.T) {
 		{
 			ID:       uuid.New(),
 			AppID:    uuid.New(),
+			LangID:   uuid.New(),
 			Title:    uuid.NewString(),
 			Content:  uuid.NewString(),
 			Channels: []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
@@ -84,6 +88,7 @@ func createBulk(t *testing.T) {
 		{
 			ID:       uuid.New(),
 			AppID:    uuid.New(),
+			LangID:   uuid.New(),
 			Title:    uuid.NewString(),
 			Content:  uuid.NewString(),
 			Channels: []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
@@ -96,9 +101,11 @@ func createBulk(t *testing.T) {
 	for _, _amt := range entities {
 		_id := _amt.ID.String()
 		_appID := _amt.AppID.String()
+		_langID := _amt.LangID.String()
 		reqs = append(reqs, &npool.AnnouncementReq{
 			ID:               &_id,
 			AppID:            &_appID,
+			LangID:           &_langID,
 			Title:            &_amt.Title,
 			Content:          &_amt.Content,
 			Channels:         []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},

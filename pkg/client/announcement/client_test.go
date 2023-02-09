@@ -36,21 +36,25 @@ func init() {
 }
 
 var data = &npool.Announcement{
-	ID:       uuid.NewString(),
-	AppID:    uuid.NewString(),
-	Title:    uuid.NewString(),
-	Content:  uuid.NewString(),
-	Channels: []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
-	EndAt:    99999999,
+	ID:               uuid.NewString(),
+	AppID:            uuid.NewString(),
+	LangID:           uuid.NewString(),
+	Title:            uuid.NewString(),
+	Content:          uuid.NewString(),
+	Channels:         []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
+	EndAt:            99999999,
+	AnnouncementType: npool.AnnouncementType_AppointUsers,
 }
 
 var dataReq = &npool.AnnouncementReq{
-	ID:       &data.ID,
-	AppID:    &data.AppID,
-	Title:    &data.Title,
-	Content:  &data.Content,
-	Channels: data.Channels,
-	EndAt:    &data.EndAt,
+	ID:               &data.ID,
+	AppID:            &data.AppID,
+	LangID:           &data.LangID,
+	Title:            &data.Title,
+	Content:          &data.Content,
+	Channels:         data.Channels,
+	EndAt:            &data.EndAt,
+	AnnouncementType: &data.AnnouncementType,
 }
 
 func createAnnouncement(t *testing.T) {
@@ -73,32 +77,36 @@ func updateAnnouncement(t *testing.T) {
 func createAnnouncements(t *testing.T) {
 	datas := []npool.Announcement{
 		{
-			ID:       uuid.NewString(),
-			AppID:    uuid.NewString(),
-			Title:    uuid.NewString(),
-			Content:  uuid.NewString(),
-			Channels: []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
-			EndAt:    99999999,
+			ID:               uuid.NewString(),
+			AppID:            uuid.NewString(),
+			Title:            uuid.NewString(),
+			Content:          uuid.NewString(),
+			Channels:         []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
+			EndAt:            99999999,
+			AnnouncementType: npool.AnnouncementType_AppointUsers,
 		},
 		{
-			ID:       uuid.NewString(),
-			AppID:    uuid.NewString(),
-			Title:    uuid.NewString(),
-			Content:  uuid.NewString(),
-			Channels: []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
-			EndAt:    99999999,
+			ID:               uuid.NewString(),
+			AppID:            uuid.NewString(),
+			Title:            uuid.NewString(),
+			Content:          uuid.NewString(),
+			Channels:         []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
+			EndAt:            99999999,
+			AnnouncementType: npool.AnnouncementType_AppointUsers,
 		},
 	}
 
 	apps := []*npool.AnnouncementReq{}
 	for key := range datas {
 		apps = append(apps, &npool.AnnouncementReq{
-			ID:       &datas[key].ID,
-			AppID:    &datas[key].AppID,
-			Title:    &datas[key].Title,
-			Content:  &datas[key].Content,
-			Channels: datas[key].Channels,
-			EndAt:    &datas[key].EndAt,
+			ID:               &datas[key].ID,
+			AppID:            &datas[key].AppID,
+			LangID:           &datas[key].LangID,
+			Title:            &datas[key].Title,
+			Content:          &datas[key].Content,
+			Channels:         datas[key].Channels,
+			EndAt:            &datas[key].EndAt,
+			AnnouncementType: &datas[key].AnnouncementType,
 		})
 	}
 
