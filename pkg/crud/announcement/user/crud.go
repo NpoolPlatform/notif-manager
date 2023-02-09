@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/userannouncement"
 
 	"time"
 
@@ -23,7 +23,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func CreateSet(c *ent.ReadAnnouncementCreate, in *npool.UserReq) (*ent.ReadAnnouncementCreate, error) {
+func CreateSet(c *ent.UserAnnouncementCreate, in *npool.UserReq) (*ent.UserAnnouncementCreate, error) {
 	if in.ID != nil {
 		c.SetID(uuid.MustParse(in.GetID()))
 	}
@@ -40,8 +40,8 @@ func CreateSet(c *ent.ReadAnnouncementCreate, in *npool.UserReq) (*ent.ReadAnnou
 	return c, nil
 }
 
-func Create(ctx context.Context, in *npool.UserReq) (*ent.ReadAnnouncement, error) {
-	var info *ent.ReadAnnouncement
+func Create(ctx context.Context, in *npool.UserReq) (*ent.UserAnnouncement, error) {
+	var info *ent.UserAnnouncement
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Create")
@@ -57,7 +57,7 @@ func Create(ctx context.Context, in *npool.UserReq) (*ent.ReadAnnouncement, erro
 	span = tracer.Trace(span, in)
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		c := cli.ReadAnnouncement.Create()
+		c := cli.UserAnnouncement.Create()
 		stm, err := CreateSet(c, in)
 		if err != nil {
 			return err
@@ -72,7 +72,7 @@ func Create(ctx context.Context, in *npool.UserReq) (*ent.ReadAnnouncement, erro
 	return info, nil
 }
 
-func CreateBulk(ctx context.Context, in []*npool.UserReq) ([]*ent.ReadAnnouncement, error) {
+func CreateBulk(ctx context.Context, in []*npool.UserReq) ([]*ent.UserAnnouncement, error) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CreateBulk")
@@ -87,17 +87,17 @@ func CreateBulk(ctx context.Context, in []*npool.UserReq) ([]*ent.ReadAnnounceme
 
 	span = tracer.TraceMany(span, in)
 
-	rows := []*ent.ReadAnnouncement{}
+	rows := []*ent.UserAnnouncement{}
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		bulk := make([]*ent.ReadAnnouncementCreate, len(in))
+		bulk := make([]*ent.UserAnnouncementCreate, len(in))
 		for i, info := range in {
-			bulk[i] = tx.ReadAnnouncement.Create()
+			bulk[i] = tx.UserAnnouncement.Create()
 			bulk[i], err = CreateSet(bulk[i], info)
 			if err != nil {
 				return err
 			}
 		}
-		rows, err = tx.ReadAnnouncement.CreateBulk(bulk...).Save(_ctx)
+		rows, err = tx.UserAnnouncement.CreateBulk(bulk...).Save(_ctx)
 		return err
 	})
 	if err != nil {
@@ -106,12 +106,12 @@ func CreateBulk(ctx context.Context, in []*npool.UserReq) ([]*ent.ReadAnnounceme
 	return rows, nil
 }
 
-func UpdateSet(u *ent.ReadAnnouncementUpdateOne, in *npool.UserReq) (*ent.ReadAnnouncementUpdateOne, error) {
+func UpdateSet(u *ent.UserAnnouncementUpdateOne, in *npool.UserReq) (*ent.UserAnnouncementUpdateOne, error) {
 	return u, nil
 }
 
-func Update(ctx context.Context, in *npool.UserReq) (*ent.ReadAnnouncement, error) {
-	var info *ent.ReadAnnouncement
+func Update(ctx context.Context, in *npool.UserReq) (*ent.UserAnnouncement, error) {
+	var info *ent.UserAnnouncement
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Update")
@@ -127,7 +127,7 @@ func Update(ctx context.Context, in *npool.UserReq) (*ent.ReadAnnouncement, erro
 	span = tracer.Trace(span, in)
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		info, err = tx.ReadAnnouncement.Query().Where(readannouncement.ID(uuid.MustParse(in.GetID()))).ForUpdate().Only(_ctx)
+		info, err = tx.UserAnnouncement.Query().Where(userannouncement.ID(uuid.MustParse(in.GetID()))).ForUpdate().Only(_ctx)
 		if err != nil {
 			return err
 		}
@@ -147,8 +147,8 @@ func Update(ctx context.Context, in *npool.UserReq) (*ent.ReadAnnouncement, erro
 	return info, nil
 }
 
-func Row(ctx context.Context, id uuid.UUID) (*ent.ReadAnnouncement, error) {
-	var info *ent.ReadAnnouncement
+func Row(ctx context.Context, id uuid.UUID) (*ent.UserAnnouncement, error) {
+	var info *ent.UserAnnouncement
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Row")
@@ -164,7 +164,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.ReadAnnouncement, error) {
 	span = commontracer.TraceID(span, id.String())
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.ReadAnnouncement.Query().Where(readannouncement.ID(id)).Only(_ctx)
+		info, err = cli.UserAnnouncement.Query().Where(userannouncement.ID(id)).Only(_ctx)
 		return err
 	})
 	if err != nil {
@@ -174,15 +174,15 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.ReadAnnouncement, error) {
 	return info, nil
 }
 
-func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ReadAnnouncementQuery, error) {
-	stm := cli.ReadAnnouncement.Query()
+func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.UserAnnouncementQuery, error) {
+	stm := cli.UserAnnouncement.Query()
 	if conds == nil {
 		return stm, nil
 	}
 	if conds.ID != nil {
 		switch conds.GetID().GetOp() {
 		case cruder.EQ:
-			stm.Where(readannouncement.ID(uuid.MustParse(conds.GetID().GetValue())))
+			stm.Where(userannouncement.ID(uuid.MustParse(conds.GetID().GetValue())))
 		default:
 			return nil, fmt.Errorf("invalid user field")
 		}
@@ -190,7 +190,7 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ReadAnnouncementQu
 	if conds.AppID != nil {
 		switch conds.GetAppID().GetOp() {
 		case cruder.EQ:
-			stm.Where(readannouncement.AppID(uuid.MustParse(conds.GetAppID().GetValue())))
+			stm.Where(userannouncement.AppID(uuid.MustParse(conds.GetAppID().GetValue())))
 		default:
 			return nil, fmt.Errorf("invalid user field")
 		}
@@ -198,7 +198,7 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ReadAnnouncementQu
 	if conds.UserID != nil {
 		switch conds.GetUserID().GetOp() {
 		case cruder.EQ:
-			stm.Where(readannouncement.UserID(uuid.MustParse(conds.GetUserID().GetValue())))
+			stm.Where(userannouncement.UserID(uuid.MustParse(conds.GetUserID().GetValue())))
 		default:
 			return nil, fmt.Errorf("invalid user field")
 		}
@@ -206,7 +206,7 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ReadAnnouncementQu
 	if conds.AnnouncementID != nil {
 		switch conds.GetAnnouncementID().GetOp() {
 		case cruder.EQ:
-			stm.Where(readannouncement.AnnouncementID(uuid.MustParse(conds.GetAnnouncementID().GetValue())))
+			stm.Where(userannouncement.AnnouncementID(uuid.MustParse(conds.GetAnnouncementID().GetValue())))
 		default:
 			return nil, fmt.Errorf("invalid user field")
 		}
@@ -215,7 +215,7 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ReadAnnouncementQu
 	return stm, nil
 }
 
-func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.ReadAnnouncement, int, error) {
+func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.UserAnnouncement, int, error) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Rows")
@@ -231,7 +231,7 @@ func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.Re
 	span = tracer.TraceConds(span, conds)
 	span = commontracer.TraceOffsetLimit(span, offset, limit)
 
-	rows := []*ent.ReadAnnouncement{}
+	rows := []*ent.UserAnnouncement{}
 	var total int
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := SetQueryConds(conds, cli)
@@ -246,7 +246,7 @@ func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.Re
 
 		rows, err = stm.
 			Offset(offset).
-			Order(ent.Desc(readannouncement.FieldUpdatedAt)).
+			Order(ent.Desc(userannouncement.FieldUpdatedAt)).
 			Limit(limit).
 			All(_ctx)
 		if err != nil {
@@ -261,8 +261,8 @@ func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.Re
 	return rows, total, nil
 }
 
-func RowOnly(ctx context.Context, conds *npool.Conds) (*ent.ReadAnnouncement, error) {
-	var info *ent.ReadAnnouncement
+func RowOnly(ctx context.Context, conds *npool.Conds) (*ent.UserAnnouncement, error) {
+	var info *ent.UserAnnouncement
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "RowOnly")
@@ -349,7 +349,7 @@ func Exist(ctx context.Context, id uuid.UUID) (bool, error) {
 	span = commontracer.TraceID(span, id.String())
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.ReadAnnouncement.Query().Where(readannouncement.ID(id)).Exist(_ctx)
+		exist, err = cli.UserAnnouncement.Query().Where(userannouncement.ID(id)).Exist(_ctx)
 		return err
 	})
 	if err != nil {
@@ -395,8 +395,8 @@ func ExistConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 	return exist, nil
 }
 
-func Delete(ctx context.Context, id uuid.UUID) (*ent.ReadAnnouncement, error) {
-	var info *ent.ReadAnnouncement
+func Delete(ctx context.Context, id uuid.UUID) (*ent.UserAnnouncement, error) {
+	var info *ent.UserAnnouncement
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Delete")
@@ -412,7 +412,7 @@ func Delete(ctx context.Context, id uuid.UUID) (*ent.ReadAnnouncement, error) {
 	span = commontracer.TraceID(span, id.String())
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.ReadAnnouncement.UpdateOneID(id).
+		info, err = cli.UserAnnouncement.UpdateOneID(id).
 			SetDeletedAt(uint32(time.Now().Unix())).
 			Save(_ctx)
 		return err

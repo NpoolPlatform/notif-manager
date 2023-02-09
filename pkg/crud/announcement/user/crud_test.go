@@ -29,7 +29,7 @@ func init() {
 	}
 }
 
-var amt = ent.ReadAnnouncement{
+var amt = ent.UserAnnouncement{
 	ID:             uuid.New(),
 	AppID:          uuid.New(),
 	UserID:         uuid.New(),
@@ -49,7 +49,7 @@ var (
 	}
 )
 
-var info *ent.ReadAnnouncement
+var info *ent.UserAnnouncement
 
 func create(t *testing.T) {
 	var err error
@@ -62,7 +62,7 @@ func create(t *testing.T) {
 }
 
 func createBulk(t *testing.T) {
-	entities := []*ent.ReadAnnouncement{
+	entities := []*ent.UserAnnouncement{
 		{
 			ID:             uuid.New(),
 			AppID:          uuid.New(),

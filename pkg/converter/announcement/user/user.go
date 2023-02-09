@@ -5,7 +5,7 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent"
 )
 
-func Ent2Grpc(row *ent.ReadAnnouncement) *npool.User {
+func Ent2Grpc(row *ent.UserAnnouncement) *npool.User {
 	if row == nil {
 		return nil
 	}
@@ -19,7 +19,7 @@ func Ent2Grpc(row *ent.ReadAnnouncement) *npool.User {
 	}
 }
 
-func Ent2GrpcMany(rows []*ent.ReadAnnouncement) []*npool.User {
+func Ent2GrpcMany(rows []*ent.UserAnnouncement) []*npool.User {
 	infos := []*npool.User{}
 	for _, row := range rows {
 		infos = append(infos, Ent2Grpc(row))
