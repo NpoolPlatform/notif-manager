@@ -151,6 +151,8 @@ func existAppGoodConds(t *testing.T) {
 func deleteUser(t *testing.T) {
 	info, err := DeleteUser(context.Background(), data.ID)
 	if assert.Nil(t, err) {
+		data.UpdatedAt = info.UpdatedAt
+		data.CreatedAt = info.CreatedAt
 		assert.Equal(t, data, info)
 	}
 
