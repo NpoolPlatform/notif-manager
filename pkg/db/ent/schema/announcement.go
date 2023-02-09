@@ -32,6 +32,10 @@ func (Announcement) Fields() []ent.Field {
 			Optional().
 			Default(uuid.New),
 		field.
+			UUID("lang_id", uuid.UUID{}).
+			Optional().
+			Default(uuid.New),
+		field.
 			String("title").
 			Optional().
 			Default(""),

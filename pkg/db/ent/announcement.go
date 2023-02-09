@@ -25,6 +25,8 @@ type Announcement struct {
 	DeletedAt uint32 `json:"deleted_at,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID uuid.UUID `json:"app_id,omitempty"`
+	// LangID holds the value of the "lang_id" field.
+	LangID uuid.UUID `json:"lang_id,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Content holds the value of the "content" field.
@@ -48,7 +50,7 @@ func (*Announcement) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case announcement.FieldTitle, announcement.FieldContent, announcement.FieldType:
 			values[i] = new(sql.NullString)
-		case announcement.FieldID, announcement.FieldAppID:
+		case announcement.FieldID, announcement.FieldAppID, announcement.FieldLangID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Announcement", columns[i])
@@ -94,6 +96,12 @@ func (a *Announcement) assignValues(columns []string, values []interface{}) erro
 				return fmt.Errorf("unexpected type %T for field app_id", values[i])
 			} else if value != nil {
 				a.AppID = *value
+			}
+		case announcement.FieldLangID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field lang_id", values[i])
+			} else if value != nil {
+				a.LangID = *value
 			}
 		case announcement.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -166,6 +174,9 @@ func (a *Announcement) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("app_id=")
 	builder.WriteString(fmt.Sprintf("%v", a.AppID))
+	builder.WriteString(", ")
+	builder.WriteString("lang_id=")
+	builder.WriteString(fmt.Sprintf("%v", a.LangID))
 	builder.WriteString(", ")
 	builder.WriteString("title=")
 	builder.WriteString(a.Title)

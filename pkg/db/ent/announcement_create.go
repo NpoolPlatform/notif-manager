@@ -79,6 +79,20 @@ func (ac *AnnouncementCreate) SetNillableAppID(u *uuid.UUID) *AnnouncementCreate
 	return ac
 }
 
+// SetLangID sets the "lang_id" field.
+func (ac *AnnouncementCreate) SetLangID(u uuid.UUID) *AnnouncementCreate {
+	ac.mutation.SetLangID(u)
+	return ac
+}
+
+// SetNillableLangID sets the "lang_id" field if the given value is not nil.
+func (ac *AnnouncementCreate) SetNillableLangID(u *uuid.UUID) *AnnouncementCreate {
+	if u != nil {
+		ac.SetLangID(*u)
+	}
+	return ac
+}
+
 // SetTitle sets the "title" field.
 func (ac *AnnouncementCreate) SetTitle(s string) *AnnouncementCreate {
 	ac.mutation.SetTitle(s)
@@ -262,6 +276,13 @@ func (ac *AnnouncementCreate) defaults() error {
 		v := announcement.DefaultAppID()
 		ac.mutation.SetAppID(v)
 	}
+	if _, ok := ac.mutation.LangID(); !ok {
+		if announcement.DefaultLangID == nil {
+			return fmt.Errorf("ent: uninitialized announcement.DefaultLangID (forgotten import ent/runtime?)")
+		}
+		v := announcement.DefaultLangID()
+		ac.mutation.SetLangID(v)
+	}
 	if _, ok := ac.mutation.Title(); !ok {
 		v := announcement.DefaultTitle
 		ac.mutation.SetTitle(v)
@@ -371,6 +392,14 @@ func (ac *AnnouncementCreate) createSpec() (*Announcement, *sqlgraph.CreateSpec)
 			Column: announcement.FieldAppID,
 		})
 		_node.AppID = value
+	}
+	if value, ok := ac.mutation.LangID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: announcement.FieldLangID,
+		})
+		_node.LangID = value
 	}
 	if value, ok := ac.mutation.Title(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -535,6 +564,24 @@ func (u *AnnouncementUpsert) UpdateAppID() *AnnouncementUpsert {
 // ClearAppID clears the value of the "app_id" field.
 func (u *AnnouncementUpsert) ClearAppID() *AnnouncementUpsert {
 	u.SetNull(announcement.FieldAppID)
+	return u
+}
+
+// SetLangID sets the "lang_id" field.
+func (u *AnnouncementUpsert) SetLangID(v uuid.UUID) *AnnouncementUpsert {
+	u.Set(announcement.FieldLangID, v)
+	return u
+}
+
+// UpdateLangID sets the "lang_id" field to the value that was provided on create.
+func (u *AnnouncementUpsert) UpdateLangID() *AnnouncementUpsert {
+	u.SetExcluded(announcement.FieldLangID)
+	return u
+}
+
+// ClearLangID clears the value of the "lang_id" field.
+func (u *AnnouncementUpsert) ClearLangID() *AnnouncementUpsert {
+	u.SetNull(announcement.FieldLangID)
 	return u
 }
 
@@ -765,6 +812,27 @@ func (u *AnnouncementUpsertOne) UpdateAppID() *AnnouncementUpsertOne {
 func (u *AnnouncementUpsertOne) ClearAppID() *AnnouncementUpsertOne {
 	return u.Update(func(s *AnnouncementUpsert) {
 		s.ClearAppID()
+	})
+}
+
+// SetLangID sets the "lang_id" field.
+func (u *AnnouncementUpsertOne) SetLangID(v uuid.UUID) *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetLangID(v)
+	})
+}
+
+// UpdateLangID sets the "lang_id" field to the value that was provided on create.
+func (u *AnnouncementUpsertOne) UpdateLangID() *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateLangID()
+	})
+}
+
+// ClearLangID clears the value of the "lang_id" field.
+func (u *AnnouncementUpsertOne) ClearLangID() *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.ClearLangID()
 	})
 }
 
@@ -1177,6 +1245,27 @@ func (u *AnnouncementUpsertBulk) UpdateAppID() *AnnouncementUpsertBulk {
 func (u *AnnouncementUpsertBulk) ClearAppID() *AnnouncementUpsertBulk {
 	return u.Update(func(s *AnnouncementUpsert) {
 		s.ClearAppID()
+	})
+}
+
+// SetLangID sets the "lang_id" field.
+func (u *AnnouncementUpsertBulk) SetLangID(v uuid.UUID) *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetLangID(v)
+	})
+}
+
+// UpdateLangID sets the "lang_id" field to the value that was provided on create.
+func (u *AnnouncementUpsertBulk) UpdateLangID() *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateLangID()
+	})
+}
+
+// ClearLangID clears the value of the "lang_id" field.
+func (u *AnnouncementUpsertBulk) ClearLangID() *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.ClearLangID()
 	})
 }
 

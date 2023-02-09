@@ -20,6 +20,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldAppID holds the string denoting the app_id field in the database.
 	FieldAppID = "app_id"
+	// FieldLangID holds the string denoting the lang_id field in the database.
+	FieldLangID = "lang_id"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
 	// FieldContent holds the string denoting the content field in the database.
@@ -41,6 +43,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldAppID,
+	FieldLangID,
 	FieldTitle,
 	FieldContent,
 	FieldChannels,
@@ -77,6 +80,8 @@ var (
 	DefaultDeletedAt func() uint32
 	// DefaultAppID holds the default value on creation for the "app_id" field.
 	DefaultAppID func() uuid.UUID
+	// DefaultLangID holds the default value on creation for the "lang_id" field.
+	DefaultLangID func() uuid.UUID
 	// DefaultTitle holds the default value on creation for the "title" field.
 	DefaultTitle string
 	// DefaultContent holds the default value on creation for the "content" field.

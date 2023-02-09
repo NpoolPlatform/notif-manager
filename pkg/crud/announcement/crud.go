@@ -32,6 +32,9 @@ func CreateSet(c *ent.AnnouncementCreate, in *npool.AnnouncementReq) (*ent.Annou
 	if in.AppID != nil {
 		c.SetAppID(uuid.MustParse(in.GetAppID()))
 	}
+	if in.LangID != nil {
+		c.SetLangID(uuid.MustParse(in.GetLangID()))
+	}
 	if in.Title != nil {
 		c.SetTitle(in.GetTitle())
 	}
@@ -240,6 +243,14 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.AnnouncementQuery,
 		switch conds.GetAppID().GetOp() {
 		case cruder.EQ:
 			stm.Where(announcement.AppID(uuid.MustParse(conds.GetAppID().GetValue())))
+		default:
+			return nil, fmt.Errorf("invalid announcement field")
+		}
+	}
+	if conds.LangID != nil {
+		switch conds.GetLangID().GetOp() {
+		case cruder.EQ:
+			stm.Where(announcement.LangID(uuid.MustParse(conds.GetLangID().GetValue())))
 		default:
 			return nil, fmt.Errorf("invalid announcement field")
 		}

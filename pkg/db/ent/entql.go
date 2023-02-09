@@ -33,6 +33,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			announcement.FieldUpdatedAt: {Type: field.TypeUint32, Column: announcement.FieldUpdatedAt},
 			announcement.FieldDeletedAt: {Type: field.TypeUint32, Column: announcement.FieldDeletedAt},
 			announcement.FieldAppID:     {Type: field.TypeUUID, Column: announcement.FieldAppID},
+			announcement.FieldLangID:    {Type: field.TypeUUID, Column: announcement.FieldLangID},
 			announcement.FieldTitle:     {Type: field.TypeString, Column: announcement.FieldTitle},
 			announcement.FieldContent:   {Type: field.TypeString, Column: announcement.FieldContent},
 			announcement.FieldChannels:  {Type: field.TypeJSON, Column: announcement.FieldChannels},
@@ -191,6 +192,11 @@ func (f *AnnouncementFilter) WhereDeletedAt(p entql.Uint32P) {
 // WhereAppID applies the entql [16]byte predicate on the app_id field.
 func (f *AnnouncementFilter) WhereAppID(p entql.ValueP) {
 	f.Where(p.Field(announcement.FieldAppID))
+}
+
+// WhereLangID applies the entql [16]byte predicate on the lang_id field.
+func (f *AnnouncementFilter) WhereLangID(p entql.ValueP) {
+	f.Where(p.Field(announcement.FieldLangID))
 }
 
 // WhereTitle applies the entql string predicate on the title field.

@@ -15,6 +15,7 @@ var (
 		{Name: "updated_at", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeUint32},
 		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "lang_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "title", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
 		{Name: "channels", Type: field.TypeJSON, Nullable: true},

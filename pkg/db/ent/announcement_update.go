@@ -104,6 +104,26 @@ func (au *AnnouncementUpdate) ClearAppID() *AnnouncementUpdate {
 	return au
 }
 
+// SetLangID sets the "lang_id" field.
+func (au *AnnouncementUpdate) SetLangID(u uuid.UUID) *AnnouncementUpdate {
+	au.mutation.SetLangID(u)
+	return au
+}
+
+// SetNillableLangID sets the "lang_id" field if the given value is not nil.
+func (au *AnnouncementUpdate) SetNillableLangID(u *uuid.UUID) *AnnouncementUpdate {
+	if u != nil {
+		au.SetLangID(*u)
+	}
+	return au
+}
+
+// ClearLangID clears the value of the "lang_id" field.
+func (au *AnnouncementUpdate) ClearLangID() *AnnouncementUpdate {
+	au.mutation.ClearLangID()
+	return au
+}
+
 // SetTitle sets the "title" field.
 func (au *AnnouncementUpdate) SetTitle(s string) *AnnouncementUpdate {
 	au.mutation.SetTitle(s)
@@ -356,6 +376,19 @@ func (au *AnnouncementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: announcement.FieldAppID,
 		})
 	}
+	if value, ok := au.mutation.LangID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: announcement.FieldLangID,
+		})
+	}
+	if au.mutation.LangIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: announcement.FieldLangID,
+		})
+	}
 	if value, ok := au.mutation.Title(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -521,6 +554,26 @@ func (auo *AnnouncementUpdateOne) SetNillableAppID(u *uuid.UUID) *AnnouncementUp
 // ClearAppID clears the value of the "app_id" field.
 func (auo *AnnouncementUpdateOne) ClearAppID() *AnnouncementUpdateOne {
 	auo.mutation.ClearAppID()
+	return auo
+}
+
+// SetLangID sets the "lang_id" field.
+func (auo *AnnouncementUpdateOne) SetLangID(u uuid.UUID) *AnnouncementUpdateOne {
+	auo.mutation.SetLangID(u)
+	return auo
+}
+
+// SetNillableLangID sets the "lang_id" field if the given value is not nil.
+func (auo *AnnouncementUpdateOne) SetNillableLangID(u *uuid.UUID) *AnnouncementUpdateOne {
+	if u != nil {
+		auo.SetLangID(*u)
+	}
+	return auo
+}
+
+// ClearLangID clears the value of the "lang_id" field.
+func (auo *AnnouncementUpdateOne) ClearLangID() *AnnouncementUpdateOne {
+	auo.mutation.ClearLangID()
 	return auo
 }
 
@@ -804,6 +857,19 @@ func (auo *AnnouncementUpdateOne) sqlSave(ctx context.Context) (_node *Announcem
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: announcement.FieldAppID,
+		})
+	}
+	if value, ok := auo.mutation.LangID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: announcement.FieldLangID,
+		})
+	}
+	if auo.mutation.LangIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: announcement.FieldLangID,
 		})
 	}
 	if value, ok := auo.mutation.Title(); ok {

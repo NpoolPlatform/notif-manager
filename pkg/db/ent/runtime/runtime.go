@@ -53,24 +53,28 @@ func init() {
 	announcementDescAppID := announcementFields[1].Descriptor()
 	// announcement.DefaultAppID holds the default value on creation for the app_id field.
 	announcement.DefaultAppID = announcementDescAppID.Default.(func() uuid.UUID)
+	// announcementDescLangID is the schema descriptor for lang_id field.
+	announcementDescLangID := announcementFields[2].Descriptor()
+	// announcement.DefaultLangID holds the default value on creation for the lang_id field.
+	announcement.DefaultLangID = announcementDescLangID.Default.(func() uuid.UUID)
 	// announcementDescTitle is the schema descriptor for title field.
-	announcementDescTitle := announcementFields[2].Descriptor()
+	announcementDescTitle := announcementFields[3].Descriptor()
 	// announcement.DefaultTitle holds the default value on creation for the title field.
 	announcement.DefaultTitle = announcementDescTitle.Default.(string)
 	// announcementDescContent is the schema descriptor for content field.
-	announcementDescContent := announcementFields[3].Descriptor()
+	announcementDescContent := announcementFields[4].Descriptor()
 	// announcement.DefaultContent holds the default value on creation for the content field.
 	announcement.DefaultContent = announcementDescContent.Default.(string)
 	// announcementDescChannels is the schema descriptor for channels field.
-	announcementDescChannels := announcementFields[4].Descriptor()
+	announcementDescChannels := announcementFields[5].Descriptor()
 	// announcement.DefaultChannels holds the default value on creation for the channels field.
 	announcement.DefaultChannels = announcementDescChannels.Default.([]string)
 	// announcementDescEndAt is the schema descriptor for end_at field.
-	announcementDescEndAt := announcementFields[5].Descriptor()
+	announcementDescEndAt := announcementFields[6].Descriptor()
 	// announcement.DefaultEndAt holds the default value on creation for the end_at field.
 	announcement.DefaultEndAt = announcementDescEndAt.Default.(uint32)
 	// announcementDescType is the schema descriptor for type field.
-	announcementDescType := announcementFields[6].Descriptor()
+	announcementDescType := announcementFields[7].Descriptor()
 	// announcement.DefaultType holds the default value on creation for the type field.
 	announcement.DefaultType = announcementDescType.Default.(string)
 	// announcementDescID is the schema descriptor for id field.

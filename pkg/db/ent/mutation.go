@@ -48,6 +48,7 @@ type AnnouncementMutation struct {
 	deleted_at    *uint32
 	adddeleted_at *int32
 	app_id        *uuid.UUID
+	lang_id       *uuid.UUID
 	title         *string
 	content       *string
 	channels      *[]string
@@ -381,6 +382,55 @@ func (m *AnnouncementMutation) ResetAppID() {
 	delete(m.clearedFields, announcement.FieldAppID)
 }
 
+// SetLangID sets the "lang_id" field.
+func (m *AnnouncementMutation) SetLangID(u uuid.UUID) {
+	m.lang_id = &u
+}
+
+// LangID returns the value of the "lang_id" field in the mutation.
+func (m *AnnouncementMutation) LangID() (r uuid.UUID, exists bool) {
+	v := m.lang_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLangID returns the old "lang_id" field's value of the Announcement entity.
+// If the Announcement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AnnouncementMutation) OldLangID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLangID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLangID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLangID: %w", err)
+	}
+	return oldValue.LangID, nil
+}
+
+// ClearLangID clears the value of the "lang_id" field.
+func (m *AnnouncementMutation) ClearLangID() {
+	m.lang_id = nil
+	m.clearedFields[announcement.FieldLangID] = struct{}{}
+}
+
+// LangIDCleared returns if the "lang_id" field was cleared in this mutation.
+func (m *AnnouncementMutation) LangIDCleared() bool {
+	_, ok := m.clearedFields[announcement.FieldLangID]
+	return ok
+}
+
+// ResetLangID resets all changes to the "lang_id" field.
+func (m *AnnouncementMutation) ResetLangID() {
+	m.lang_id = nil
+	delete(m.clearedFields, announcement.FieldLangID)
+}
+
 // SetTitle sets the "title" field.
 func (m *AnnouncementMutation) SetTitle(s string) {
 	m.title = &s
@@ -666,7 +716,7 @@ func (m *AnnouncementMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AnnouncementMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, announcement.FieldCreatedAt)
 	}
@@ -678,6 +728,9 @@ func (m *AnnouncementMutation) Fields() []string {
 	}
 	if m.app_id != nil {
 		fields = append(fields, announcement.FieldAppID)
+	}
+	if m.lang_id != nil {
+		fields = append(fields, announcement.FieldLangID)
 	}
 	if m.title != nil {
 		fields = append(fields, announcement.FieldTitle)
@@ -710,6 +763,8 @@ func (m *AnnouncementMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case announcement.FieldAppID:
 		return m.AppID()
+	case announcement.FieldLangID:
+		return m.LangID()
 	case announcement.FieldTitle:
 		return m.Title()
 	case announcement.FieldContent:
@@ -737,6 +792,8 @@ func (m *AnnouncementMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldDeletedAt(ctx)
 	case announcement.FieldAppID:
 		return m.OldAppID(ctx)
+	case announcement.FieldLangID:
+		return m.OldLangID(ctx)
 	case announcement.FieldTitle:
 		return m.OldTitle(ctx)
 	case announcement.FieldContent:
@@ -783,6 +840,13 @@ func (m *AnnouncementMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAppID(v)
+		return nil
+	case announcement.FieldLangID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLangID(v)
 		return nil
 	case announcement.FieldTitle:
 		v, ok := value.(string)
@@ -903,6 +967,9 @@ func (m *AnnouncementMutation) ClearedFields() []string {
 	if m.FieldCleared(announcement.FieldAppID) {
 		fields = append(fields, announcement.FieldAppID)
 	}
+	if m.FieldCleared(announcement.FieldLangID) {
+		fields = append(fields, announcement.FieldLangID)
+	}
 	if m.FieldCleared(announcement.FieldTitle) {
 		fields = append(fields, announcement.FieldTitle)
 	}
@@ -934,6 +1001,9 @@ func (m *AnnouncementMutation) ClearField(name string) error {
 	switch name {
 	case announcement.FieldAppID:
 		m.ClearAppID()
+		return nil
+	case announcement.FieldLangID:
+		m.ClearLangID()
 		return nil
 	case announcement.FieldTitle:
 		m.ClearTitle()
@@ -969,6 +1039,9 @@ func (m *AnnouncementMutation) ResetField(name string) error {
 		return nil
 	case announcement.FieldAppID:
 		m.ResetAppID()
+		return nil
+	case announcement.FieldLangID:
+		m.ResetLangID()
 		return nil
 	case announcement.FieldTitle:
 		m.ResetTitle()

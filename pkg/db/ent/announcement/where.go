@@ -107,6 +107,13 @@ func AppID(v uuid.UUID) predicate.Announcement {
 	})
 }
 
+// LangID applies equality check predicate on the "lang_id" field. It's identical to LangIDEQ.
+func LangID(v uuid.UUID) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLangID), v))
+	})
+}
+
 // Title applies equality check predicate on the "title" field. It's identical to TitleEQ.
 func Title(v string) predicate.Announcement {
 	return predicate.Announcement(func(s *sql.Selector) {
@@ -402,6 +409,84 @@ func AppIDIsNil() predicate.Announcement {
 func AppIDNotNil() predicate.Announcement {
 	return predicate.Announcement(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldAppID)))
+	})
+}
+
+// LangIDEQ applies the EQ predicate on the "lang_id" field.
+func LangIDEQ(v uuid.UUID) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLangID), v))
+	})
+}
+
+// LangIDNEQ applies the NEQ predicate on the "lang_id" field.
+func LangIDNEQ(v uuid.UUID) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLangID), v))
+	})
+}
+
+// LangIDIn applies the In predicate on the "lang_id" field.
+func LangIDIn(vs ...uuid.UUID) predicate.Announcement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldLangID), v...))
+	})
+}
+
+// LangIDNotIn applies the NotIn predicate on the "lang_id" field.
+func LangIDNotIn(vs ...uuid.UUID) predicate.Announcement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldLangID), v...))
+	})
+}
+
+// LangIDGT applies the GT predicate on the "lang_id" field.
+func LangIDGT(v uuid.UUID) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldLangID), v))
+	})
+}
+
+// LangIDGTE applies the GTE predicate on the "lang_id" field.
+func LangIDGTE(v uuid.UUID) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldLangID), v))
+	})
+}
+
+// LangIDLT applies the LT predicate on the "lang_id" field.
+func LangIDLT(v uuid.UUID) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldLangID), v))
+	})
+}
+
+// LangIDLTE applies the LTE predicate on the "lang_id" field.
+func LangIDLTE(v uuid.UUID) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldLangID), v))
+	})
+}
+
+// LangIDIsNil applies the IsNil predicate on the "lang_id" field.
+func LangIDIsNil() predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldLangID)))
+	})
+}
+
+// LangIDNotNil applies the NotNil predicate on the "lang_id" field.
+func LangIDNotNil() predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldLangID)))
 	})
 }
 
