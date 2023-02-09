@@ -216,6 +216,18 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.AnnouncementQuery,
 	if conds == nil {
 		return stm, nil
 	}
+	if len(conds.GetChannels().GetValue()) > 0 {
+		stm.Where(func(selector *sql.Selector) {
+			channels := conds.GetChannels().GetValue()
+			for i := 0; i < len(channels); i++ {
+				if i == 0 {
+					selector.Where(sqljson.ValueContains(announcement.FieldChannels, channels[i]))
+				} else {
+					selector.Or().Where(sqljson.ValueContains(announcement.FieldChannels, channels[i]))
+				}
+			}
+		})
+	}
 	if conds.ID != nil {
 		switch conds.GetID().GetOp() {
 		case cruder.EQ:
@@ -242,14 +254,6 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.AnnouncementQuery,
 			return nil, fmt.Errorf("invalid announcement field")
 		}
 	}
-	if len(conds.GetChannels().GetValue()) > 0 {
-		stm.Where(func(selector *sql.Selector) {
-			for _, val := range conds.GetChannels().GetValue() {
-				selector.Or().Where(sqljson.ValueContains(announcement.FieldChannels, val))
-			}
-		})
-	}
-
 	return stm, nil
 }
 

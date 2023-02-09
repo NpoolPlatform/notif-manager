@@ -229,6 +229,18 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 	if conds == nil {
 		return stm, nil
 	}
+	if len(conds.GetChannels().GetValue()) > 0 {
+		stm.Where(func(selector *sql.Selector) {
+			channels := conds.GetChannels().GetValue()
+			for i := 0; i < len(channels); i++ {
+				if i == 0 {
+					selector.Where(sqljson.ValueContains(notif.FieldChannels, channels[i]))
+				} else {
+					selector.Or().Where(sqljson.ValueContains(notif.FieldChannels, channels[i]))
+				}
+			}
+		})
+	}
 	if conds.ID != nil {
 		switch conds.GetID().GetOp() {
 		case cruder.EQ:
@@ -301,18 +313,7 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 			return nil, fmt.Errorf("invalid notif field")
 		}
 	}
-	if len(conds.GetChannels().GetValue()) > 0 {
-		stm.Where(func(selector *sql.Selector) {
-			channels := conds.GetChannels().GetValue()
-			for i := 0; i < len(channels); i++ {
-				if i == 0 {
-					selector.Where(sqljson.ValueContains(notif.FieldChannels, channels[i]))
-				} else {
-					selector.Or().Where(sqljson.ValueContains(notif.FieldChannels, channels[i]))
-				}
-			}
-		})
-	}
+
 	if conds.EmailSend != nil {
 		switch conds.GetEmailSend().GetOp() {
 		case cruder.EQ:
@@ -355,7 +356,7 @@ func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.No
 
 		rows, err = stm.
 			Offset(offset).
-			Order(ent.Desc(notif.FieldUpdatedAt)).
+			Order(ent.Desc(notif.FieldCreatedAt)).
 			Limit(limit).
 			All(_ctx)
 		if err != nil {
