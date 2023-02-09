@@ -18,6 +18,7 @@ func Ent2Grpc(row *ent.Announcement) *npool.Announcement {
 	return &npool.Announcement{
 		ID:               row.ID.String(),
 		AppID:            row.AppID.String(),
+		LangID:           row.LangID.String(),
 		Title:            row.Title,
 		Content:          row.Content,
 		Channels:         channels,
