@@ -32,6 +32,7 @@ type hooks struct {
 	Notif            []ent.Hook
 	ReadAnnouncement []ent.Hook
 	SendAnnouncement []ent.Hook
+	UserAnnouncement []ent.Hook
 }
 
 // Options applies the options on the config object.

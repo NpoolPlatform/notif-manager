@@ -8,19 +8,19 @@ import (
 	"github.com/google/uuid"
 )
 
-// ReadAnnouncement holds the schema definition for the ReadAnnouncement entity.
-type ReadAnnouncement struct {
+// UserAnnouncement holds the schema definition for the UserAnnouncement entity.
+type UserAnnouncement struct {
 	ent.Schema
 }
 
-func (ReadAnnouncement) Mixin() []ent.Mixin {
+func (UserAnnouncement) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeMixin{},
 	}
 }
 
-// Fields of the ReadAnnouncement.
-func (ReadAnnouncement) Fields() []ent.Field {
+// Fields of the UserAnnouncement.
+func (UserAnnouncement) Fields() []ent.Field {
 	return []ent.Field{
 		field.
 			UUID("id", uuid.UUID{}).
@@ -41,7 +41,7 @@ func (ReadAnnouncement) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ReadAnnouncement.
-func (ReadAnnouncement) Edges() []ent.Edge {
+// Edges of the UserAnnouncement.
+func (UserAnnouncement) Edges() []ent.Edge {
 	return nil
 }

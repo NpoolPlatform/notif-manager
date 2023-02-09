@@ -183,6 +183,26 @@ func (au *AnnouncementUpdate) ClearEndAt() *AnnouncementUpdate {
 	return au
 }
 
+// SetType sets the "type" field.
+func (au *AnnouncementUpdate) SetType(s string) *AnnouncementUpdate {
+	au.mutation.SetType(s)
+	return au
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (au *AnnouncementUpdate) SetNillableType(s *string) *AnnouncementUpdate {
+	if s != nil {
+		au.SetType(*s)
+	}
+	return au
+}
+
+// ClearType clears the value of the "type" field.
+func (au *AnnouncementUpdate) ClearType() *AnnouncementUpdate {
+	au.mutation.ClearType()
+	return au
+}
+
 // Mutation returns the AnnouncementMutation object of the builder.
 func (au *AnnouncementUpdate) Mutation() *AnnouncementMutation {
 	return au.mutation
@@ -395,6 +415,19 @@ func (au *AnnouncementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: announcement.FieldEndAt,
 		})
 	}
+	if value, ok := au.mutation.GetType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: announcement.FieldType,
+		})
+	}
+	if au.mutation.TypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: announcement.FieldType,
+		})
+	}
 	_spec.Modifiers = au.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -567,6 +600,26 @@ func (auo *AnnouncementUpdateOne) AddEndAt(u int32) *AnnouncementUpdateOne {
 // ClearEndAt clears the value of the "end_at" field.
 func (auo *AnnouncementUpdateOne) ClearEndAt() *AnnouncementUpdateOne {
 	auo.mutation.ClearEndAt()
+	return auo
+}
+
+// SetType sets the "type" field.
+func (auo *AnnouncementUpdateOne) SetType(s string) *AnnouncementUpdateOne {
+	auo.mutation.SetType(s)
+	return auo
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (auo *AnnouncementUpdateOne) SetNillableType(s *string) *AnnouncementUpdateOne {
+	if s != nil {
+		auo.SetType(*s)
+	}
+	return auo
+}
+
+// ClearType clears the value of the "type" field.
+func (auo *AnnouncementUpdateOne) ClearType() *AnnouncementUpdateOne {
+	auo.mutation.ClearType()
 	return auo
 }
 
@@ -810,6 +863,19 @@ func (auo *AnnouncementUpdateOne) sqlSave(ctx context.Context) (_node *Announcem
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUint32,
 			Column: announcement.FieldEndAt,
+		})
+	}
+	if value, ok := auo.mutation.GetType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: announcement.FieldType,
+		})
+	}
+	if auo.mutation.TypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: announcement.FieldType,
 		})
 	}
 	_spec.Modifiers = auo.modifiers

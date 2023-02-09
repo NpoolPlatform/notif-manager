@@ -28,6 +28,8 @@ const (
 	FieldChannels = "channels"
 	// FieldEndAt holds the string denoting the end_at field in the database.
 	FieldEndAt = "end_at"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
 	// Table holds the table name of the announcement in the database.
 	Table = "announcements"
 )
@@ -43,6 +45,7 @@ var Columns = []string{
 	FieldContent,
 	FieldChannels,
 	FieldEndAt,
+	FieldType,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -82,6 +85,8 @@ var (
 	DefaultChannels []string
 	// DefaultEndAt holds the default value on creation for the "end_at" field.
 	DefaultEndAt uint32
+	// DefaultType holds the default value on creation for the "type" field.
+	DefaultType string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

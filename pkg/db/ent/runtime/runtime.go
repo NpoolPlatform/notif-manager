@@ -10,6 +10,7 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/schema"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/userannouncement"
 	"github.com/google/uuid"
 
 	"entgo.io/ent"
@@ -68,6 +69,10 @@ func init() {
 	announcementDescEndAt := announcementFields[5].Descriptor()
 	// announcement.DefaultEndAt holds the default value on creation for the end_at field.
 	announcement.DefaultEndAt = announcementDescEndAt.Default.(uint32)
+	// announcementDescType is the schema descriptor for type field.
+	announcementDescType := announcementFields[6].Descriptor()
+	// announcement.DefaultType holds the default value on creation for the type field.
+	announcement.DefaultType = announcementDescType.Default.(string)
 	// announcementDescID is the schema descriptor for id field.
 	announcementDescID := announcementFields[0].Descriptor()
 	// announcement.DefaultID holds the default value on creation for the id field.
@@ -236,6 +241,50 @@ func init() {
 	sendannouncementDescID := sendannouncementFields[0].Descriptor()
 	// sendannouncement.DefaultID holds the default value on creation for the id field.
 	sendannouncement.DefaultID = sendannouncementDescID.Default.(func() uuid.UUID)
+	userannouncementMixin := schema.UserAnnouncement{}.Mixin()
+	userannouncement.Policy = privacy.NewPolicies(userannouncementMixin[0], schema.UserAnnouncement{})
+	userannouncement.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := userannouncement.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	userannouncementMixinFields0 := userannouncementMixin[0].Fields()
+	_ = userannouncementMixinFields0
+	userannouncementFields := schema.UserAnnouncement{}.Fields()
+	_ = userannouncementFields
+	// userannouncementDescCreatedAt is the schema descriptor for created_at field.
+	userannouncementDescCreatedAt := userannouncementMixinFields0[0].Descriptor()
+	// userannouncement.DefaultCreatedAt holds the default value on creation for the created_at field.
+	userannouncement.DefaultCreatedAt = userannouncementDescCreatedAt.Default.(func() uint32)
+	// userannouncementDescUpdatedAt is the schema descriptor for updated_at field.
+	userannouncementDescUpdatedAt := userannouncementMixinFields0[1].Descriptor()
+	// userannouncement.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	userannouncement.DefaultUpdatedAt = userannouncementDescUpdatedAt.Default.(func() uint32)
+	// userannouncement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	userannouncement.UpdateDefaultUpdatedAt = userannouncementDescUpdatedAt.UpdateDefault.(func() uint32)
+	// userannouncementDescDeletedAt is the schema descriptor for deleted_at field.
+	userannouncementDescDeletedAt := userannouncementMixinFields0[2].Descriptor()
+	// userannouncement.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	userannouncement.DefaultDeletedAt = userannouncementDescDeletedAt.Default.(func() uint32)
+	// userannouncementDescAppID is the schema descriptor for app_id field.
+	userannouncementDescAppID := userannouncementFields[1].Descriptor()
+	// userannouncement.DefaultAppID holds the default value on creation for the app_id field.
+	userannouncement.DefaultAppID = userannouncementDescAppID.Default.(func() uuid.UUID)
+	// userannouncementDescUserID is the schema descriptor for user_id field.
+	userannouncementDescUserID := userannouncementFields[2].Descriptor()
+	// userannouncement.DefaultUserID holds the default value on creation for the user_id field.
+	userannouncement.DefaultUserID = userannouncementDescUserID.Default.(func() uuid.UUID)
+	// userannouncementDescAnnouncementID is the schema descriptor for announcement_id field.
+	userannouncementDescAnnouncementID := userannouncementFields[3].Descriptor()
+	// userannouncement.DefaultAnnouncementID holds the default value on creation for the announcement_id field.
+	userannouncement.DefaultAnnouncementID = userannouncementDescAnnouncementID.Default.(func() uuid.UUID)
+	// userannouncementDescID is the schema descriptor for id field.
+	userannouncementDescID := userannouncementFields[0].Descriptor()
+	// userannouncement.DefaultID holds the default value on creation for the id field.
+	userannouncement.DefaultID = userannouncementDescID.Default.(func() uuid.UUID)
 }
 
 const (

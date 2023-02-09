@@ -128,6 +128,13 @@ func EndAt(v uint32) predicate.Announcement {
 	})
 }
 
+// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
+func Type(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldType), v))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v uint32) predicate.Announcement {
 	return predicate.Announcement(func(s *sql.Selector) {
@@ -713,6 +720,119 @@ func EndAtIsNil() predicate.Announcement {
 func EndAtNotNil() predicate.Announcement {
 	return predicate.Announcement(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldEndAt)))
+	})
+}
+
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldType), v))
+	})
+}
+
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldType), v))
+	})
+}
+
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...string) predicate.Announcement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldType), v...))
+	})
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...string) predicate.Announcement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldType), v...))
+	})
+}
+
+// TypeGT applies the GT predicate on the "type" field.
+func TypeGT(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldType), v))
+	})
+}
+
+// TypeGTE applies the GTE predicate on the "type" field.
+func TypeGTE(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldType), v))
+	})
+}
+
+// TypeLT applies the LT predicate on the "type" field.
+func TypeLT(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldType), v))
+	})
+}
+
+// TypeLTE applies the LTE predicate on the "type" field.
+func TypeLTE(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldType), v))
+	})
+}
+
+// TypeContains applies the Contains predicate on the "type" field.
+func TypeContains(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldType), v))
+	})
+}
+
+// TypeHasPrefix applies the HasPrefix predicate on the "type" field.
+func TypeHasPrefix(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldType), v))
+	})
+}
+
+// TypeHasSuffix applies the HasSuffix predicate on the "type" field.
+func TypeHasSuffix(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldType), v))
+	})
+}
+
+// TypeIsNil applies the IsNil predicate on the "type" field.
+func TypeIsNil() predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldType)))
+	})
+}
+
+// TypeNotNil applies the NotNil predicate on the "type" field.
+func TypeNotNil() predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldType)))
+	})
+}
+
+// TypeEqualFold applies the EqualFold predicate on the "type" field.
+func TypeEqualFold(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldType), v))
+	})
+}
+
+// TypeContainsFold applies the ContainsFold predicate on the "type" field.
+func TypeContainsFold(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldType), v))
 	})
 }
 

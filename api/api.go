@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"github.com/NpoolPlatform/notif-manager/api/announcement/user"
 
 	"github.com/NpoolPlatform/notif-manager/api/announcement/sendstate"
 
@@ -25,6 +26,7 @@ func Register(server grpc.ServiceRegistrar) {
 	announcement.Register(server)
 	readstate.Register(server)
 	sendstate.Register(server)
+	user.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {

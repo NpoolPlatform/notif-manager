@@ -127,6 +127,20 @@ func (ac *AnnouncementCreate) SetNillableEndAt(u *uint32) *AnnouncementCreate {
 	return ac
 }
 
+// SetType sets the "type" field.
+func (ac *AnnouncementCreate) SetType(s string) *AnnouncementCreate {
+	ac.mutation.SetType(s)
+	return ac
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (ac *AnnouncementCreate) SetNillableType(s *string) *AnnouncementCreate {
+	if s != nil {
+		ac.SetType(*s)
+	}
+	return ac
+}
+
 // SetID sets the "id" field.
 func (ac *AnnouncementCreate) SetID(u uuid.UUID) *AnnouncementCreate {
 	ac.mutation.SetID(u)
@@ -264,6 +278,10 @@ func (ac *AnnouncementCreate) defaults() error {
 		v := announcement.DefaultEndAt
 		ac.mutation.SetEndAt(v)
 	}
+	if _, ok := ac.mutation.GetType(); !ok {
+		v := announcement.DefaultType
+		ac.mutation.SetType(v)
+	}
 	if _, ok := ac.mutation.ID(); !ok {
 		if announcement.DefaultID == nil {
 			return fmt.Errorf("ent: uninitialized announcement.DefaultID (forgotten import ent/runtime?)")
@@ -385,6 +403,14 @@ func (ac *AnnouncementCreate) createSpec() (*Announcement, *sqlgraph.CreateSpec)
 			Column: announcement.FieldEndAt,
 		})
 		_node.EndAt = value
+	}
+	if value, ok := ac.mutation.GetType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: announcement.FieldType,
+		})
+		_node.Type = value
 	}
 	return _node, _spec
 }
@@ -587,6 +613,24 @@ func (u *AnnouncementUpsert) AddEndAt(v uint32) *AnnouncementUpsert {
 // ClearEndAt clears the value of the "end_at" field.
 func (u *AnnouncementUpsert) ClearEndAt() *AnnouncementUpsert {
 	u.SetNull(announcement.FieldEndAt)
+	return u
+}
+
+// SetType sets the "type" field.
+func (u *AnnouncementUpsert) SetType(v string) *AnnouncementUpsert {
+	u.Set(announcement.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *AnnouncementUpsert) UpdateType() *AnnouncementUpsert {
+	u.SetExcluded(announcement.FieldType)
+	return u
+}
+
+// ClearType clears the value of the "type" field.
+func (u *AnnouncementUpsert) ClearType() *AnnouncementUpsert {
+	u.SetNull(announcement.FieldType)
 	return u
 }
 
@@ -812,6 +856,27 @@ func (u *AnnouncementUpsertOne) UpdateEndAt() *AnnouncementUpsertOne {
 func (u *AnnouncementUpsertOne) ClearEndAt() *AnnouncementUpsertOne {
 	return u.Update(func(s *AnnouncementUpsert) {
 		s.ClearEndAt()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *AnnouncementUpsertOne) SetType(v string) *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *AnnouncementUpsertOne) UpdateType() *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateType()
+	})
+}
+
+// ClearType clears the value of the "type" field.
+func (u *AnnouncementUpsertOne) ClearType() *AnnouncementUpsertOne {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.ClearType()
 	})
 }
 
@@ -1203,6 +1268,27 @@ func (u *AnnouncementUpsertBulk) UpdateEndAt() *AnnouncementUpsertBulk {
 func (u *AnnouncementUpsertBulk) ClearEndAt() *AnnouncementUpsertBulk {
 	return u.Update(func(s *AnnouncementUpsert) {
 		s.ClearEndAt()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *AnnouncementUpsertBulk) SetType(v string) *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *AnnouncementUpsertBulk) UpdateType() *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.UpdateType()
+	})
+}
+
+// ClearType clears the value of the "type" field.
+func (u *AnnouncementUpsertBulk) ClearType() *AnnouncementUpsertBulk {
+	return u.Update(func(s *AnnouncementUpsert) {
+		s.ClearType()
 	})
 }
 

@@ -17,3 +17,6 @@ type ReadAnnouncement func(*sql.Selector)
 
 // SendAnnouncement is the predicate function for sendannouncement builders.
 type SendAnnouncement func(*sql.Selector)
+
+// UserAnnouncement is the predicate function for userannouncement builders.
+type UserAnnouncement func(*sql.Selector)
