@@ -2,9 +2,9 @@ package api
 
 import (
 	"context"
-	"github.com/NpoolPlatform/notif-manager/api/announcement/user"
 
 	"github.com/NpoolPlatform/notif-manager/api/announcement/sendstate"
+	"github.com/NpoolPlatform/notif-manager/api/announcement/user"
 
 	"github.com/NpoolPlatform/notif-manager/api/announcement"
 	"github.com/NpoolPlatform/notif-manager/api/announcement/readstate"
