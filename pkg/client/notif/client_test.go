@@ -46,7 +46,7 @@ var data = &npool.Notif{
 	Title:       uuid.NewString(),
 	Content:     uuid.NewString(),
 	Channels:    []channel.NotifChannel{channel.NotifChannel_ChannelSMS, channel.NotifChannel_ChannelEmail},
-	EmailSend:   true,
+	EmailSend:   false,
 }
 
 var dataReq = &npool.NotifReq{
@@ -93,7 +93,7 @@ func createNotifs(t *testing.T) {
 			Title:       uuid.NewString(),
 			Content:     uuid.NewString(),
 			Channels:    []channel.NotifChannel{channel.NotifChannel_ChannelSMS, channel.NotifChannel_ChannelEmail},
-			EmailSend:   true,
+			EmailSend:   false,
 		},
 		{
 			ID:          uuid.NewString(),
@@ -106,7 +106,7 @@ func createNotifs(t *testing.T) {
 			Title:       uuid.NewString(),
 			Content:     uuid.NewString(),
 			Channels:    []channel.NotifChannel{channel.NotifChannel_ChannelSMS, channel.NotifChannel_ChannelEmail},
-			EmailSend:   true,
+			EmailSend:   false,
 		},
 	}
 
