@@ -42,7 +42,7 @@ func CreateAnnouncement(ctx context.Context, in *npool.AnnouncementReq) (*npool.
 		if err != nil {
 			return nil, fmt.Errorf("fail create announcement: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail create announcement: %v", err)
@@ -74,7 +74,7 @@ func UpdateAnnouncement(ctx context.Context, in *npool.AnnouncementReq) (*npool.
 		if err != nil {
 			return nil, fmt.Errorf("fail add announcement: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail update announcement: %v", err)
@@ -90,7 +90,7 @@ func GetAnnouncement(ctx context.Context, id string) (*npool.Announcement, error
 		if err != nil {
 			return nil, fmt.Errorf("fail get announcement: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail get announcement: %v", err)
@@ -106,7 +106,7 @@ func GetAnnouncementOnly(ctx context.Context, conds *npool.Conds) (*npool.Announ
 		if err != nil {
 			return nil, fmt.Errorf("fail get announcement: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail get announcement: %v", err)
@@ -142,7 +142,7 @@ func ExistAnnouncement(ctx context.Context, id string) (bool, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail get announcement: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return false, fmt.Errorf("fail get announcement: %v", err)
@@ -158,7 +158,7 @@ func ExistAnnouncementConds(ctx context.Context, conds *npool.Conds) (bool, erro
 		if err != nil {
 			return nil, fmt.Errorf("fail get announcement: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return false, fmt.Errorf("fail get announcement: %v", err)
@@ -174,7 +174,7 @@ func CountAnnouncements(ctx context.Context, conds *npool.Conds) (uint32, error)
 		if err != nil {
 			return nil, fmt.Errorf("fail count announcement: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return 0, fmt.Errorf("fail count announcement: %v", err)
@@ -190,7 +190,7 @@ func DeleteAnnouncement(ctx context.Context, id string) (*npool.Announcement, er
 		if err != nil {
 			return nil, fmt.Errorf("fail delete announcement: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail delete announcement: %v", err)
