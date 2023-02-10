@@ -175,7 +175,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.UserAnnouncement, error) {
 }
 
 func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.UserAnnouncementQuery, error) {
-	stm := cli.UserAnnouncement.Query()
+	stm := cli.Debug().UserAnnouncement.Query()
 	if conds == nil {
 		return stm, nil
 	}
