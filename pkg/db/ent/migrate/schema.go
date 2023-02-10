@@ -43,7 +43,7 @@ var (
 		{Name: "title", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
 		{Name: "channels", Type: field.TypeJSON, Nullable: true},
-		{Name: "email_send", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "email_send", Type: field.TypeBool, Nullable: true, Default: false},
 	}
 	// NotifsTable holds the schema information for the "notifs" table.
 	NotifsTable = &schema.Table{
