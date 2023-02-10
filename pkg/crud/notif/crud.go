@@ -60,9 +60,7 @@ func CreateSet(c *ent.NotifCreate, in *npool.NotifReq) (*ent.NotifCreate, error)
 		}
 		c.SetChannels(channels)
 	}
-	if in.EmailSend != nil {
-		c.SetEmailSend(in.GetEmailSend())
-	}
+	c.SetEmailSend(false)
 	if in.Extra != nil {
 		c.SetExtra(in.GetExtra())
 	}
@@ -150,7 +148,7 @@ func UpdateSet(u *ent.NotifUpdateOne, in *npool.NotifReq) (*ent.NotifUpdateOne, 
 		}
 		u.SetChannels(channels)
 	}
-	if in.EmailSend != nil {
+	if in.GetEmailSend() {
 		u.SetEmailSend(in.GetEmailSend())
 	}
 	if in.AlreadyRead != nil {

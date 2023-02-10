@@ -41,7 +41,7 @@ var amt = ent.Notif{
 	Title:       uuid.NewString(),
 	Content:     uuid.NewString(),
 	Channels:    []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-	EmailSend:   true,
+	EmailSend:   false,
 	Extra:       uuid.NewString(),
 }
 
@@ -93,7 +93,7 @@ func createBulk(t *testing.T) {
 			Title:       uuid.NewString(),
 			Content:     uuid.NewString(),
 			Channels:    []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-			EmailSend:   true,
+			EmailSend:   false,
 			Extra:       uuid.NewString(),
 		},
 		{
@@ -107,7 +107,7 @@ func createBulk(t *testing.T) {
 			Title:       uuid.NewString(),
 			Content:     uuid.NewString(),
 			Channels:    []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-			EmailSend:   true,
+			EmailSend:   false,
 			Extra:       uuid.NewString(),
 		},
 	}
