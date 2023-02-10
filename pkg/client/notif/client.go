@@ -42,7 +42,7 @@ func CreateNotif(ctx context.Context, in *npool.NotifReq) (*npool.Notif, error) 
 		if err != nil {
 			return nil, fmt.Errorf("fail create notif: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail create notif: %v", err)
@@ -58,7 +58,7 @@ func CreateNotifs(ctx context.Context, in []*npool.NotifReq) ([]*npool.Notif, er
 		if err != nil {
 			return nil, fmt.Errorf("fail create notifs: %v", err)
 		}
-		return resp.GetInfos(), nil
+		return resp.Infos, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail create notifs: %v", err)
@@ -74,7 +74,7 @@ func UpdateNotif(ctx context.Context, in *npool.NotifReq) (*npool.Notif, error) 
 		if err != nil {
 			return nil, fmt.Errorf("fail add notif: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail update notif: %v", err)
@@ -90,7 +90,7 @@ func GetNotif(ctx context.Context, id string) (*npool.Notif, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail get notif: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail get notif: %v", err)
@@ -106,7 +106,7 @@ func GetNotifOnly(ctx context.Context, conds *npool.Conds) (*npool.Notif, error)
 		if err != nil {
 			return nil, fmt.Errorf("fail get notif: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail get notif: %v", err)
@@ -126,7 +126,7 @@ func GetNotifs(ctx context.Context, conds *npool.Conds, offset, limit int32) ([]
 			return nil, fmt.Errorf("fail get notifs: %v", err)
 		}
 		total = resp.GetTotal()
-		return resp.GetInfos(), nil
+		return resp.Infos, nil
 	})
 	if err != nil {
 		return nil, 0, fmt.Errorf("fail get notifs: %v", err)
@@ -142,7 +142,7 @@ func ExistNotif(ctx context.Context, id string) (bool, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail get notif: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return false, fmt.Errorf("fail get notif: %v", err)
@@ -158,7 +158,7 @@ func ExistNotifConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail get notif: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return false, fmt.Errorf("fail get notif: %v", err)
@@ -174,7 +174,7 @@ func CountNotifs(ctx context.Context, conds *npool.Conds) (uint32, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail count notif: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return 0, fmt.Errorf("fail count notif: %v", err)
@@ -190,7 +190,7 @@ func DeleteNotif(ctx context.Context, id string) (*npool.Notif, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail delete notif: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail delete notif: %v", err)

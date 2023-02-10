@@ -20,6 +20,10 @@ func validate(in *npool.AnnouncementReq) error {
 		logger.Sugar().Errorw("validate", "AppID", in.GetAppID(), "error", err)
 		return err
 	}
+	if _, err := uuid.Parse(in.GetLangID()); err != nil {
+		logger.Sugar().Errorw("validate", "LangID", in.GetLangID(), "error", err)
+		return err
+	}
 	if in.GetTitle() == "" {
 		logger.Sugar().Errorw("validate", "Title", in.GetTitle())
 		return fmt.Errorf("title is invalid")

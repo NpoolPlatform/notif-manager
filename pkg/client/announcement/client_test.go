@@ -79,6 +79,7 @@ func createAnnouncements(t *testing.T) {
 		{
 			ID:               uuid.NewString(),
 			AppID:            uuid.NewString(),
+			LangID:           uuid.NewString(),
 			Title:            uuid.NewString(),
 			Content:          uuid.NewString(),
 			Channels:         []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
@@ -88,6 +89,7 @@ func createAnnouncements(t *testing.T) {
 		{
 			ID:               uuid.NewString(),
 			AppID:            uuid.NewString(),
+			LangID:           uuid.NewString(),
 			Title:            uuid.NewString(),
 			Content:          uuid.NewString(),
 			Channels:         []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
