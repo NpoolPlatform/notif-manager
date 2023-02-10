@@ -276,6 +276,26 @@ func (nu *NotifUpdate) ClearEmailSend() *NotifUpdate {
 	return nu
 }
 
+// SetExtra sets the "extra" field.
+func (nu *NotifUpdate) SetExtra(s string) *NotifUpdate {
+	nu.mutation.SetExtra(s)
+	return nu
+}
+
+// SetNillableExtra sets the "extra" field if the given value is not nil.
+func (nu *NotifUpdate) SetNillableExtra(s *string) *NotifUpdate {
+	if s != nil {
+		nu.SetExtra(*s)
+	}
+	return nu
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (nu *NotifUpdate) ClearExtra() *NotifUpdate {
+	nu.mutation.ClearExtra()
+	return nu
+}
+
 // Mutation returns the NotifMutation object of the builder.
 func (nu *NotifUpdate) Mutation() *NotifMutation {
 	return nu.mutation
@@ -546,6 +566,19 @@ func (nu *NotifUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: notif.FieldEmailSend,
 		})
 	}
+	if value, ok := nu.mutation.Extra(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notif.FieldExtra,
+		})
+	}
+	if nu.mutation.ExtraCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: notif.FieldExtra,
+		})
+	}
 	_spec.Modifiers = nu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, nu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -811,6 +844,26 @@ func (nuo *NotifUpdateOne) SetNillableEmailSend(b *bool) *NotifUpdateOne {
 // ClearEmailSend clears the value of the "email_send" field.
 func (nuo *NotifUpdateOne) ClearEmailSend() *NotifUpdateOne {
 	nuo.mutation.ClearEmailSend()
+	return nuo
+}
+
+// SetExtra sets the "extra" field.
+func (nuo *NotifUpdateOne) SetExtra(s string) *NotifUpdateOne {
+	nuo.mutation.SetExtra(s)
+	return nuo
+}
+
+// SetNillableExtra sets the "extra" field if the given value is not nil.
+func (nuo *NotifUpdateOne) SetNillableExtra(s *string) *NotifUpdateOne {
+	if s != nil {
+		nuo.SetExtra(*s)
+	}
+	return nuo
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (nuo *NotifUpdateOne) ClearExtra() *NotifUpdateOne {
+	nuo.mutation.ClearExtra()
 	return nuo
 }
 
@@ -1112,6 +1165,19 @@ func (nuo *NotifUpdateOne) sqlSave(ctx context.Context) (_node *Notif, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Column: notif.FieldEmailSend,
+		})
+	}
+	if value, ok := nuo.mutation.Extra(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notif.FieldExtra,
+		})
+	}
+	if nuo.mutation.ExtraCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: notif.FieldExtra,
 		})
 	}
 	_spec.Modifiers = nuo.modifiers

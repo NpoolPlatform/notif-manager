@@ -32,6 +32,7 @@ type hooks struct {
 	Notif            []ent.Hook
 	ReadAnnouncement []ent.Hook
 	SendAnnouncement []ent.Hook
+	TxNotifState     []ent.Hook
 	UserAnnouncement []ent.Hook
 }
 

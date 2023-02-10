@@ -67,6 +67,10 @@ func (Notif) Fields() []ent.Field {
 			Bool("email_send").
 			Optional().
 			Default(true),
+		field.
+			Text("extra").
+			Optional().
+			Default(""),
 	}
 }
 

@@ -1,4 +1,4 @@
-package notif
+package txnotifstate
 
 import (
 	"context"
@@ -12,8 +12,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	valuedef "github.com/NpoolPlatform/message/npool"
-	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
-	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif"
+	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif/txnotifstate"
 
 	testinit "github.com/NpoolPlatform/notif-manager/pkg/testinit"
 	"github.com/google/uuid"
@@ -30,45 +29,29 @@ func init() {
 	}
 }
 
-var amt = ent.Notif{
-	ID:          uuid.New(),
-	AppID:       uuid.New(),
-	UserID:      uuid.New(),
-	AlreadyRead: false,
-	LangID:      uuid.New(),
-	EventType:   "DefaultEventType",
-	UseTemplate: true,
-	Title:       uuid.NewString(),
-	Content:     uuid.NewString(),
-	Channels:    []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-	EmailSend:   true,
-	Extra:       uuid.NewString(),
-}
-
 var (
-	id        = amt.ID.String()
-	appID     = amt.AppID.String()
-	userID    = amt.UserID.String()
-	langID    = amt.LangID.String()
-	eventType = npool.EventType(npool.EventType_value[amt.EventType])
-	channel1  = []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS}
-	req       = npool.NotifReq{
-		ID:          &id,
-		AppID:       &appID,
-		UserID:      &userID,
-		AlreadyRead: &amt.AlreadyRead,
-		LangID:      &langID,
-		EventType:   &eventType,
-		UseTemplate: &amt.UseTemplate,
-		Title:       &amt.Title,
-		Content:     &amt.Content,
-		Channels:    channel1,
-		EmailSend:   &amt.EmailSend,
-		Extra:       &amt.Extra,
+	notifState = npool.TxState_WaitSend
+	notifType  = npool.TxType_Withdraw
+	amt        = ent.TxNotifState{
+		ID:         uuid.New(),
+		TxID:       uuid.New(),
+		NotifState: notifState.String(),
+		NotifType:  notifType.String(),
 	}
 )
 
-var info *ent.Notif
+var (
+	id   = amt.ID.String()
+	txID = amt.TxID.String()
+	req  = npool.TxNotifStateReq{
+		ID:         &id,
+		TxID:       &txID,
+		NotifState: &notifState,
+		NotifType:  &notifType,
+	}
+)
+
+var info *ent.TxNotifState
 
 func create(t *testing.T) {
 	var err error
@@ -81,58 +64,30 @@ func create(t *testing.T) {
 }
 
 func createBulk(t *testing.T) {
-	entities := []*ent.Notif{
+	entities := []*ent.TxNotifState{
 		{
-			ID:          uuid.New(),
-			AppID:       uuid.New(),
-			UserID:      uuid.New(),
-			AlreadyRead: false,
-			LangID:      uuid.New(),
-			EventType:   "DefaultEventType",
-			UseTemplate: true,
-			Title:       uuid.NewString(),
-			Content:     uuid.NewString(),
-			Channels:    []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-			EmailSend:   true,
-			Extra:       uuid.NewString(),
+			ID:         uuid.New(),
+			TxID:       uuid.New(),
+			NotifState: notifState.String(),
+			NotifType:  notifType.String(),
 		},
 		{
-			ID:          uuid.New(),
-			AppID:       uuid.New(),
-			UserID:      uuid.New(),
-			AlreadyRead: false,
-			LangID:      uuid.New(),
-			EventType:   "DefaultEventType",
-			UseTemplate: true,
-			Title:       uuid.NewString(),
-			Content:     uuid.NewString(),
-			Channels:    []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-			EmailSend:   true,
-			Extra:       uuid.NewString(),
+			ID:         uuid.New(),
+			TxID:       uuid.New(),
+			NotifState: notifState.String(),
+			NotifType:  notifType.String(),
 		},
 	}
 
-	reqs := []*npool.NotifReq{}
+	reqs := []*npool.TxNotifStateReq{}
 	for _, _amt := range entities {
 		_id := _amt.ID.String()
-		_appID := _amt.AppID.String()
-		_userID := _amt.UserID.String()
-		_langID := _amt.LangID.String()
-		_eventType := npool.EventType(npool.EventType_value[_amt.EventType])
-		_channel1 := []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS}
-		reqs = append(reqs, &npool.NotifReq{
-			ID:          &_id,
-			AppID:       &_appID,
-			UserID:      &_userID,
-			AlreadyRead: &_amt.AlreadyRead,
-			LangID:      &_langID,
-			EventType:   &_eventType,
-			UseTemplate: &_amt.UseTemplate,
-			Title:       &_amt.Title,
-			Content:     &_amt.Content,
-			Channels:    _channel1,
-			EmailSend:   &_amt.EmailSend,
-			Extra:       &_amt.Extra,
+		_txID := _amt.TxID.String()
+		reqs = append(reqs, &npool.TxNotifStateReq{
+			ID:         &_id,
+			TxID:       &_txID,
+			NotifState: &notifState,
+			NotifType:  &notifType,
 		})
 	}
 	infos, err := CreateBulk(context.Background(), reqs)

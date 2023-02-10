@@ -197,6 +197,20 @@ func (nc *NotifCreate) SetNillableEmailSend(b *bool) *NotifCreate {
 	return nc
 }
 
+// SetExtra sets the "extra" field.
+func (nc *NotifCreate) SetExtra(s string) *NotifCreate {
+	nc.mutation.SetExtra(s)
+	return nc
+}
+
+// SetNillableExtra sets the "extra" field if the given value is not nil.
+func (nc *NotifCreate) SetNillableExtra(s *string) *NotifCreate {
+	if s != nil {
+		nc.SetExtra(*s)
+	}
+	return nc
+}
+
 // SetID sets the "id" field.
 func (nc *NotifCreate) SetID(u uuid.UUID) *NotifCreate {
 	nc.mutation.SetID(u)
@@ -360,6 +374,10 @@ func (nc *NotifCreate) defaults() error {
 		v := notif.DefaultEmailSend
 		nc.mutation.SetEmailSend(v)
 	}
+	if _, ok := nc.mutation.Extra(); !ok {
+		v := notif.DefaultExtra
+		nc.mutation.SetExtra(v)
+	}
 	if _, ok := nc.mutation.ID(); !ok {
 		if notif.DefaultID == nil {
 			return fmt.Errorf("ent: uninitialized notif.DefaultID (forgotten import ent/runtime?)")
@@ -521,6 +539,14 @@ func (nc *NotifCreate) createSpec() (*Notif, *sqlgraph.CreateSpec) {
 			Column: notif.FieldEmailSend,
 		})
 		_node.EmailSend = value
+	}
+	if value, ok := nc.mutation.Extra(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notif.FieldExtra,
+		})
+		_node.Extra = value
 	}
 	return _node, _spec
 }
@@ -807,6 +833,24 @@ func (u *NotifUpsert) UpdateEmailSend() *NotifUpsert {
 // ClearEmailSend clears the value of the "email_send" field.
 func (u *NotifUpsert) ClearEmailSend() *NotifUpsert {
 	u.SetNull(notif.FieldEmailSend)
+	return u
+}
+
+// SetExtra sets the "extra" field.
+func (u *NotifUpsert) SetExtra(v string) *NotifUpsert {
+	u.Set(notif.FieldExtra, v)
+	return u
+}
+
+// UpdateExtra sets the "extra" field to the value that was provided on create.
+func (u *NotifUpsert) UpdateExtra() *NotifUpsert {
+	u.SetExcluded(notif.FieldExtra)
+	return u
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (u *NotifUpsert) ClearExtra() *NotifUpsert {
+	u.SetNull(notif.FieldExtra)
 	return u
 }
 
@@ -1130,6 +1174,27 @@ func (u *NotifUpsertOne) UpdateEmailSend() *NotifUpsertOne {
 func (u *NotifUpsertOne) ClearEmailSend() *NotifUpsertOne {
 	return u.Update(func(s *NotifUpsert) {
 		s.ClearEmailSend()
+	})
+}
+
+// SetExtra sets the "extra" field.
+func (u *NotifUpsertOne) SetExtra(v string) *NotifUpsertOne {
+	return u.Update(func(s *NotifUpsert) {
+		s.SetExtra(v)
+	})
+}
+
+// UpdateExtra sets the "extra" field to the value that was provided on create.
+func (u *NotifUpsertOne) UpdateExtra() *NotifUpsertOne {
+	return u.Update(func(s *NotifUpsert) {
+		s.UpdateExtra()
+	})
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (u *NotifUpsertOne) ClearExtra() *NotifUpsertOne {
+	return u.Update(func(s *NotifUpsert) {
+		s.ClearExtra()
 	})
 }
 
@@ -1619,6 +1684,27 @@ func (u *NotifUpsertBulk) UpdateEmailSend() *NotifUpsertBulk {
 func (u *NotifUpsertBulk) ClearEmailSend() *NotifUpsertBulk {
 	return u.Update(func(s *NotifUpsert) {
 		s.ClearEmailSend()
+	})
+}
+
+// SetExtra sets the "extra" field.
+func (u *NotifUpsertBulk) SetExtra(v string) *NotifUpsertBulk {
+	return u.Update(func(s *NotifUpsert) {
+		s.SetExtra(v)
+	})
+}
+
+// UpdateExtra sets the "extra" field to the value that was provided on create.
+func (u *NotifUpsertBulk) UpdateExtra() *NotifUpsertBulk {
+	return u.Update(func(s *NotifUpsert) {
+		s.UpdateExtra()
+	})
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (u *NotifUpsertBulk) ClearExtra() *NotifUpsertBulk {
+	return u.Update(func(s *NotifUpsert) {
+		s.ClearExtra()
 	})
 }
 

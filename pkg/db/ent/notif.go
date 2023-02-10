@@ -43,6 +43,8 @@ type Notif struct {
 	Channels []string `json:"channels,omitempty"`
 	// EmailSend holds the value of the "email_send" field.
 	EmailSend bool `json:"email_send,omitempty"`
+	// Extra holds the value of the "extra" field.
+	Extra string `json:"extra,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -56,7 +58,7 @@ func (*Notif) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullBool)
 		case notif.FieldCreatedAt, notif.FieldUpdatedAt, notif.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case notif.FieldEventType, notif.FieldTitle, notif.FieldContent:
+		case notif.FieldEventType, notif.FieldTitle, notif.FieldContent, notif.FieldExtra:
 			values[i] = new(sql.NullString)
 		case notif.FieldID, notif.FieldAppID, notif.FieldUserID, notif.FieldLangID:
 			values[i] = new(uuid.UUID)
@@ -161,6 +163,12 @@ func (n *Notif) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				n.EmailSend = value.Bool
 			}
+		case notif.FieldExtra:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field extra", values[i])
+			} else if value.Valid {
+				n.Extra = value.String
+			}
 		}
 	}
 	return nil
@@ -227,6 +235,9 @@ func (n *Notif) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("email_send=")
 	builder.WriteString(fmt.Sprintf("%v", n.EmailSend))
+	builder.WriteString(", ")
+	builder.WriteString("extra=")
+	builder.WriteString(n.Extra)
 	builder.WriteByte(')')
 	return builder.String()
 }

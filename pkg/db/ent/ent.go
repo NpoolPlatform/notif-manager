@@ -14,6 +14,7 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/txnotifstate"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/userannouncement"
 )
 
@@ -39,6 +40,7 @@ func columnChecker(table string) func(string) error {
 		notif.Table:            notif.ValidColumn,
 		readannouncement.Table: readannouncement.ValidColumn,
 		sendannouncement.Table: sendannouncement.ValidColumn,
+		txnotifstate.Table:     txnotifstate.ValidColumn,
 		userannouncement.Table: userannouncement.ValidColumn,
 	}
 	check, ok := checks[table]

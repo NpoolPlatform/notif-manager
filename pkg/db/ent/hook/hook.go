@@ -61,6 +61,19 @@ func (f SendAnnouncementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.V
 	return f(ctx, mv)
 }
 
+// The TxNotifStateFunc type is an adapter to allow the use of ordinary
+// function as TxNotifState mutator.
+type TxNotifStateFunc func(context.Context, *ent.TxNotifStateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TxNotifStateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.TxNotifStateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TxNotifStateMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The UserAnnouncementFunc type is an adapter to allow the use of ordinary
 // function as UserAnnouncement mutator.
 type UserAnnouncementFunc func(context.Context, *ent.UserAnnouncementMutation) (ent.Value, error)

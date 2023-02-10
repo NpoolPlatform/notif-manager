@@ -44,6 +44,7 @@ var (
 		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
 		{Name: "channels", Type: field.TypeJSON, Nullable: true},
 		{Name: "email_send", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "extra", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
 	}
 	// NotifsTable holds the schema information for the "notifs" table.
 	NotifsTable = &schema.Table{
@@ -84,6 +85,22 @@ var (
 		Columns:    SendAnnouncementsColumns,
 		PrimaryKey: []*schema.Column{SendAnnouncementsColumns[0]},
 	}
+	// TxNotifStatesColumns holds the columns for the "tx_notif_states" table.
+	TxNotifStatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "tx_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "notif_state", Type: field.TypeString, Nullable: true, Default: "DefaultNotifState"},
+		{Name: "notif_type", Type: field.TypeString, Nullable: true, Default: "DefaultType"},
+	}
+	// TxNotifStatesTable holds the schema information for the "tx_notif_states" table.
+	TxNotifStatesTable = &schema.Table{
+		Name:       "tx_notif_states",
+		Columns:    TxNotifStatesColumns,
+		PrimaryKey: []*schema.Column{TxNotifStatesColumns[0]},
+	}
 	// UserAnnouncementsColumns holds the columns for the "user_announcements" table.
 	UserAnnouncementsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
@@ -106,6 +123,7 @@ var (
 		NotifsTable,
 		ReadAnnouncementsTable,
 		SendAnnouncementsTable,
+		TxNotifStatesTable,
 		UserAnnouncementsTable,
 	}
 )

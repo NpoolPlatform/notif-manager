@@ -15,6 +15,7 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/txnotifstate"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/userannouncement"
 
 	"entgo.io/ent/dialect"
@@ -34,6 +35,8 @@ type Client struct {
 	ReadAnnouncement *ReadAnnouncementClient
 	// SendAnnouncement is the client for interacting with the SendAnnouncement builders.
 	SendAnnouncement *SendAnnouncementClient
+	// TxNotifState is the client for interacting with the TxNotifState builders.
+	TxNotifState *TxNotifStateClient
 	// UserAnnouncement is the client for interacting with the UserAnnouncement builders.
 	UserAnnouncement *UserAnnouncementClient
 }
@@ -53,6 +56,7 @@ func (c *Client) init() {
 	c.Notif = NewNotifClient(c.config)
 	c.ReadAnnouncement = NewReadAnnouncementClient(c.config)
 	c.SendAnnouncement = NewSendAnnouncementClient(c.config)
+	c.TxNotifState = NewTxNotifStateClient(c.config)
 	c.UserAnnouncement = NewUserAnnouncementClient(c.config)
 }
 
@@ -91,6 +95,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Notif:            NewNotifClient(cfg),
 		ReadAnnouncement: NewReadAnnouncementClient(cfg),
 		SendAnnouncement: NewSendAnnouncementClient(cfg),
+		TxNotifState:     NewTxNotifStateClient(cfg),
 		UserAnnouncement: NewUserAnnouncementClient(cfg),
 	}, nil
 }
@@ -115,6 +120,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Notif:            NewNotifClient(cfg),
 		ReadAnnouncement: NewReadAnnouncementClient(cfg),
 		SendAnnouncement: NewSendAnnouncementClient(cfg),
+		TxNotifState:     NewTxNotifStateClient(cfg),
 		UserAnnouncement: NewUserAnnouncementClient(cfg),
 	}, nil
 }
@@ -149,6 +155,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Notif.Use(hooks...)
 	c.ReadAnnouncement.Use(hooks...)
 	c.SendAnnouncement.Use(hooks...)
+	c.TxNotifState.Use(hooks...)
 	c.UserAnnouncement.Use(hooks...)
 }
 
@@ -514,6 +521,97 @@ func (c *SendAnnouncementClient) GetX(ctx context.Context, id uuid.UUID) *SendAn
 func (c *SendAnnouncementClient) Hooks() []Hook {
 	hooks := c.hooks.SendAnnouncement
 	return append(hooks[:len(hooks):len(hooks)], sendannouncement.Hooks[:]...)
+}
+
+// TxNotifStateClient is a client for the TxNotifState schema.
+type TxNotifStateClient struct {
+	config
+}
+
+// NewTxNotifStateClient returns a client for the TxNotifState from the given config.
+func NewTxNotifStateClient(c config) *TxNotifStateClient {
+	return &TxNotifStateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `txnotifstate.Hooks(f(g(h())))`.
+func (c *TxNotifStateClient) Use(hooks ...Hook) {
+	c.hooks.TxNotifState = append(c.hooks.TxNotifState, hooks...)
+}
+
+// Create returns a builder for creating a TxNotifState entity.
+func (c *TxNotifStateClient) Create() *TxNotifStateCreate {
+	mutation := newTxNotifStateMutation(c.config, OpCreate)
+	return &TxNotifStateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TxNotifState entities.
+func (c *TxNotifStateClient) CreateBulk(builders ...*TxNotifStateCreate) *TxNotifStateCreateBulk {
+	return &TxNotifStateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TxNotifState.
+func (c *TxNotifStateClient) Update() *TxNotifStateUpdate {
+	mutation := newTxNotifStateMutation(c.config, OpUpdate)
+	return &TxNotifStateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TxNotifStateClient) UpdateOne(tns *TxNotifState) *TxNotifStateUpdateOne {
+	mutation := newTxNotifStateMutation(c.config, OpUpdateOne, withTxNotifState(tns))
+	return &TxNotifStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TxNotifStateClient) UpdateOneID(id uuid.UUID) *TxNotifStateUpdateOne {
+	mutation := newTxNotifStateMutation(c.config, OpUpdateOne, withTxNotifStateID(id))
+	return &TxNotifStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TxNotifState.
+func (c *TxNotifStateClient) Delete() *TxNotifStateDelete {
+	mutation := newTxNotifStateMutation(c.config, OpDelete)
+	return &TxNotifStateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TxNotifStateClient) DeleteOne(tns *TxNotifState) *TxNotifStateDeleteOne {
+	return c.DeleteOneID(tns.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *TxNotifStateClient) DeleteOneID(id uuid.UUID) *TxNotifStateDeleteOne {
+	builder := c.Delete().Where(txnotifstate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TxNotifStateDeleteOne{builder}
+}
+
+// Query returns a query builder for TxNotifState.
+func (c *TxNotifStateClient) Query() *TxNotifStateQuery {
+	return &TxNotifStateQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a TxNotifState entity by its id.
+func (c *TxNotifStateClient) Get(ctx context.Context, id uuid.UUID) (*TxNotifState, error) {
+	return c.Query().Where(txnotifstate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TxNotifStateClient) GetX(ctx context.Context, id uuid.UUID) *TxNotifState {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *TxNotifStateClient) Hooks() []Hook {
+	hooks := c.hooks.TxNotifState
+	return append(hooks[:len(hooks):len(hooks)], txnotifstate.Hooks[:]...)
 }
 
 // UserAnnouncementClient is a client for the UserAnnouncement schema.

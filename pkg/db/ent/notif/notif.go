@@ -38,6 +38,8 @@ const (
 	FieldChannels = "channels"
 	// FieldEmailSend holds the string denoting the email_send field in the database.
 	FieldEmailSend = "email_send"
+	// FieldExtra holds the string denoting the extra field in the database.
+	FieldExtra = "extra"
 	// Table holds the table name of the notif in the database.
 	Table = "notifs"
 )
@@ -58,6 +60,7 @@ var Columns = []string{
 	FieldContent,
 	FieldChannels,
 	FieldEmailSend,
+	FieldExtra,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -107,6 +110,8 @@ var (
 	DefaultChannels []string
 	// DefaultEmailSend holds the default value on creation for the "email_send" field.
 	DefaultEmailSend bool
+	// DefaultExtra holds the default value on creation for the "extra" field.
+	DefaultExtra string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

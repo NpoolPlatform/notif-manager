@@ -13,6 +13,7 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/predicate"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/txnotifstate"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/userannouncement"
 	"github.com/google/uuid"
 
@@ -32,6 +33,7 @@ const (
 	TypeNotif            = "Notif"
 	TypeReadAnnouncement = "ReadAnnouncement"
 	TypeSendAnnouncement = "SendAnnouncement"
+	TypeTxNotifState     = "TxNotifState"
 	TypeUserAnnouncement = "UserAnnouncement"
 )
 
@@ -1132,6 +1134,7 @@ type NotifMutation struct {
 	content       *string
 	channels      *[]string
 	email_send    *bool
+	extra         *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Notif, error)
@@ -1900,6 +1903,55 @@ func (m *NotifMutation) ResetEmailSend() {
 	delete(m.clearedFields, notif.FieldEmailSend)
 }
 
+// SetExtra sets the "extra" field.
+func (m *NotifMutation) SetExtra(s string) {
+	m.extra = &s
+}
+
+// Extra returns the value of the "extra" field in the mutation.
+func (m *NotifMutation) Extra() (r string, exists bool) {
+	v := m.extra
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExtra returns the old "extra" field's value of the Notif entity.
+// If the Notif object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotifMutation) OldExtra(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExtra is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExtra requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExtra: %w", err)
+	}
+	return oldValue.Extra, nil
+}
+
+// ClearExtra clears the value of the "extra" field.
+func (m *NotifMutation) ClearExtra() {
+	m.extra = nil
+	m.clearedFields[notif.FieldExtra] = struct{}{}
+}
+
+// ExtraCleared returns if the "extra" field was cleared in this mutation.
+func (m *NotifMutation) ExtraCleared() bool {
+	_, ok := m.clearedFields[notif.FieldExtra]
+	return ok
+}
+
+// ResetExtra resets all changes to the "extra" field.
+func (m *NotifMutation) ResetExtra() {
+	m.extra = nil
+	delete(m.clearedFields, notif.FieldExtra)
+}
+
 // Where appends a list predicates to the NotifMutation builder.
 func (m *NotifMutation) Where(ps ...predicate.Notif) {
 	m.predicates = append(m.predicates, ps...)
@@ -1919,7 +1971,7 @@ func (m *NotifMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NotifMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, notif.FieldCreatedAt)
 	}
@@ -1959,6 +2011,9 @@ func (m *NotifMutation) Fields() []string {
 	if m.email_send != nil {
 		fields = append(fields, notif.FieldEmailSend)
 	}
+	if m.extra != nil {
+		fields = append(fields, notif.FieldExtra)
+	}
 	return fields
 }
 
@@ -1993,6 +2048,8 @@ func (m *NotifMutation) Field(name string) (ent.Value, bool) {
 		return m.Channels()
 	case notif.FieldEmailSend:
 		return m.EmailSend()
+	case notif.FieldExtra:
+		return m.Extra()
 	}
 	return nil, false
 }
@@ -2028,6 +2085,8 @@ func (m *NotifMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldChannels(ctx)
 	case notif.FieldEmailSend:
 		return m.OldEmailSend(ctx)
+	case notif.FieldExtra:
+		return m.OldExtra(ctx)
 	}
 	return nil, fmt.Errorf("unknown Notif field %s", name)
 }
@@ -2128,6 +2187,13 @@ func (m *NotifMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetEmailSend(v)
 		return nil
+	case notif.FieldExtra:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExtra(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Notif field %s", name)
 }
@@ -2227,6 +2293,9 @@ func (m *NotifMutation) ClearedFields() []string {
 	if m.FieldCleared(notif.FieldEmailSend) {
 		fields = append(fields, notif.FieldEmailSend)
 	}
+	if m.FieldCleared(notif.FieldExtra) {
+		fields = append(fields, notif.FieldExtra)
+	}
 	return fields
 }
 
@@ -2270,6 +2339,9 @@ func (m *NotifMutation) ClearField(name string) error {
 		return nil
 	case notif.FieldEmailSend:
 		m.ClearEmailSend()
+		return nil
+	case notif.FieldExtra:
+		m.ClearExtra()
 		return nil
 	}
 	return fmt.Errorf("unknown Notif nullable field %s", name)
@@ -2317,6 +2389,9 @@ func (m *NotifMutation) ResetField(name string) error {
 		return nil
 	case notif.FieldEmailSend:
 		m.ResetEmailSend()
+		return nil
+	case notif.FieldExtra:
+		m.ResetExtra()
 		return nil
 	}
 	return fmt.Errorf("unknown Notif field %s", name)
@@ -3939,6 +4014,755 @@ func (m *SendAnnouncementMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *SendAnnouncementMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown SendAnnouncement edge %s", name)
+}
+
+// TxNotifStateMutation represents an operation that mutates the TxNotifState nodes in the graph.
+type TxNotifStateMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uuid.UUID
+	created_at    *uint32
+	addcreated_at *int32
+	updated_at    *uint32
+	addupdated_at *int32
+	deleted_at    *uint32
+	adddeleted_at *int32
+	tx_id         *uuid.UUID
+	notif_state   *string
+	notif_type    *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*TxNotifState, error)
+	predicates    []predicate.TxNotifState
+}
+
+var _ ent.Mutation = (*TxNotifStateMutation)(nil)
+
+// txnotifstateOption allows management of the mutation configuration using functional options.
+type txnotifstateOption func(*TxNotifStateMutation)
+
+// newTxNotifStateMutation creates new mutation for the TxNotifState entity.
+func newTxNotifStateMutation(c config, op Op, opts ...txnotifstateOption) *TxNotifStateMutation {
+	m := &TxNotifStateMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTxNotifState,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTxNotifStateID sets the ID field of the mutation.
+func withTxNotifStateID(id uuid.UUID) txnotifstateOption {
+	return func(m *TxNotifStateMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *TxNotifState
+		)
+		m.oldValue = func(ctx context.Context) (*TxNotifState, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().TxNotifState.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTxNotifState sets the old TxNotifState of the mutation.
+func withTxNotifState(node *TxNotifState) txnotifstateOption {
+	return func(m *TxNotifStateMutation) {
+		m.oldValue = func(context.Context) (*TxNotifState, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TxNotifStateMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TxNotifStateMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of TxNotifState entities.
+func (m *TxNotifStateMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *TxNotifStateMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *TxNotifStateMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().TxNotifState.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *TxNotifStateMutation) SetCreatedAt(u uint32) {
+	m.created_at = &u
+	m.addcreated_at = nil
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *TxNotifStateMutation) CreatedAt() (r uint32, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the TxNotifState entity.
+// If the TxNotifState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TxNotifStateMutation) OldCreatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// AddCreatedAt adds u to the "created_at" field.
+func (m *TxNotifStateMutation) AddCreatedAt(u int32) {
+	if m.addcreated_at != nil {
+		*m.addcreated_at += u
+	} else {
+		m.addcreated_at = &u
+	}
+}
+
+// AddedCreatedAt returns the value that was added to the "created_at" field in this mutation.
+func (m *TxNotifStateMutation) AddedCreatedAt() (r int32, exists bool) {
+	v := m.addcreated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *TxNotifStateMutation) ResetCreatedAt() {
+	m.created_at = nil
+	m.addcreated_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *TxNotifStateMutation) SetUpdatedAt(u uint32) {
+	m.updated_at = &u
+	m.addupdated_at = nil
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *TxNotifStateMutation) UpdatedAt() (r uint32, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the TxNotifState entity.
+// If the TxNotifState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TxNotifStateMutation) OldUpdatedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// AddUpdatedAt adds u to the "updated_at" field.
+func (m *TxNotifStateMutation) AddUpdatedAt(u int32) {
+	if m.addupdated_at != nil {
+		*m.addupdated_at += u
+	} else {
+		m.addupdated_at = &u
+	}
+}
+
+// AddedUpdatedAt returns the value that was added to the "updated_at" field in this mutation.
+func (m *TxNotifStateMutation) AddedUpdatedAt() (r int32, exists bool) {
+	v := m.addupdated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *TxNotifStateMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	m.addupdated_at = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *TxNotifStateMutation) SetDeletedAt(u uint32) {
+	m.deleted_at = &u
+	m.adddeleted_at = nil
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *TxNotifStateMutation) DeletedAt() (r uint32, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the TxNotifState entity.
+// If the TxNotifState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TxNotifStateMutation) OldDeletedAt(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// AddDeletedAt adds u to the "deleted_at" field.
+func (m *TxNotifStateMutation) AddDeletedAt(u int32) {
+	if m.adddeleted_at != nil {
+		*m.adddeleted_at += u
+	} else {
+		m.adddeleted_at = &u
+	}
+}
+
+// AddedDeletedAt returns the value that was added to the "deleted_at" field in this mutation.
+func (m *TxNotifStateMutation) AddedDeletedAt() (r int32, exists bool) {
+	v := m.adddeleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *TxNotifStateMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	m.adddeleted_at = nil
+}
+
+// SetTxID sets the "tx_id" field.
+func (m *TxNotifStateMutation) SetTxID(u uuid.UUID) {
+	m.tx_id = &u
+}
+
+// TxID returns the value of the "tx_id" field in the mutation.
+func (m *TxNotifStateMutation) TxID() (r uuid.UUID, exists bool) {
+	v := m.tx_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTxID returns the old "tx_id" field's value of the TxNotifState entity.
+// If the TxNotifState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TxNotifStateMutation) OldTxID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTxID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTxID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTxID: %w", err)
+	}
+	return oldValue.TxID, nil
+}
+
+// ClearTxID clears the value of the "tx_id" field.
+func (m *TxNotifStateMutation) ClearTxID() {
+	m.tx_id = nil
+	m.clearedFields[txnotifstate.FieldTxID] = struct{}{}
+}
+
+// TxIDCleared returns if the "tx_id" field was cleared in this mutation.
+func (m *TxNotifStateMutation) TxIDCleared() bool {
+	_, ok := m.clearedFields[txnotifstate.FieldTxID]
+	return ok
+}
+
+// ResetTxID resets all changes to the "tx_id" field.
+func (m *TxNotifStateMutation) ResetTxID() {
+	m.tx_id = nil
+	delete(m.clearedFields, txnotifstate.FieldTxID)
+}
+
+// SetNotifState sets the "notif_state" field.
+func (m *TxNotifStateMutation) SetNotifState(s string) {
+	m.notif_state = &s
+}
+
+// NotifState returns the value of the "notif_state" field in the mutation.
+func (m *TxNotifStateMutation) NotifState() (r string, exists bool) {
+	v := m.notif_state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNotifState returns the old "notif_state" field's value of the TxNotifState entity.
+// If the TxNotifState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TxNotifStateMutation) OldNotifState(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNotifState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNotifState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNotifState: %w", err)
+	}
+	return oldValue.NotifState, nil
+}
+
+// ClearNotifState clears the value of the "notif_state" field.
+func (m *TxNotifStateMutation) ClearNotifState() {
+	m.notif_state = nil
+	m.clearedFields[txnotifstate.FieldNotifState] = struct{}{}
+}
+
+// NotifStateCleared returns if the "notif_state" field was cleared in this mutation.
+func (m *TxNotifStateMutation) NotifStateCleared() bool {
+	_, ok := m.clearedFields[txnotifstate.FieldNotifState]
+	return ok
+}
+
+// ResetNotifState resets all changes to the "notif_state" field.
+func (m *TxNotifStateMutation) ResetNotifState() {
+	m.notif_state = nil
+	delete(m.clearedFields, txnotifstate.FieldNotifState)
+}
+
+// SetNotifType sets the "notif_type" field.
+func (m *TxNotifStateMutation) SetNotifType(s string) {
+	m.notif_type = &s
+}
+
+// NotifType returns the value of the "notif_type" field in the mutation.
+func (m *TxNotifStateMutation) NotifType() (r string, exists bool) {
+	v := m.notif_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNotifType returns the old "notif_type" field's value of the TxNotifState entity.
+// If the TxNotifState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TxNotifStateMutation) OldNotifType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNotifType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNotifType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNotifType: %w", err)
+	}
+	return oldValue.NotifType, nil
+}
+
+// ClearNotifType clears the value of the "notif_type" field.
+func (m *TxNotifStateMutation) ClearNotifType() {
+	m.notif_type = nil
+	m.clearedFields[txnotifstate.FieldNotifType] = struct{}{}
+}
+
+// NotifTypeCleared returns if the "notif_type" field was cleared in this mutation.
+func (m *TxNotifStateMutation) NotifTypeCleared() bool {
+	_, ok := m.clearedFields[txnotifstate.FieldNotifType]
+	return ok
+}
+
+// ResetNotifType resets all changes to the "notif_type" field.
+func (m *TxNotifStateMutation) ResetNotifType() {
+	m.notif_type = nil
+	delete(m.clearedFields, txnotifstate.FieldNotifType)
+}
+
+// Where appends a list predicates to the TxNotifStateMutation builder.
+func (m *TxNotifStateMutation) Where(ps ...predicate.TxNotifState) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *TxNotifStateMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (TxNotifState).
+func (m *TxNotifStateMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TxNotifStateMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.created_at != nil {
+		fields = append(fields, txnotifstate.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, txnotifstate.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, txnotifstate.FieldDeletedAt)
+	}
+	if m.tx_id != nil {
+		fields = append(fields, txnotifstate.FieldTxID)
+	}
+	if m.notif_state != nil {
+		fields = append(fields, txnotifstate.FieldNotifState)
+	}
+	if m.notif_type != nil {
+		fields = append(fields, txnotifstate.FieldNotifType)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TxNotifStateMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case txnotifstate.FieldCreatedAt:
+		return m.CreatedAt()
+	case txnotifstate.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case txnotifstate.FieldDeletedAt:
+		return m.DeletedAt()
+	case txnotifstate.FieldTxID:
+		return m.TxID()
+	case txnotifstate.FieldNotifState:
+		return m.NotifState()
+	case txnotifstate.FieldNotifType:
+		return m.NotifType()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TxNotifStateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case txnotifstate.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case txnotifstate.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case txnotifstate.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case txnotifstate.FieldTxID:
+		return m.OldTxID(ctx)
+	case txnotifstate.FieldNotifState:
+		return m.OldNotifState(ctx)
+	case txnotifstate.FieldNotifType:
+		return m.OldNotifType(ctx)
+	}
+	return nil, fmt.Errorf("unknown TxNotifState field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TxNotifStateMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case txnotifstate.FieldCreatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case txnotifstate.FieldUpdatedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case txnotifstate.FieldDeletedAt:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case txnotifstate.FieldTxID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTxID(v)
+		return nil
+	case txnotifstate.FieldNotifState:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNotifState(v)
+		return nil
+	case txnotifstate.FieldNotifType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNotifType(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TxNotifState field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TxNotifStateMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_at != nil {
+		fields = append(fields, txnotifstate.FieldCreatedAt)
+	}
+	if m.addupdated_at != nil {
+		fields = append(fields, txnotifstate.FieldUpdatedAt)
+	}
+	if m.adddeleted_at != nil {
+		fields = append(fields, txnotifstate.FieldDeletedAt)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TxNotifStateMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case txnotifstate.FieldCreatedAt:
+		return m.AddedCreatedAt()
+	case txnotifstate.FieldUpdatedAt:
+		return m.AddedUpdatedAt()
+	case txnotifstate.FieldDeletedAt:
+		return m.AddedDeletedAt()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TxNotifStateMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case txnotifstate.FieldCreatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedAt(v)
+		return nil
+	case txnotifstate.FieldUpdatedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedAt(v)
+		return nil
+	case txnotifstate.FieldDeletedAt:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TxNotifState numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TxNotifStateMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(txnotifstate.FieldTxID) {
+		fields = append(fields, txnotifstate.FieldTxID)
+	}
+	if m.FieldCleared(txnotifstate.FieldNotifState) {
+		fields = append(fields, txnotifstate.FieldNotifState)
+	}
+	if m.FieldCleared(txnotifstate.FieldNotifType) {
+		fields = append(fields, txnotifstate.FieldNotifType)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TxNotifStateMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TxNotifStateMutation) ClearField(name string) error {
+	switch name {
+	case txnotifstate.FieldTxID:
+		m.ClearTxID()
+		return nil
+	case txnotifstate.FieldNotifState:
+		m.ClearNotifState()
+		return nil
+	case txnotifstate.FieldNotifType:
+		m.ClearNotifType()
+		return nil
+	}
+	return fmt.Errorf("unknown TxNotifState nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TxNotifStateMutation) ResetField(name string) error {
+	switch name {
+	case txnotifstate.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case txnotifstate.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case txnotifstate.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case txnotifstate.FieldTxID:
+		m.ResetTxID()
+		return nil
+	case txnotifstate.FieldNotifState:
+		m.ResetNotifState()
+		return nil
+	case txnotifstate.FieldNotifType:
+		m.ResetNotifType()
+		return nil
+	}
+	return fmt.Errorf("unknown TxNotifState field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TxNotifStateMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TxNotifStateMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TxNotifStateMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TxNotifStateMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TxNotifStateMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TxNotifStateMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TxNotifStateMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown TxNotifState unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TxNotifStateMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown TxNotifState edge %s", name)
 }
 
 // UserAnnouncementMutation represents an operation that mutates the UserAnnouncement nodes in the graph.

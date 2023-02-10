@@ -27,6 +27,7 @@ func Ent2Grpc(row *ent.Notif) *npool.Notif {
 		Content:     row.Content,
 		Channels:    channels,
 		EmailSend:   row.EmailSend,
+		Extra:       row.Extra,
 		CreatedAt:   row.CreatedAt,
 		UpdatedAt:   row.UpdatedAt,
 	}

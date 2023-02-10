@@ -246,6 +246,30 @@ func (f SendAnnouncementMutationRuleFunc) EvalMutation(ctx context.Context, m en
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SendAnnouncementMutation", m)
 }
 
+// The TxNotifStateQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type TxNotifStateQueryRuleFunc func(context.Context, *ent.TxNotifStateQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f TxNotifStateQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.TxNotifStateQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.TxNotifStateQuery", q)
+}
+
+// The TxNotifStateMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type TxNotifStateMutationRuleFunc func(context.Context, *ent.TxNotifStateMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f TxNotifStateMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.TxNotifStateMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.TxNotifStateMutation", m)
+}
+
 // The UserAnnouncementQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UserAnnouncementQueryRuleFunc func(context.Context, *ent.UserAnnouncementQuery) error
@@ -313,6 +337,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.SendAnnouncementQuery:
 		return q.Filter(), nil
+	case *ent.TxNotifStateQuery:
+		return q.Filter(), nil
 	case *ent.UserAnnouncementQuery:
 		return q.Filter(), nil
 	default:
@@ -329,6 +355,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.ReadAnnouncementMutation:
 		return m.Filter(), nil
 	case *ent.SendAnnouncementMutation:
+		return m.Filter(), nil
+	case *ent.TxNotifStateMutation:
 		return m.Filter(), nil
 	case *ent.UserAnnouncementMutation:
 		return m.Filter(), nil
