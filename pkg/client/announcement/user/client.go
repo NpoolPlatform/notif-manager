@@ -42,7 +42,7 @@ func CreateUser(ctx context.Context, in *npool.UserReq) (*npool.User, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail create user: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail create user: %v", err)
@@ -74,7 +74,7 @@ func UpdateUser(ctx context.Context, in *npool.UserReq) (*npool.User, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail add user: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail update user: %v", err)
@@ -90,7 +90,7 @@ func GetUser(ctx context.Context, id string) (*npool.User, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail get user: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail get user: %v", err)
@@ -106,7 +106,7 @@ func GetUserOnly(ctx context.Context, conds *npool.Conds) (*npool.User, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail get user: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail get user: %v", err)
@@ -142,7 +142,7 @@ func ExistUser(ctx context.Context, id string) (bool, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail get user: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return false, fmt.Errorf("fail get user: %v", err)
@@ -158,7 +158,7 @@ func ExistUserConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail get user: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return false, fmt.Errorf("fail get user: %v", err)
@@ -174,7 +174,7 @@ func CountUsers(ctx context.Context, conds *npool.Conds) (uint32, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail count user: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return 0, fmt.Errorf("fail count user: %v", err)
@@ -190,7 +190,7 @@ func DeleteUser(ctx context.Context, id string) (*npool.User, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail delete user: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail delete user: %v", err)

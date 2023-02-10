@@ -42,7 +42,7 @@ func CreateReadState(ctx context.Context, in *npool.ReadStateReq) (*npool.ReadSt
 		if err != nil {
 			return nil, fmt.Errorf("fail create readstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail create readstate: %v", err)
@@ -74,7 +74,7 @@ func UpdateReadState(ctx context.Context, in *npool.ReadStateReq) (*npool.ReadSt
 		if err != nil {
 			return nil, fmt.Errorf("fail add readstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail update readstate: %v", err)
@@ -90,7 +90,7 @@ func GetReadState(ctx context.Context, id string) (*npool.ReadState, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail get readstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail get readstate: %v", err)
@@ -106,7 +106,7 @@ func GetReadStateOnly(ctx context.Context, conds *npool.Conds) (*npool.ReadState
 		if err != nil {
 			return nil, fmt.Errorf("fail get readstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail get readstate: %v", err)
@@ -142,7 +142,7 @@ func ExistReadState(ctx context.Context, id string) (bool, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail get readstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return false, fmt.Errorf("fail get readstate: %v", err)
@@ -158,7 +158,7 @@ func ExistReadStateConds(ctx context.Context, conds *npool.Conds) (bool, error) 
 		if err != nil {
 			return nil, fmt.Errorf("fail get readstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return false, fmt.Errorf("fail get readstate: %v", err)
@@ -174,7 +174,7 @@ func CountReadStates(ctx context.Context, conds *npool.Conds) (uint32, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail count readstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return 0, fmt.Errorf("fail count readstate: %v", err)
@@ -190,7 +190,7 @@ func DeleteReadState(ctx context.Context, id string) (*npool.ReadState, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail delete readstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail delete readstate: %v", err)

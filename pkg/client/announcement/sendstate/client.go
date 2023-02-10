@@ -42,7 +42,7 @@ func CreateSendState(ctx context.Context, in *npool.SendStateReq) (*npool.SendSt
 		if err != nil {
 			return nil, fmt.Errorf("fail create sendstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail create sendstate: %v", err)
@@ -74,7 +74,7 @@ func UpdateSendState(ctx context.Context, in *npool.SendStateReq) (*npool.SendSt
 		if err != nil {
 			return nil, fmt.Errorf("fail add sendstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail update sendstate: %v", err)
@@ -90,7 +90,7 @@ func GetSendState(ctx context.Context, id string) (*npool.SendState, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail get sendstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail get sendstate: %v", err)
@@ -106,7 +106,7 @@ func GetSendStateOnly(ctx context.Context, conds *npool.Conds) (*npool.SendState
 		if err != nil {
 			return nil, fmt.Errorf("fail get sendstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail get sendstate: %v", err)
@@ -142,7 +142,7 @@ func ExistSendState(ctx context.Context, id string) (bool, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail get sendstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return false, fmt.Errorf("fail get sendstate: %v", err)
@@ -158,7 +158,7 @@ func ExistSendStateConds(ctx context.Context, conds *npool.Conds) (bool, error) 
 		if err != nil {
 			return nil, fmt.Errorf("fail get sendstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return false, fmt.Errorf("fail get sendstate: %v", err)
@@ -174,7 +174,7 @@ func CountSendStates(ctx context.Context, conds *npool.Conds) (uint32, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail count sendstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return 0, fmt.Errorf("fail count sendstate: %v", err)
@@ -190,7 +190,7 @@ func DeleteSendState(ctx context.Context, id string) (*npool.SendState, error) {
 		if err != nil {
 			return nil, fmt.Errorf("fail delete sendstate: %v", err)
 		}
-		return resp.GetInfo(), nil
+		return resp.Info, nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("fail delete sendstate: %v", err)
