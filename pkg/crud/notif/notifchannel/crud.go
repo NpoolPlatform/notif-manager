@@ -1,18 +1,15 @@
-package notif
+package notifchannel
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
-
-	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqljson"
+	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
 
 	"time"
 
-	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
-	tracer "github.com/NpoolPlatform/notif-manager/pkg/tracer/notif"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notifchannel"
+	tracer "github.com/NpoolPlatform/notif-manager/pkg/tracer/notif/notifchannel"
 
 	constant "github.com/NpoolPlatform/notif-manager/pkg/message/const"
 	commontracer "github.com/NpoolPlatform/notif-manager/pkg/tracer"
@@ -20,58 +17,34 @@ import (
 	"go.opentelemetry.io/otel/codes"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
-	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif"
+	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif/notifchannel"
 	"github.com/NpoolPlatform/notif-manager/pkg/db"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent"
 
 	"github.com/google/uuid"
+
+	"github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
 )
 
-func CreateSet(c *ent.NotifCreate, in *npool.NotifReq) (*ent.NotifCreate, error) {
+func CreateSet(c *ent.NotifChannelCreate, in *npool.NotifChannelReq) (*ent.NotifChannelCreate, error) {
 	if in.ID != nil {
 		c.SetID(uuid.MustParse(in.GetID()))
 	}
 	if in.AppID != nil {
 		c.SetAppID(uuid.MustParse(in.GetAppID()))
 	}
-	if in.UserID != nil {
-		c.SetUserID(uuid.MustParse(in.GetUserID()))
-	}
-
-	c.SetAlreadyRead(false)
-
-	if in.LangID != nil {
-		c.SetLangID(uuid.MustParse(in.GetLangID()))
-	}
 	if in.EventType != nil {
 		c.SetEventType(in.GetEventType().String())
 	}
-	if in.UseTemplate != nil {
-		c.SetUseTemplate(in.GetUseTemplate())
-	}
-	if in.Title != nil {
-		c.SetTitle(in.GetTitle())
-	}
-	if in.Content != nil {
-		c.SetContent(in.GetContent())
-	}
-	if in.Channels != nil {
-		var channels []string
-		for _, m := range in.GetChannels() {
-			channels = append(channels, m.String())
-		}
-		c.SetChannels(channels)
-	}
-	c.SetEmailSend(false)
-	if in.Extra != nil {
-		c.SetExtra(in.GetExtra())
+	if in.Channel != nil {
+		c.SetChannel(in.GetChannel().String())
 	}
 
 	return c, nil
 }
 
-func Create(ctx context.Context, in *npool.NotifReq) (*ent.Notif, error) {
-	var info *ent.Notif
+func Create(ctx context.Context, in *npool.NotifChannelReq) (*ent.NotifChannel, error) {
+	var info *ent.NotifChannel
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Create")
@@ -87,7 +60,7 @@ func Create(ctx context.Context, in *npool.NotifReq) (*ent.Notif, error) {
 	span = tracer.Trace(span, in)
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		c := cli.Notif.Create()
+		c := cli.NotifChannel.Create()
 		stm, err := CreateSet(c, in)
 		if err != nil {
 			return err
@@ -102,7 +75,7 @@ func Create(ctx context.Context, in *npool.NotifReq) (*ent.Notif, error) {
 	return info, nil
 }
 
-func CreateBulk(ctx context.Context, in []*npool.NotifReq) ([]*ent.Notif, error) {
+func CreateBulk(ctx context.Context, in []*npool.NotifChannelReq) ([]*ent.NotifChannel, error) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CreateBulk")
@@ -117,17 +90,17 @@ func CreateBulk(ctx context.Context, in []*npool.NotifReq) ([]*ent.Notif, error)
 
 	span = tracer.TraceMany(span, in)
 
-	var rows []*ent.Notif
+	rows := []*ent.NotifChannel{}
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		bulk := make([]*ent.NotifCreate, len(in))
+		bulk := make([]*ent.NotifChannelCreate, len(in))
 		for i, info := range in {
-			bulk[i] = tx.Notif.Create()
+			bulk[i] = tx.NotifChannel.Create()
 			bulk[i], err = CreateSet(bulk[i], info)
 			if err != nil {
 				return err
 			}
 		}
-		rows, err = tx.Notif.CreateBulk(bulk...).Save(_ctx)
+		rows, err = tx.NotifChannel.CreateBulk(bulk...).Save(_ctx)
 		return err
 	})
 	if err != nil {
@@ -136,37 +109,12 @@ func CreateBulk(ctx context.Context, in []*npool.NotifReq) ([]*ent.Notif, error)
 	return rows, nil
 }
 
-func UpdateSet(u *ent.NotifUpdateOne, in *npool.NotifReq) (*ent.NotifUpdateOne, error) {
-	if in.Title != nil {
-		u.SetTitle(in.GetTitle())
-	}
-	if in.Content != nil {
-		u.SetContent(in.GetContent())
-	}
-	if in.Channels != nil {
-		var channels []string
-		for _, m := range in.GetChannels() {
-			channels = append(channels, m.String())
-		}
-		u.SetChannels(channels)
-	}
-	if in.GetEmailSend() {
-		u.SetEmailSend(in.GetEmailSend())
-	}
-	if in.AlreadyRead != nil {
-		u.SetAlreadyRead(in.GetAlreadyRead())
-	}
-	if in.UseTemplate != nil {
-		u.SetUseTemplate(in.GetUseTemplate())
-	}
-	if in.Extra != nil {
-		u.SetExtra(in.GetExtra())
-	}
+func UpdateSet(u *ent.NotifChannelUpdateOne, in *npool.NotifChannelReq) (*ent.NotifChannelUpdateOne, error) {
 	return u, nil
 }
 
-func Update(ctx context.Context, in *npool.NotifReq) (*ent.Notif, error) {
-	var info *ent.Notif
+func Update(ctx context.Context, in *npool.NotifChannelReq) (*ent.NotifChannel, error) {
+	var info *ent.NotifChannel
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Update")
@@ -182,7 +130,7 @@ func Update(ctx context.Context, in *npool.NotifReq) (*ent.Notif, error) {
 	span = tracer.Trace(span, in)
 
 	err = db.WithTx(ctx, func(_ctx context.Context, tx *ent.Tx) error {
-		info, err = tx.Notif.Query().Where(notif.ID(uuid.MustParse(in.GetID()))).ForUpdate().Only(_ctx)
+		info, err = tx.NotifChannel.Query().Where(notifchannel.ID(uuid.MustParse(in.GetID()))).ForUpdate().Only(_ctx)
 		if err != nil {
 			return err
 		}
@@ -202,8 +150,8 @@ func Update(ctx context.Context, in *npool.NotifReq) (*ent.Notif, error) {
 	return info, nil
 }
 
-func Row(ctx context.Context, id uuid.UUID) (*ent.Notif, error) {
-	var info *ent.Notif
+func Row(ctx context.Context, id uuid.UUID) (*ent.NotifChannel, error) {
+	var info *ent.NotifChannel
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Row")
@@ -219,7 +167,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Notif, error) {
 	span = commontracer.TraceID(span, id.String())
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Notif.Query().Where(notif.ID(id)).Only(_ctx)
+		info, err = cli.NotifChannel.Query().Where(notifchannel.ID(id)).Only(_ctx)
 		return err
 	})
 	if err != nil {
@@ -229,109 +177,51 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Notif, error) {
 	return info, nil
 }
 
-//nolint:funlen,gocyclo
-func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error) {
-	stm := cli.Notif.Query()
+func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifChannelQuery, error) {
+	stm := cli.NotifChannel.Query()
 	if conds == nil {
 		return stm, nil
-	}
-	if len(conds.GetChannels().GetValue()) > 0 {
-		stm.Where(func(selector *sql.Selector) {
-			channels := conds.GetChannels().GetValue()
-			for i := 0; i < len(channels); i++ {
-				if i == 0 {
-					selector.Where(sqljson.ValueContains(notif.FieldChannels, channels[i]))
-				} else {
-					selector.Or().Where(sqljson.ValueContains(notif.FieldChannels, channels[i]))
-				}
-			}
-		})
 	}
 	if conds.ID != nil {
 		switch conds.GetID().GetOp() {
 		case cruder.EQ:
-			stm.Where(notif.ID(uuid.MustParse(conds.GetID().GetValue())))
+			stm.Where(notifchannel.ID(uuid.MustParse(conds.GetID().GetValue())))
 		default:
-			return nil, fmt.Errorf("invalid notif field")
+			return nil, fmt.Errorf("invalid notifchannel field")
 		}
 	}
-	if conds.IDs != nil {
-		switch conds.GetIDs().GetOp() {
-		case cruder.IN:
-			var ids []uuid.UUID
-			for _, val := range conds.GetIDs().GetValue() {
-				id, err := uuid.Parse(val)
-				if err != nil {
-					return nil, err
-				}
-				ids = append(ids, id)
-			}
-			stm.Where(notif.IDIn(ids...))
-		default:
-			return nil, fmt.Errorf("invalid notif field")
-		}
-	}
+
 	if conds.AppID != nil {
 		switch conds.GetAppID().GetOp() {
 		case cruder.EQ:
-			stm.Where(notif.AppID(uuid.MustParse(conds.GetAppID().GetValue())))
+			stm.Where(notifchannel.AppID(uuid.MustParse(conds.GetAppID().GetValue())))
 		default:
-			return nil, fmt.Errorf("invalid notif field")
+			return nil, fmt.Errorf("invalid notifchannel field")
 		}
 	}
-	if conds.UserID != nil {
-		switch conds.GetUserID().GetOp() {
-		case cruder.EQ:
-			stm.Where(notif.UserID(uuid.MustParse(conds.GetUserID().GetValue())))
-		default:
-			return nil, fmt.Errorf("invalid notif field")
-		}
-	}
-	if conds.AlreadyRead != nil {
-		switch conds.GetAlreadyRead().GetOp() {
-		case cruder.EQ:
-			stm.Where(notif.AlreadyRead(conds.GetAlreadyRead().GetValue()))
-		default:
-			return nil, fmt.Errorf("invalid notif field")
-		}
-	}
-	if conds.LangID != nil {
-		switch conds.GetLangID().GetOp() {
-		case cruder.EQ:
-			stm.Where(notif.LangID(uuid.MustParse(conds.GetLangID().GetValue())))
-		default:
-			return nil, fmt.Errorf("invalid notif field")
-		}
-	}
+
 	if conds.EventType != nil {
 		switch conds.GetEventType().GetOp() {
 		case cruder.EQ:
-			stm.Where(notif.EventType(usedfor.UsedFor(conds.GetEventType().GetValue()).String()))
+			stm.Where(notifchannel.EventType(usedfor.UsedFor(conds.GetEventType().GetValue()).String()))
 		default:
-			return nil, fmt.Errorf("invalid notif field")
-		}
-	}
-	if conds.UseTemplate != nil {
-		switch conds.GetUseTemplate().GetOp() {
-		case cruder.EQ:
-			stm.Where(notif.UseTemplate(conds.GetUseTemplate().GetValue()))
-		default:
-			return nil, fmt.Errorf("invalid notif field")
+			return nil, fmt.Errorf("invalid notifchannel field")
 		}
 	}
 
-	if conds.EmailSend != nil {
-		switch conds.GetEmailSend().GetOp() {
+	if conds.Channel != nil {
+		switch conds.GetChannel().GetOp() {
 		case cruder.EQ:
-			stm.Where(notif.EmailSend(conds.GetEmailSend().GetValue()))
+			stm.Where(notifchannel.Channel(channel.NotifChannel(conds.GetChannel().GetValue()).String()))
 		default:
-			return nil, fmt.Errorf("invalid notif field")
+			return nil, fmt.Errorf("invalid notifchannel field")
 		}
 	}
+
 	return stm, nil
 }
 
-func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.Notif, int, error) {
+func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.NotifChannel, int, error) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Rows")
@@ -347,7 +237,7 @@ func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.No
 	span = tracer.TraceConds(span, conds)
 	span = commontracer.TraceOffsetLimit(span, offset, limit)
 
-	var rows []*ent.Notif
+	rows := []*ent.NotifChannel{}
 	var total int
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
 		stm, err := SetQueryConds(conds, cli)
@@ -362,7 +252,7 @@ func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.No
 
 		rows, err = stm.
 			Offset(offset).
-			Order(ent.Desc(notif.FieldCreatedAt)).
+			Order(ent.Desc(notifchannel.FieldCreatedAt)).
 			Limit(limit).
 			All(_ctx)
 		if err != nil {
@@ -377,8 +267,8 @@ func Rows(ctx context.Context, conds *npool.Conds, offset, limit int) ([]*ent.No
 	return rows, total, nil
 }
 
-func RowOnly(ctx context.Context, conds *npool.Conds) (*ent.Notif, error) {
-	var info *ent.Notif
+func RowOnly(ctx context.Context, conds *npool.Conds) (*ent.NotifChannel, error) {
+	var info *ent.NotifChannel
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "RowOnly")
@@ -465,7 +355,7 @@ func Exist(ctx context.Context, id uuid.UUID) (bool, error) {
 	span = commontracer.TraceID(span, id.String())
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		exist, err = cli.Notif.Query().Where(notif.ID(id)).Exist(_ctx)
+		exist, err = cli.NotifChannel.Query().Where(notifchannel.ID(id)).Exist(_ctx)
 		return err
 	})
 	if err != nil {
@@ -511,8 +401,8 @@ func ExistConds(ctx context.Context, conds *npool.Conds) (bool, error) {
 	return exist, nil
 }
 
-func Delete(ctx context.Context, id uuid.UUID) (*ent.Notif, error) {
-	var info *ent.Notif
+func Delete(ctx context.Context, id uuid.UUID) (*ent.NotifChannel, error) {
+	var info *ent.NotifChannel
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "Delete")
@@ -528,7 +418,7 @@ func Delete(ctx context.Context, id uuid.UUID) (*ent.Notif, error) {
 	span = commontracer.TraceID(span, id.String())
 
 	err = db.WithClient(ctx, func(_ctx context.Context, cli *ent.Client) error {
-		info, err = cli.Notif.UpdateOneID(id).
+		info, err = cli.NotifChannel.UpdateOneID(id).
 			SetDeletedAt(uint32(time.Now().Unix())).
 			Save(_ctx)
 		return err

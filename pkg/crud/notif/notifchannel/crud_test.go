@@ -1,4 +1,4 @@
-package notif
+package notifchannel
 
 import (
 	"context"
@@ -7,20 +7,20 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
+	"github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
+
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent"
 
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	valuedef "github.com/NpoolPlatform/message/npool"
-	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
-	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif"
+	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif/notifchannel"
 
 	testinit "github.com/NpoolPlatform/notif-manager/pkg/testinit"
 	"github.com/google/uuid"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
 )
 
 func init() {
@@ -32,45 +32,29 @@ func init() {
 	}
 }
 
-var amt = ent.Notif{
-	ID:          uuid.New(),
-	AppID:       uuid.New(),
-	UserID:      uuid.New(),
-	AlreadyRead: false,
-	LangID:      uuid.New(),
-	EventType:   "DefaultUsedFor",
-	UseTemplate: true,
-	Title:       uuid.NewString(),
-	Content:     uuid.NewString(),
-	Channels:    []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-	EmailSend:   false,
-	Extra:       uuid.NewString(),
-}
-
 var (
-	id        = amt.ID.String()
-	appID     = amt.AppID.String()
-	userID    = amt.UserID.String()
-	langID    = amt.LangID.String()
-	eventType = usedfor.UsedFor(usedfor.UsedFor_value[amt.EventType])
-	channel1  = []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS}
-	req       = npool.NotifReq{
-		ID:          &id,
-		AppID:       &appID,
-		UserID:      &userID,
-		AlreadyRead: &amt.AlreadyRead,
-		LangID:      &langID,
-		EventType:   &eventType,
-		UseTemplate: &amt.UseTemplate,
-		Title:       &amt.Title,
-		Content:     &amt.Content,
-		Channels:    channel1,
-		EmailSend:   &amt.EmailSend,
-		Extra:       &amt.Extra,
+	eventType = usedfor.UsedFor_KYCApproved
+	channel1  = channel.NotifChannel_ChannelFrontend
+	amt       = ent.NotifChannel{
+		ID:        uuid.New(),
+		AppID:     uuid.New(),
+		EventType: eventType.String(),
+		Channel:   channel1.String(),
 	}
 )
 
-var info *ent.Notif
+var (
+	id    = amt.ID.String()
+	appID = amt.AppID.String()
+	req   = npool.NotifChannelReq{
+		ID:        &id,
+		AppID:     &appID,
+		EventType: &eventType,
+		Channel:   &channel1,
+	}
+)
+
+var info *ent.NotifChannel
 
 func create(t *testing.T) {
 	var err error
@@ -83,58 +67,30 @@ func create(t *testing.T) {
 }
 
 func createBulk(t *testing.T) {
-	entities := []*ent.Notif{
+	entities := []*ent.NotifChannel{
 		{
-			ID:          uuid.New(),
-			AppID:       uuid.New(),
-			UserID:      uuid.New(),
-			AlreadyRead: false,
-			LangID:      uuid.New(),
-			EventType:   "DefaultUsedFor",
-			UseTemplate: true,
-			Title:       uuid.NewString(),
-			Content:     uuid.NewString(),
-			Channels:    []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-			EmailSend:   false,
-			Extra:       uuid.NewString(),
+			ID:        uuid.New(),
+			AppID:     uuid.New(),
+			EventType: eventType.String(),
+			Channel:   channel1.String(),
 		},
 		{
-			ID:          uuid.New(),
-			AppID:       uuid.New(),
-			UserID:      uuid.New(),
-			AlreadyRead: false,
-			LangID:      uuid.New(),
-			EventType:   "DefaultUsedFor",
-			UseTemplate: true,
-			Title:       uuid.NewString(),
-			Content:     uuid.NewString(),
-			Channels:    []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-			EmailSend:   false,
-			Extra:       uuid.NewString(),
+			ID:        uuid.New(),
+			AppID:     uuid.New(),
+			EventType: eventType.String(),
+			Channel:   channel1.String(),
 		},
 	}
 
-	reqs := []*npool.NotifReq{}
+	reqs := []*npool.NotifChannelReq{}
 	for _, _amt := range entities {
 		_id := _amt.ID.String()
 		_appID := _amt.AppID.String()
-		_userID := _amt.UserID.String()
-		_langID := _amt.LangID.String()
-		_eventType := usedfor.UsedFor(usedfor.UsedFor_value[_amt.EventType])
-		_channel1 := []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS}
-		reqs = append(reqs, &npool.NotifReq{
-			ID:          &_id,
-			AppID:       &_appID,
-			UserID:      &_userID,
-			AlreadyRead: &_amt.AlreadyRead,
-			LangID:      &_langID,
-			EventType:   &_eventType,
-			UseTemplate: &_amt.UseTemplate,
-			Title:       &_amt.Title,
-			Content:     &_amt.Content,
-			Channels:    _channel1,
-			EmailSend:   &_amt.EmailSend,
-			Extra:       &_amt.Extra,
+		reqs = append(reqs, &npool.NotifChannelReq{
+			ID:        &_id,
+			AppID:     &_appID,
+			EventType: &eventType,
+			Channel:   &channel1,
 		})
 	}
 	infos, err := CreateBulk(context.Background(), reqs)
@@ -234,7 +190,7 @@ func deleteA(t *testing.T) {
 	}
 }
 
-func TestNotif(t *testing.T) {
+func TestDetail(t *testing.T) {
 	if runByGithubAction, err := strconv.ParseBool(os.Getenv("RUN_BY_GITHUB_ACTION")); err == nil && runByGithubAction {
 		return
 	}

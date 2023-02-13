@@ -30,6 +30,7 @@ type config struct {
 type hooks struct {
 	Announcement     []ent.Hook
 	Notif            []ent.Hook
+	NotifChannel     []ent.Hook
 	ReadAnnouncement []ent.Hook
 	SendAnnouncement []ent.Hook
 	TxNotifState     []ent.Hook

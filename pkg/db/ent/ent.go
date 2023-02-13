@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/announcement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notifchannel"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/txnotifstate"
@@ -38,6 +39,7 @@ func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		announcement.Table:     announcement.ValidColumn,
 		notif.Table:            notif.ValidColumn,
+		notifchannel.Table:     notifchannel.ValidColumn,
 		readannouncement.Table: readannouncement.ValidColumn,
 		sendannouncement.Table: sendannouncement.ValidColumn,
 		txnotifstate.Table:     txnotifstate.ValidColumn,

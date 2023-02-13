@@ -7,6 +7,7 @@ import (
 
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/announcement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notifchannel"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/schema"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
@@ -158,6 +159,50 @@ func init() {
 	notifDescID := notifFields[0].Descriptor()
 	// notif.DefaultID holds the default value on creation for the id field.
 	notif.DefaultID = notifDescID.Default.(func() uuid.UUID)
+	notifchannelMixin := schema.NotifChannel{}.Mixin()
+	notifchannel.Policy = privacy.NewPolicies(notifchannelMixin[0], schema.NotifChannel{})
+	notifchannel.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := notifchannel.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	notifchannelMixinFields0 := notifchannelMixin[0].Fields()
+	_ = notifchannelMixinFields0
+	notifchannelFields := schema.NotifChannel{}.Fields()
+	_ = notifchannelFields
+	// notifchannelDescCreatedAt is the schema descriptor for created_at field.
+	notifchannelDescCreatedAt := notifchannelMixinFields0[0].Descriptor()
+	// notifchannel.DefaultCreatedAt holds the default value on creation for the created_at field.
+	notifchannel.DefaultCreatedAt = notifchannelDescCreatedAt.Default.(func() uint32)
+	// notifchannelDescUpdatedAt is the schema descriptor for updated_at field.
+	notifchannelDescUpdatedAt := notifchannelMixinFields0[1].Descriptor()
+	// notifchannel.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	notifchannel.DefaultUpdatedAt = notifchannelDescUpdatedAt.Default.(func() uint32)
+	// notifchannel.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	notifchannel.UpdateDefaultUpdatedAt = notifchannelDescUpdatedAt.UpdateDefault.(func() uint32)
+	// notifchannelDescDeletedAt is the schema descriptor for deleted_at field.
+	notifchannelDescDeletedAt := notifchannelMixinFields0[2].Descriptor()
+	// notifchannel.DefaultDeletedAt holds the default value on creation for the deleted_at field.
+	notifchannel.DefaultDeletedAt = notifchannelDescDeletedAt.Default.(func() uint32)
+	// notifchannelDescAppID is the schema descriptor for app_id field.
+	notifchannelDescAppID := notifchannelFields[1].Descriptor()
+	// notifchannel.DefaultAppID holds the default value on creation for the app_id field.
+	notifchannel.DefaultAppID = notifchannelDescAppID.Default.(func() uuid.UUID)
+	// notifchannelDescEventType is the schema descriptor for event_type field.
+	notifchannelDescEventType := notifchannelFields[2].Descriptor()
+	// notifchannel.DefaultEventType holds the default value on creation for the event_type field.
+	notifchannel.DefaultEventType = notifchannelDescEventType.Default.(string)
+	// notifchannelDescChannel is the schema descriptor for channel field.
+	notifchannelDescChannel := notifchannelFields[3].Descriptor()
+	// notifchannel.DefaultChannel holds the default value on creation for the channel field.
+	notifchannel.DefaultChannel = notifchannelDescChannel.Default.(string)
+	// notifchannelDescID is the schema descriptor for id field.
+	notifchannelDescID := notifchannelFields[0].Descriptor()
+	// notifchannel.DefaultID holds the default value on creation for the id field.
+	notifchannel.DefaultID = notifchannelDescID.Default.(func() uuid.UUID)
 	readannouncementMixin := schema.ReadAnnouncement{}.Mixin()
 	readannouncement.Policy = privacy.NewPolicies(readannouncementMixin[0], schema.ReadAnnouncement{})
 	readannouncement.Hooks[0] = func(next ent.Mutator) ent.Mutator {

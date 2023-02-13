@@ -10,7 +10,7 @@ import (
 )
 
 func trace(span trace1.Span, in *npool.NotifReq, index int) trace1.Span {
-	channel := []string{}
+	var channel []string
 	for _, val := range in.GetChannels() {
 		channel = append(channel, val.String())
 	}

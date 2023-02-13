@@ -198,6 +198,30 @@ func (f NotifMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation)
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.NotifMutation", m)
 }
 
+// The NotifChannelQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type NotifChannelQueryRuleFunc func(context.Context, *ent.NotifChannelQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f NotifChannelQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.NotifChannelQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.NotifChannelQuery", q)
+}
+
+// The NotifChannelMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type NotifChannelMutationRuleFunc func(context.Context, *ent.NotifChannelMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f NotifChannelMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.NotifChannelMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.NotifChannelMutation", m)
+}
+
 // The ReadAnnouncementQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ReadAnnouncementQueryRuleFunc func(context.Context, *ent.ReadAnnouncementQuery) error
@@ -333,6 +357,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.NotifQuery:
 		return q.Filter(), nil
+	case *ent.NotifChannelQuery:
+		return q.Filter(), nil
 	case *ent.ReadAnnouncementQuery:
 		return q.Filter(), nil
 	case *ent.SendAnnouncementQuery:
@@ -351,6 +377,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.AnnouncementMutation:
 		return m.Filter(), nil
 	case *ent.NotifMutation:
+		return m.Filter(), nil
+	case *ent.NotifChannelMutation:
 		return m.Filter(), nil
 	case *ent.ReadAnnouncementMutation:
 		return m.Filter(), nil

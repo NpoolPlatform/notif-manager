@@ -13,6 +13,7 @@ import (
 
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/announcement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notifchannel"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/txnotifstate"
@@ -31,6 +32,8 @@ type Client struct {
 	Announcement *AnnouncementClient
 	// Notif is the client for interacting with the Notif builders.
 	Notif *NotifClient
+	// NotifChannel is the client for interacting with the NotifChannel builders.
+	NotifChannel *NotifChannelClient
 	// ReadAnnouncement is the client for interacting with the ReadAnnouncement builders.
 	ReadAnnouncement *ReadAnnouncementClient
 	// SendAnnouncement is the client for interacting with the SendAnnouncement builders.
@@ -54,6 +57,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Announcement = NewAnnouncementClient(c.config)
 	c.Notif = NewNotifClient(c.config)
+	c.NotifChannel = NewNotifChannelClient(c.config)
 	c.ReadAnnouncement = NewReadAnnouncementClient(c.config)
 	c.SendAnnouncement = NewSendAnnouncementClient(c.config)
 	c.TxNotifState = NewTxNotifStateClient(c.config)
@@ -93,6 +97,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:           cfg,
 		Announcement:     NewAnnouncementClient(cfg),
 		Notif:            NewNotifClient(cfg),
+		NotifChannel:     NewNotifChannelClient(cfg),
 		ReadAnnouncement: NewReadAnnouncementClient(cfg),
 		SendAnnouncement: NewSendAnnouncementClient(cfg),
 		TxNotifState:     NewTxNotifStateClient(cfg),
@@ -118,6 +123,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:           cfg,
 		Announcement:     NewAnnouncementClient(cfg),
 		Notif:            NewNotifClient(cfg),
+		NotifChannel:     NewNotifChannelClient(cfg),
 		ReadAnnouncement: NewReadAnnouncementClient(cfg),
 		SendAnnouncement: NewSendAnnouncementClient(cfg),
 		TxNotifState:     NewTxNotifStateClient(cfg),
@@ -153,6 +159,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Announcement.Use(hooks...)
 	c.Notif.Use(hooks...)
+	c.NotifChannel.Use(hooks...)
 	c.ReadAnnouncement.Use(hooks...)
 	c.SendAnnouncement.Use(hooks...)
 	c.TxNotifState.Use(hooks...)
@@ -339,6 +346,97 @@ func (c *NotifClient) GetX(ctx context.Context, id uuid.UUID) *Notif {
 func (c *NotifClient) Hooks() []Hook {
 	hooks := c.hooks.Notif
 	return append(hooks[:len(hooks):len(hooks)], notif.Hooks[:]...)
+}
+
+// NotifChannelClient is a client for the NotifChannel schema.
+type NotifChannelClient struct {
+	config
+}
+
+// NewNotifChannelClient returns a client for the NotifChannel from the given config.
+func NewNotifChannelClient(c config) *NotifChannelClient {
+	return &NotifChannelClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `notifchannel.Hooks(f(g(h())))`.
+func (c *NotifChannelClient) Use(hooks ...Hook) {
+	c.hooks.NotifChannel = append(c.hooks.NotifChannel, hooks...)
+}
+
+// Create returns a builder for creating a NotifChannel entity.
+func (c *NotifChannelClient) Create() *NotifChannelCreate {
+	mutation := newNotifChannelMutation(c.config, OpCreate)
+	return &NotifChannelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of NotifChannel entities.
+func (c *NotifChannelClient) CreateBulk(builders ...*NotifChannelCreate) *NotifChannelCreateBulk {
+	return &NotifChannelCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for NotifChannel.
+func (c *NotifChannelClient) Update() *NotifChannelUpdate {
+	mutation := newNotifChannelMutation(c.config, OpUpdate)
+	return &NotifChannelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NotifChannelClient) UpdateOne(nc *NotifChannel) *NotifChannelUpdateOne {
+	mutation := newNotifChannelMutation(c.config, OpUpdateOne, withNotifChannel(nc))
+	return &NotifChannelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NotifChannelClient) UpdateOneID(id uuid.UUID) *NotifChannelUpdateOne {
+	mutation := newNotifChannelMutation(c.config, OpUpdateOne, withNotifChannelID(id))
+	return &NotifChannelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for NotifChannel.
+func (c *NotifChannelClient) Delete() *NotifChannelDelete {
+	mutation := newNotifChannelMutation(c.config, OpDelete)
+	return &NotifChannelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NotifChannelClient) DeleteOne(nc *NotifChannel) *NotifChannelDeleteOne {
+	return c.DeleteOneID(nc.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *NotifChannelClient) DeleteOneID(id uuid.UUID) *NotifChannelDeleteOne {
+	builder := c.Delete().Where(notifchannel.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NotifChannelDeleteOne{builder}
+}
+
+// Query returns a query builder for NotifChannel.
+func (c *NotifChannelClient) Query() *NotifChannelQuery {
+	return &NotifChannelQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a NotifChannel entity by its id.
+func (c *NotifChannelClient) Get(ctx context.Context, id uuid.UUID) (*NotifChannel, error) {
+	return c.Query().Where(notifchannel.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NotifChannelClient) GetX(ctx context.Context, id uuid.UUID) *NotifChannel {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *NotifChannelClient) Hooks() []Hook {
+	hooks := c.hooks.NotifChannel
+	return append(hooks[:len(hooks):len(hooks)], notifchannel.Hooks[:]...)
 }
 
 // ReadAnnouncementClient is a client for the ReadAnnouncement schema.

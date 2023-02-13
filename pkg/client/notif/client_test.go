@@ -24,6 +24,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/google/uuid"
+
+	"github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
 )
 
 func init() {
@@ -41,7 +43,7 @@ var data = &npool.Notif{
 	UserID:      uuid.NewString(),
 	AlreadyRead: false,
 	LangID:      uuid.NewString(),
-	EventType:   npool.EventType_KYCApproved,
+	EventType:   usedfor.UsedFor_KYCApproved,
 	UseTemplate: true,
 	Title:       uuid.NewString(),
 	Content:     uuid.NewString(),
@@ -90,7 +92,7 @@ func createNotifs(t *testing.T) {
 			UserID:      uuid.NewString(),
 			AlreadyRead: true,
 			LangID:      uuid.NewString(),
-			EventType:   npool.EventType_KYCApproved,
+			EventType:   usedfor.UsedFor_KYCApproved,
 			UseTemplate: true,
 			Title:       uuid.NewString(),
 			Content:     uuid.NewString(),
@@ -104,7 +106,7 @@ func createNotifs(t *testing.T) {
 			UserID:      uuid.NewString(),
 			AlreadyRead: true,
 			LangID:      uuid.NewString(),
-			EventType:   npool.EventType_KYCApproved,
+			EventType:   usedfor.UsedFor_KYCApproved,
 			UseTemplate: true,
 			Title:       uuid.NewString(),
 			Content:     uuid.NewString(),

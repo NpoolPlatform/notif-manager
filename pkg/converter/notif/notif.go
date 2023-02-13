@@ -3,6 +3,7 @@ package notif
 import (
 	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
 	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif"
+	"github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent"
 )
 
@@ -11,7 +12,7 @@ func Ent2Grpc(row *ent.Notif) *npool.Notif {
 		return nil
 	}
 
-	channels := []channel.NotifChannel{}
+	var channels []channel.NotifChannel
 	for _, val := range row.Channels {
 		channels = append(channels, channel.NotifChannel(channel.NotifChannel_value[val]))
 	}
@@ -21,7 +22,7 @@ func Ent2Grpc(row *ent.Notif) *npool.Notif {
 		UserID:      row.UserID.String(),
 		AlreadyRead: row.AlreadyRead,
 		LangID:      row.LangID.String(),
-		EventType:   npool.EventType(npool.EventType_value[row.EventType]),
+		EventType:   usedfor.UsedFor(usedfor.UsedFor_value[row.EventType]),
 		UseTemplate: row.UseTemplate,
 		Title:       row.Title,
 		Content:     row.Content,
@@ -34,7 +35,7 @@ func Ent2Grpc(row *ent.Notif) *npool.Notif {
 }
 
 func Ent2GrpcMany(rows []*ent.Notif) []*npool.Notif {
-	infos := []*npool.Notif{}
+	var infos []*npool.Notif
 	for _, row := range rows {
 		infos = append(infos, Ent2Grpc(row))
 	}

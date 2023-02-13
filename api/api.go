@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 
+	"github.com/NpoolPlatform/notif-manager/api/notif/notifchannel"
+
 	"github.com/NpoolPlatform/notif-manager/api/notif/txnotifstate"
 
 	"github.com/NpoolPlatform/notif-manager/api/announcement/sendstate"
@@ -30,6 +32,7 @@ func Register(server grpc.ServiceRegistrar) {
 	sendstate.Register(server)
 	user.Register(server)
 	txnotifstate.Register(server)
+	notifchannel.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {

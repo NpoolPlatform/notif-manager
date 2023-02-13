@@ -38,7 +38,7 @@ var (
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "already_read", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "lang_id", Type: field.TypeUUID, Nullable: true},
-		{Name: "event_type", Type: field.TypeString, Nullable: true, Default: "DefaultEventType"},
+		{Name: "event_type", Type: field.TypeString, Nullable: true, Default: "DefaultUsedFor"},
 		{Name: "use_template", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "title", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
@@ -51,6 +51,22 @@ var (
 		Name:       "notifs",
 		Columns:    NotifsColumns,
 		PrimaryKey: []*schema.Column{NotifsColumns[0]},
+	}
+	// NotifChannelsColumns holds the columns for the "notif_channels" table.
+	NotifChannelsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeUint32},
+		{Name: "app_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "event_type", Type: field.TypeString, Nullable: true, Default: "DefaultUsedFor"},
+		{Name: "channel", Type: field.TypeString, Nullable: true, Default: "DefaultChannel"},
+	}
+	// NotifChannelsTable holds the schema information for the "notif_channels" table.
+	NotifChannelsTable = &schema.Table{
+		Name:       "notif_channels",
+		Columns:    NotifChannelsColumns,
+		PrimaryKey: []*schema.Column{NotifChannelsColumns[0]},
 	}
 	// ReadAnnouncementsColumns holds the columns for the "read_announcements" table.
 	ReadAnnouncementsColumns = []*schema.Column{
@@ -121,6 +137,7 @@ var (
 	Tables = []*schema.Table{
 		AnnouncementsTable,
 		NotifsTable,
+		NotifChannelsTable,
 		ReadAnnouncementsTable,
 		SendAnnouncementsTable,
 		TxNotifStatesTable,

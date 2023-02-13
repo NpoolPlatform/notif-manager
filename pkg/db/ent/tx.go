@@ -18,6 +18,8 @@ type Tx struct {
 	Announcement *AnnouncementClient
 	// Notif is the client for interacting with the Notif builders.
 	Notif *NotifClient
+	// NotifChannel is the client for interacting with the NotifChannel builders.
+	NotifChannel *NotifChannelClient
 	// ReadAnnouncement is the client for interacting with the ReadAnnouncement builders.
 	ReadAnnouncement *ReadAnnouncementClient
 	// SendAnnouncement is the client for interacting with the SendAnnouncement builders.
@@ -163,6 +165,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Announcement = NewAnnouncementClient(tx.config)
 	tx.Notif = NewNotifClient(tx.config)
+	tx.NotifChannel = NewNotifChannelClient(tx.config)
 	tx.ReadAnnouncement = NewReadAnnouncementClient(tx.config)
 	tx.SendAnnouncement = NewSendAnnouncementClient(tx.config)
 	tx.TxNotifState = NewTxNotifStateClient(tx.config)

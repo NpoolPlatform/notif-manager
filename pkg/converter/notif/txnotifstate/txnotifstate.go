@@ -20,7 +20,7 @@ func Ent2Grpc(row *ent.TxNotifState) *npool.TxNotifState {
 }
 
 func Ent2GrpcMany(rows []*ent.TxNotifState) []*npool.TxNotifState {
-	infos := []*npool.TxNotifState{}
+	var infos []*npool.TxNotifState
 	for _, row := range rows {
 		infos = append(infos, Ent2Grpc(row))
 	}
