@@ -194,6 +194,7 @@ func existAppGoodConds(t *testing.T) {
 func deleteNotif(t *testing.T) {
 	info, err := DeleteNotif(context.Background(), data.ID)
 	if assert.Nil(t, err) {
+		data.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, data, info)
 	}
 
