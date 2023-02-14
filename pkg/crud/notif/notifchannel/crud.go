@@ -177,7 +177,7 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.NotifChannel, error) {
 	return info, nil
 }
 
-func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifChannelQuery, error) {
+func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifChannelQuery, error) { //nolint
 	stm := cli.NotifChannel.Query()
 	if conds == nil {
 		return stm, nil
@@ -209,10 +209,36 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifChannelQuery,
 		}
 	}
 
+	if len(conds.GetEventTypes().GetValue()) > 0 {
+		switch conds.GetEventTypes().GetOp() {
+		case cruder.IN:
+			types := []string{}
+			for _, typ := range conds.GetEventTypes().GetValue() {
+				types = append(types, usedfor.UsedFor(typ).String())
+			}
+			stm.Where(notifchannel.EventTypeIn(types...))
+		default:
+			return nil, fmt.Errorf("invalid notifchannel field")
+		}
+	}
+
 	if conds.Channel != nil {
 		switch conds.GetChannel().GetOp() {
 		case cruder.EQ:
 			stm.Where(notifchannel.Channel(channel.NotifChannel(conds.GetChannel().GetValue()).String()))
+		default:
+			return nil, fmt.Errorf("invalid notifchannel field")
+		}
+	}
+
+	if len(conds.GetChannels().GetValue()) > 0 {
+		switch conds.GetChannels().GetOp() {
+		case cruder.IN:
+			chans := []string{}
+			for _, ch := range conds.GetChannels().GetValue() {
+				chans = append(chans, channel.NotifChannel(ch).String())
+			}
+			stm.Where(notifchannel.ChannelIn(chans...))
 		default:
 			return nil, fmt.Errorf("invalid notifchannel field")
 		}

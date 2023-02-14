@@ -59,14 +59,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 			notif.FieldDeletedAt:   {Type: field.TypeUint32, Column: notif.FieldDeletedAt},
 			notif.FieldAppID:       {Type: field.TypeUUID, Column: notif.FieldAppID},
 			notif.FieldUserID:      {Type: field.TypeUUID, Column: notif.FieldUserID},
-			notif.FieldAlreadyRead: {Type: field.TypeBool, Column: notif.FieldAlreadyRead},
+			notif.FieldNotified:    {Type: field.TypeBool, Column: notif.FieldNotified},
 			notif.FieldLangID:      {Type: field.TypeUUID, Column: notif.FieldLangID},
 			notif.FieldEventType:   {Type: field.TypeString, Column: notif.FieldEventType},
 			notif.FieldUseTemplate: {Type: field.TypeBool, Column: notif.FieldUseTemplate},
 			notif.FieldTitle:       {Type: field.TypeString, Column: notif.FieldTitle},
 			notif.FieldContent:     {Type: field.TypeString, Column: notif.FieldContent},
-			notif.FieldChannels:    {Type: field.TypeJSON, Column: notif.FieldChannels},
-			notif.FieldEmailSend:   {Type: field.TypeBool, Column: notif.FieldEmailSend},
+			notif.FieldChannel:     {Type: field.TypeString, Column: notif.FieldChannel},
 			notif.FieldExtra:       {Type: field.TypeString, Column: notif.FieldExtra},
 		},
 	}
@@ -330,9 +329,9 @@ func (f *NotifFilter) WhereUserID(p entql.ValueP) {
 	f.Where(p.Field(notif.FieldUserID))
 }
 
-// WhereAlreadyRead applies the entql bool predicate on the already_read field.
-func (f *NotifFilter) WhereAlreadyRead(p entql.BoolP) {
-	f.Where(p.Field(notif.FieldAlreadyRead))
+// WhereNotified applies the entql bool predicate on the notified field.
+func (f *NotifFilter) WhereNotified(p entql.BoolP) {
+	f.Where(p.Field(notif.FieldNotified))
 }
 
 // WhereLangID applies the entql [16]byte predicate on the lang_id field.
@@ -360,14 +359,9 @@ func (f *NotifFilter) WhereContent(p entql.StringP) {
 	f.Where(p.Field(notif.FieldContent))
 }
 
-// WhereChannels applies the entql json.RawMessage predicate on the channels field.
-func (f *NotifFilter) WhereChannels(p entql.BytesP) {
-	f.Where(p.Field(notif.FieldChannels))
-}
-
-// WhereEmailSend applies the entql bool predicate on the email_send field.
-func (f *NotifFilter) WhereEmailSend(p entql.BoolP) {
-	f.Where(p.Field(notif.FieldEmailSend))
+// WhereChannel applies the entql string predicate on the channel field.
+func (f *NotifFilter) WhereChannel(p entql.StringP) {
+	f.Where(p.Field(notif.FieldChannel))
 }
 
 // WhereExtra applies the entql string predicate on the extra field.

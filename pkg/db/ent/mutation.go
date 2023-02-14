@@ -1128,14 +1128,13 @@ type NotifMutation struct {
 	adddeleted_at *int32
 	app_id        *uuid.UUID
 	user_id       *uuid.UUID
-	already_read  *bool
+	notified      *bool
 	lang_id       *uuid.UUID
 	event_type    *string
 	use_template  *bool
 	title         *string
 	content       *string
-	channels      *[]string
-	email_send    *bool
+	channel       *string
 	extra         *string
 	clearedFields map[string]struct{}
 	done          bool
@@ -1513,53 +1512,53 @@ func (m *NotifMutation) ResetUserID() {
 	delete(m.clearedFields, notif.FieldUserID)
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (m *NotifMutation) SetAlreadyRead(b bool) {
-	m.already_read = &b
+// SetNotified sets the "notified" field.
+func (m *NotifMutation) SetNotified(b bool) {
+	m.notified = &b
 }
 
-// AlreadyRead returns the value of the "already_read" field in the mutation.
-func (m *NotifMutation) AlreadyRead() (r bool, exists bool) {
-	v := m.already_read
+// Notified returns the value of the "notified" field in the mutation.
+func (m *NotifMutation) Notified() (r bool, exists bool) {
+	v := m.notified
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAlreadyRead returns the old "already_read" field's value of the Notif entity.
+// OldNotified returns the old "notified" field's value of the Notif entity.
 // If the Notif object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *NotifMutation) OldAlreadyRead(ctx context.Context) (v bool, err error) {
+func (m *NotifMutation) OldNotified(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAlreadyRead is only allowed on UpdateOne operations")
+		return v, errors.New("OldNotified is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAlreadyRead requires an ID field in the mutation")
+		return v, errors.New("OldNotified requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAlreadyRead: %w", err)
+		return v, fmt.Errorf("querying old value for OldNotified: %w", err)
 	}
-	return oldValue.AlreadyRead, nil
+	return oldValue.Notified, nil
 }
 
-// ClearAlreadyRead clears the value of the "already_read" field.
-func (m *NotifMutation) ClearAlreadyRead() {
-	m.already_read = nil
-	m.clearedFields[notif.FieldAlreadyRead] = struct{}{}
+// ClearNotified clears the value of the "notified" field.
+func (m *NotifMutation) ClearNotified() {
+	m.notified = nil
+	m.clearedFields[notif.FieldNotified] = struct{}{}
 }
 
-// AlreadyReadCleared returns if the "already_read" field was cleared in this mutation.
-func (m *NotifMutation) AlreadyReadCleared() bool {
-	_, ok := m.clearedFields[notif.FieldAlreadyRead]
+// NotifiedCleared returns if the "notified" field was cleared in this mutation.
+func (m *NotifMutation) NotifiedCleared() bool {
+	_, ok := m.clearedFields[notif.FieldNotified]
 	return ok
 }
 
-// ResetAlreadyRead resets all changes to the "already_read" field.
-func (m *NotifMutation) ResetAlreadyRead() {
-	m.already_read = nil
-	delete(m.clearedFields, notif.FieldAlreadyRead)
+// ResetNotified resets all changes to the "notified" field.
+func (m *NotifMutation) ResetNotified() {
+	m.notified = nil
+	delete(m.clearedFields, notif.FieldNotified)
 }
 
 // SetLangID sets the "lang_id" field.
@@ -1807,102 +1806,53 @@ func (m *NotifMutation) ResetContent() {
 	delete(m.clearedFields, notif.FieldContent)
 }
 
-// SetChannels sets the "channels" field.
-func (m *NotifMutation) SetChannels(s []string) {
-	m.channels = &s
+// SetChannel sets the "channel" field.
+func (m *NotifMutation) SetChannel(s string) {
+	m.channel = &s
 }
 
-// Channels returns the value of the "channels" field in the mutation.
-func (m *NotifMutation) Channels() (r []string, exists bool) {
-	v := m.channels
+// Channel returns the value of the "channel" field in the mutation.
+func (m *NotifMutation) Channel() (r string, exists bool) {
+	v := m.channel
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldChannels returns the old "channels" field's value of the Notif entity.
+// OldChannel returns the old "channel" field's value of the Notif entity.
 // If the Notif object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *NotifMutation) OldChannels(ctx context.Context) (v []string, err error) {
+func (m *NotifMutation) OldChannel(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldChannels is only allowed on UpdateOne operations")
+		return v, errors.New("OldChannel is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldChannels requires an ID field in the mutation")
+		return v, errors.New("OldChannel requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChannels: %w", err)
+		return v, fmt.Errorf("querying old value for OldChannel: %w", err)
 	}
-	return oldValue.Channels, nil
+	return oldValue.Channel, nil
 }
 
-// ClearChannels clears the value of the "channels" field.
-func (m *NotifMutation) ClearChannels() {
-	m.channels = nil
-	m.clearedFields[notif.FieldChannels] = struct{}{}
+// ClearChannel clears the value of the "channel" field.
+func (m *NotifMutation) ClearChannel() {
+	m.channel = nil
+	m.clearedFields[notif.FieldChannel] = struct{}{}
 }
 
-// ChannelsCleared returns if the "channels" field was cleared in this mutation.
-func (m *NotifMutation) ChannelsCleared() bool {
-	_, ok := m.clearedFields[notif.FieldChannels]
+// ChannelCleared returns if the "channel" field was cleared in this mutation.
+func (m *NotifMutation) ChannelCleared() bool {
+	_, ok := m.clearedFields[notif.FieldChannel]
 	return ok
 }
 
-// ResetChannels resets all changes to the "channels" field.
-func (m *NotifMutation) ResetChannels() {
-	m.channels = nil
-	delete(m.clearedFields, notif.FieldChannels)
-}
-
-// SetEmailSend sets the "email_send" field.
-func (m *NotifMutation) SetEmailSend(b bool) {
-	m.email_send = &b
-}
-
-// EmailSend returns the value of the "email_send" field in the mutation.
-func (m *NotifMutation) EmailSend() (r bool, exists bool) {
-	v := m.email_send
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldEmailSend returns the old "email_send" field's value of the Notif entity.
-// If the Notif object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *NotifMutation) OldEmailSend(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldEmailSend is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldEmailSend requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldEmailSend: %w", err)
-	}
-	return oldValue.EmailSend, nil
-}
-
-// ClearEmailSend clears the value of the "email_send" field.
-func (m *NotifMutation) ClearEmailSend() {
-	m.email_send = nil
-	m.clearedFields[notif.FieldEmailSend] = struct{}{}
-}
-
-// EmailSendCleared returns if the "email_send" field was cleared in this mutation.
-func (m *NotifMutation) EmailSendCleared() bool {
-	_, ok := m.clearedFields[notif.FieldEmailSend]
-	return ok
-}
-
-// ResetEmailSend resets all changes to the "email_send" field.
-func (m *NotifMutation) ResetEmailSend() {
-	m.email_send = nil
-	delete(m.clearedFields, notif.FieldEmailSend)
+// ResetChannel resets all changes to the "channel" field.
+func (m *NotifMutation) ResetChannel() {
+	m.channel = nil
+	delete(m.clearedFields, notif.FieldChannel)
 }
 
 // SetExtra sets the "extra" field.
@@ -1973,7 +1923,7 @@ func (m *NotifMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NotifMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, notif.FieldCreatedAt)
 	}
@@ -1989,8 +1939,8 @@ func (m *NotifMutation) Fields() []string {
 	if m.user_id != nil {
 		fields = append(fields, notif.FieldUserID)
 	}
-	if m.already_read != nil {
-		fields = append(fields, notif.FieldAlreadyRead)
+	if m.notified != nil {
+		fields = append(fields, notif.FieldNotified)
 	}
 	if m.lang_id != nil {
 		fields = append(fields, notif.FieldLangID)
@@ -2007,11 +1957,8 @@ func (m *NotifMutation) Fields() []string {
 	if m.content != nil {
 		fields = append(fields, notif.FieldContent)
 	}
-	if m.channels != nil {
-		fields = append(fields, notif.FieldChannels)
-	}
-	if m.email_send != nil {
-		fields = append(fields, notif.FieldEmailSend)
+	if m.channel != nil {
+		fields = append(fields, notif.FieldChannel)
 	}
 	if m.extra != nil {
 		fields = append(fields, notif.FieldExtra)
@@ -2034,8 +1981,8 @@ func (m *NotifMutation) Field(name string) (ent.Value, bool) {
 		return m.AppID()
 	case notif.FieldUserID:
 		return m.UserID()
-	case notif.FieldAlreadyRead:
-		return m.AlreadyRead()
+	case notif.FieldNotified:
+		return m.Notified()
 	case notif.FieldLangID:
 		return m.LangID()
 	case notif.FieldEventType:
@@ -2046,10 +1993,8 @@ func (m *NotifMutation) Field(name string) (ent.Value, bool) {
 		return m.Title()
 	case notif.FieldContent:
 		return m.Content()
-	case notif.FieldChannels:
-		return m.Channels()
-	case notif.FieldEmailSend:
-		return m.EmailSend()
+	case notif.FieldChannel:
+		return m.Channel()
 	case notif.FieldExtra:
 		return m.Extra()
 	}
@@ -2071,8 +2016,8 @@ func (m *NotifMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldAppID(ctx)
 	case notif.FieldUserID:
 		return m.OldUserID(ctx)
-	case notif.FieldAlreadyRead:
-		return m.OldAlreadyRead(ctx)
+	case notif.FieldNotified:
+		return m.OldNotified(ctx)
 	case notif.FieldLangID:
 		return m.OldLangID(ctx)
 	case notif.FieldEventType:
@@ -2083,10 +2028,8 @@ func (m *NotifMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldTitle(ctx)
 	case notif.FieldContent:
 		return m.OldContent(ctx)
-	case notif.FieldChannels:
-		return m.OldChannels(ctx)
-	case notif.FieldEmailSend:
-		return m.OldEmailSend(ctx)
+	case notif.FieldChannel:
+		return m.OldChannel(ctx)
 	case notif.FieldExtra:
 		return m.OldExtra(ctx)
 	}
@@ -2133,12 +2076,12 @@ func (m *NotifMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUserID(v)
 		return nil
-	case notif.FieldAlreadyRead:
+	case notif.FieldNotified:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAlreadyRead(v)
+		m.SetNotified(v)
 		return nil
 	case notif.FieldLangID:
 		v, ok := value.(uuid.UUID)
@@ -2175,19 +2118,12 @@ func (m *NotifMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetContent(v)
 		return nil
-	case notif.FieldChannels:
-		v, ok := value.([]string)
+	case notif.FieldChannel:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetChannels(v)
-		return nil
-	case notif.FieldEmailSend:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetEmailSend(v)
+		m.SetChannel(v)
 		return nil
 	case notif.FieldExtra:
 		v, ok := value.(string)
@@ -2271,8 +2207,8 @@ func (m *NotifMutation) ClearedFields() []string {
 	if m.FieldCleared(notif.FieldUserID) {
 		fields = append(fields, notif.FieldUserID)
 	}
-	if m.FieldCleared(notif.FieldAlreadyRead) {
-		fields = append(fields, notif.FieldAlreadyRead)
+	if m.FieldCleared(notif.FieldNotified) {
+		fields = append(fields, notif.FieldNotified)
 	}
 	if m.FieldCleared(notif.FieldLangID) {
 		fields = append(fields, notif.FieldLangID)
@@ -2289,11 +2225,8 @@ func (m *NotifMutation) ClearedFields() []string {
 	if m.FieldCleared(notif.FieldContent) {
 		fields = append(fields, notif.FieldContent)
 	}
-	if m.FieldCleared(notif.FieldChannels) {
-		fields = append(fields, notif.FieldChannels)
-	}
-	if m.FieldCleared(notif.FieldEmailSend) {
-		fields = append(fields, notif.FieldEmailSend)
+	if m.FieldCleared(notif.FieldChannel) {
+		fields = append(fields, notif.FieldChannel)
 	}
 	if m.FieldCleared(notif.FieldExtra) {
 		fields = append(fields, notif.FieldExtra)
@@ -2318,8 +2251,8 @@ func (m *NotifMutation) ClearField(name string) error {
 	case notif.FieldUserID:
 		m.ClearUserID()
 		return nil
-	case notif.FieldAlreadyRead:
-		m.ClearAlreadyRead()
+	case notif.FieldNotified:
+		m.ClearNotified()
 		return nil
 	case notif.FieldLangID:
 		m.ClearLangID()
@@ -2336,11 +2269,8 @@ func (m *NotifMutation) ClearField(name string) error {
 	case notif.FieldContent:
 		m.ClearContent()
 		return nil
-	case notif.FieldChannels:
-		m.ClearChannels()
-		return nil
-	case notif.FieldEmailSend:
-		m.ClearEmailSend()
+	case notif.FieldChannel:
+		m.ClearChannel()
 		return nil
 	case notif.FieldExtra:
 		m.ClearExtra()
@@ -2368,8 +2298,8 @@ func (m *NotifMutation) ResetField(name string) error {
 	case notif.FieldUserID:
 		m.ResetUserID()
 		return nil
-	case notif.FieldAlreadyRead:
-		m.ResetAlreadyRead()
+	case notif.FieldNotified:
+		m.ResetNotified()
 		return nil
 	case notif.FieldLangID:
 		m.ResetLangID()
@@ -2386,11 +2316,8 @@ func (m *NotifMutation) ResetField(name string) error {
 	case notif.FieldContent:
 		m.ResetContent()
 		return nil
-	case notif.FieldChannels:
-		m.ResetChannels()
-		return nil
-	case notif.FieldEmailSend:
-		m.ResetEmailSend()
+	case notif.FieldChannel:
+		m.ResetChannel()
 		return nil
 	case notif.FieldExtra:
 		m.ResetExtra()

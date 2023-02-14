@@ -22,8 +22,8 @@ const (
 	FieldAppID = "app_id"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
-	// FieldAlreadyRead holds the string denoting the already_read field in the database.
-	FieldAlreadyRead = "already_read"
+	// FieldNotified holds the string denoting the notified field in the database.
+	FieldNotified = "notified"
 	// FieldLangID holds the string denoting the lang_id field in the database.
 	FieldLangID = "lang_id"
 	// FieldEventType holds the string denoting the event_type field in the database.
@@ -34,10 +34,8 @@ const (
 	FieldTitle = "title"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
-	// FieldChannels holds the string denoting the channels field in the database.
-	FieldChannels = "channels"
-	// FieldEmailSend holds the string denoting the email_send field in the database.
-	FieldEmailSend = "email_send"
+	// FieldChannel holds the string denoting the channel field in the database.
+	FieldChannel = "channel"
 	// FieldExtra holds the string denoting the extra field in the database.
 	FieldExtra = "extra"
 	// Table holds the table name of the notif in the database.
@@ -52,14 +50,13 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldAppID,
 	FieldUserID,
-	FieldAlreadyRead,
+	FieldNotified,
 	FieldLangID,
 	FieldEventType,
 	FieldUseTemplate,
 	FieldTitle,
 	FieldContent,
-	FieldChannels,
-	FieldEmailSend,
+	FieldChannel,
 	FieldExtra,
 }
 
@@ -94,8 +91,8 @@ var (
 	DefaultAppID func() uuid.UUID
 	// DefaultUserID holds the default value on creation for the "user_id" field.
 	DefaultUserID func() uuid.UUID
-	// DefaultAlreadyRead holds the default value on creation for the "already_read" field.
-	DefaultAlreadyRead bool
+	// DefaultNotified holds the default value on creation for the "notified" field.
+	DefaultNotified bool
 	// DefaultLangID holds the default value on creation for the "lang_id" field.
 	DefaultLangID func() uuid.UUID
 	// DefaultEventType holds the default value on creation for the "event_type" field.
@@ -106,10 +103,8 @@ var (
 	DefaultTitle string
 	// DefaultContent holds the default value on creation for the "content" field.
 	DefaultContent string
-	// DefaultChannels holds the default value on creation for the "channels" field.
-	DefaultChannels []string
-	// DefaultEmailSend holds the default value on creation for the "email_send" field.
-	DefaultEmailSend bool
+	// DefaultChannel holds the default value on creation for the "channel" field.
+	DefaultChannel string
 	// DefaultExtra holds the default value on creation for the "extra" field.
 	DefaultExtra string
 	// DefaultID holds the default value on creation for the "id" field.

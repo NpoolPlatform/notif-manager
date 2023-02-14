@@ -36,14 +36,13 @@ var amt = ent.Notif{
 	ID:          uuid.New(),
 	AppID:       uuid.New(),
 	UserID:      uuid.New(),
-	AlreadyRead: false,
+	Notified:    false,
 	LangID:      uuid.New(),
 	EventType:   "DefaultUsedFor",
 	UseTemplate: true,
 	Title:       uuid.NewString(),
 	Content:     uuid.NewString(),
-	Channels:    []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-	EmailSend:   false,
+	Channel:     channel.NotifChannel_ChannelEmail.String(),
 	Extra:       uuid.NewString(),
 }
 
@@ -53,19 +52,18 @@ var (
 	userID    = amt.UserID.String()
 	langID    = amt.LangID.String()
 	eventType = usedfor.UsedFor(usedfor.UsedFor_value[amt.EventType])
-	channel1  = []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS}
+	channel1  = channel.NotifChannel_ChannelEmail
 	req       = npool.NotifReq{
 		ID:          &id,
 		AppID:       &appID,
 		UserID:      &userID,
-		AlreadyRead: &amt.AlreadyRead,
+		Notified:    &amt.Notified,
 		LangID:      &langID,
 		EventType:   &eventType,
 		UseTemplate: &amt.UseTemplate,
 		Title:       &amt.Title,
 		Content:     &amt.Content,
-		Channels:    channel1,
-		EmailSend:   &amt.EmailSend,
+		Channel:     &channel1,
 		Extra:       &amt.Extra,
 	}
 )
@@ -88,28 +86,26 @@ func createBulk(t *testing.T) {
 			ID:          uuid.New(),
 			AppID:       uuid.New(),
 			UserID:      uuid.New(),
-			AlreadyRead: false,
+			Notified:    false,
 			LangID:      uuid.New(),
 			EventType:   "DefaultUsedFor",
 			UseTemplate: true,
 			Title:       uuid.NewString(),
 			Content:     uuid.NewString(),
-			Channels:    []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-			EmailSend:   false,
+			Channel:     channel.NotifChannel_ChannelEmail.String(),
 			Extra:       uuid.NewString(),
 		},
 		{
 			ID:          uuid.New(),
 			AppID:       uuid.New(),
 			UserID:      uuid.New(),
-			AlreadyRead: false,
+			Notified:    false,
 			LangID:      uuid.New(),
 			EventType:   "DefaultUsedFor",
 			UseTemplate: true,
 			Title:       uuid.NewString(),
 			Content:     uuid.NewString(),
-			Channels:    []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-			EmailSend:   false,
+			Channel:     channel.NotifChannel_ChannelEmail.String(),
 			Extra:       uuid.NewString(),
 		},
 	}
@@ -121,19 +117,18 @@ func createBulk(t *testing.T) {
 		_userID := _amt.UserID.String()
 		_langID := _amt.LangID.String()
 		_eventType := usedfor.UsedFor(usedfor.UsedFor_value[_amt.EventType])
-		_channel1 := []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS}
+		_channel1 := channel.NotifChannel_ChannelEmail
 		reqs = append(reqs, &npool.NotifReq{
 			ID:          &_id,
 			AppID:       &_appID,
 			UserID:      &_userID,
-			AlreadyRead: &_amt.AlreadyRead,
+			Notified:    &_amt.Notified,
 			LangID:      &_langID,
 			EventType:   &_eventType,
 			UseTemplate: &_amt.UseTemplate,
 			Title:       &_amt.Title,
 			Content:     &_amt.Content,
-			Channels:    _channel1,
-			EmailSend:   &_amt.EmailSend,
+			Channel:     &_channel1,
 			Extra:       &_amt.Extra,
 		})
 	}

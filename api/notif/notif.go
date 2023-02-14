@@ -112,10 +112,6 @@ func (s *Server) UpdateNotif(ctx context.Context, in *npool.UpdateNotifRequest) 
 		logger.Sugar().Errorw("UpdateNotif", "Content", in.GetInfo().GetContent())
 		return &npool.UpdateNotifResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
-	if in.GetInfo().Channels != nil && len(in.GetInfo().GetChannels()) == 0 {
-		logger.Sugar().Errorw("UpdateNotif", "Channels", in.GetInfo().GetChannels())
-		return &npool.UpdateNotifResponse{}, status.Error(codes.InvalidArgument, "Channels is empty")
-	}
 
 	span = commontracer.TraceInvoker(span, "notif", "crud", "Update")
 

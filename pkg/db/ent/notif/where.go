@@ -114,10 +114,10 @@ func UserID(v uuid.UUID) predicate.Notif {
 	})
 }
 
-// AlreadyRead applies equality check predicate on the "already_read" field. It's identical to AlreadyReadEQ.
-func AlreadyRead(v bool) predicate.Notif {
+// Notified applies equality check predicate on the "notified" field. It's identical to NotifiedEQ.
+func Notified(v bool) predicate.Notif {
 	return predicate.Notif(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlreadyRead), v))
+		s.Where(sql.EQ(s.C(FieldNotified), v))
 	})
 }
 
@@ -156,10 +156,10 @@ func Content(v string) predicate.Notif {
 	})
 }
 
-// EmailSend applies equality check predicate on the "email_send" field. It's identical to EmailSendEQ.
-func EmailSend(v bool) predicate.Notif {
+// Channel applies equality check predicate on the "channel" field. It's identical to ChannelEQ.
+func Channel(v string) predicate.Notif {
 	return predicate.Notif(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEmailSend), v))
+		s.Where(sql.EQ(s.C(FieldChannel), v))
 	})
 }
 
@@ -518,31 +518,31 @@ func UserIDNotNil() predicate.Notif {
 	})
 }
 
-// AlreadyReadEQ applies the EQ predicate on the "already_read" field.
-func AlreadyReadEQ(v bool) predicate.Notif {
+// NotifiedEQ applies the EQ predicate on the "notified" field.
+func NotifiedEQ(v bool) predicate.Notif {
 	return predicate.Notif(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlreadyRead), v))
+		s.Where(sql.EQ(s.C(FieldNotified), v))
 	})
 }
 
-// AlreadyReadNEQ applies the NEQ predicate on the "already_read" field.
-func AlreadyReadNEQ(v bool) predicate.Notif {
+// NotifiedNEQ applies the NEQ predicate on the "notified" field.
+func NotifiedNEQ(v bool) predicate.Notif {
 	return predicate.Notif(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAlreadyRead), v))
+		s.Where(sql.NEQ(s.C(FieldNotified), v))
 	})
 }
 
-// AlreadyReadIsNil applies the IsNil predicate on the "already_read" field.
-func AlreadyReadIsNil() predicate.Notif {
+// NotifiedIsNil applies the IsNil predicate on the "notified" field.
+func NotifiedIsNil() predicate.Notif {
 	return predicate.Notif(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldAlreadyRead)))
+		s.Where(sql.IsNull(s.C(FieldNotified)))
 	})
 }
 
-// AlreadyReadNotNil applies the NotNil predicate on the "already_read" field.
-func AlreadyReadNotNil() predicate.Notif {
+// NotifiedNotNil applies the NotNil predicate on the "notified" field.
+func NotifiedNotNil() predicate.Notif {
 	return predicate.Notif(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldAlreadyRead)))
+		s.Where(sql.NotNull(s.C(FieldNotified)))
 	})
 }
 
@@ -991,45 +991,116 @@ func ContentContainsFold(v string) predicate.Notif {
 	})
 }
 
-// ChannelsIsNil applies the IsNil predicate on the "channels" field.
-func ChannelsIsNil() predicate.Notif {
+// ChannelEQ applies the EQ predicate on the "channel" field.
+func ChannelEQ(v string) predicate.Notif {
 	return predicate.Notif(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldChannels)))
+		s.Where(sql.EQ(s.C(FieldChannel), v))
 	})
 }
 
-// ChannelsNotNil applies the NotNil predicate on the "channels" field.
-func ChannelsNotNil() predicate.Notif {
+// ChannelNEQ applies the NEQ predicate on the "channel" field.
+func ChannelNEQ(v string) predicate.Notif {
 	return predicate.Notif(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldChannels)))
+		s.Where(sql.NEQ(s.C(FieldChannel), v))
 	})
 }
 
-// EmailSendEQ applies the EQ predicate on the "email_send" field.
-func EmailSendEQ(v bool) predicate.Notif {
+// ChannelIn applies the In predicate on the "channel" field.
+func ChannelIn(vs ...string) predicate.Notif {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.Notif(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEmailSend), v))
+		s.Where(sql.In(s.C(FieldChannel), v...))
 	})
 }
 
-// EmailSendNEQ applies the NEQ predicate on the "email_send" field.
-func EmailSendNEQ(v bool) predicate.Notif {
+// ChannelNotIn applies the NotIn predicate on the "channel" field.
+func ChannelNotIn(vs ...string) predicate.Notif {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.Notif(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldEmailSend), v))
+		s.Where(sql.NotIn(s.C(FieldChannel), v...))
 	})
 }
 
-// EmailSendIsNil applies the IsNil predicate on the "email_send" field.
-func EmailSendIsNil() predicate.Notif {
+// ChannelGT applies the GT predicate on the "channel" field.
+func ChannelGT(v string) predicate.Notif {
 	return predicate.Notif(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldEmailSend)))
+		s.Where(sql.GT(s.C(FieldChannel), v))
 	})
 }
 
-// EmailSendNotNil applies the NotNil predicate on the "email_send" field.
-func EmailSendNotNil() predicate.Notif {
+// ChannelGTE applies the GTE predicate on the "channel" field.
+func ChannelGTE(v string) predicate.Notif {
 	return predicate.Notif(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldEmailSend)))
+		s.Where(sql.GTE(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelLT applies the LT predicate on the "channel" field.
+func ChannelLT(v string) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelLTE applies the LTE predicate on the "channel" field.
+func ChannelLTE(v string) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelContains applies the Contains predicate on the "channel" field.
+func ChannelContains(v string) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelHasPrefix applies the HasPrefix predicate on the "channel" field.
+func ChannelHasPrefix(v string) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelHasSuffix applies the HasSuffix predicate on the "channel" field.
+func ChannelHasSuffix(v string) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelIsNil applies the IsNil predicate on the "channel" field.
+func ChannelIsNil() predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldChannel)))
+	})
+}
+
+// ChannelNotNil applies the NotNil predicate on the "channel" field.
+func ChannelNotNil() predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldChannel)))
+	})
+}
+
+// ChannelEqualFold applies the EqualFold predicate on the "channel" field.
+func ChannelEqualFold(v string) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelContainsFold applies the ContainsFold predicate on the "channel" field.
+func ChannelContainsFold(v string) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldChannel), v))
 	})
 }
 

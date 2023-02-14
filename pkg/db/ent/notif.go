@@ -3,7 +3,6 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -27,8 +26,8 @@ type Notif struct {
 	AppID uuid.UUID `json:"app_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uuid.UUID `json:"user_id,omitempty"`
-	// AlreadyRead holds the value of the "already_read" field.
-	AlreadyRead bool `json:"already_read,omitempty"`
+	// Notified holds the value of the "notified" field.
+	Notified bool `json:"notified,omitempty"`
 	// LangID holds the value of the "lang_id" field.
 	LangID uuid.UUID `json:"lang_id,omitempty"`
 	// EventType holds the value of the "event_type" field.
@@ -39,10 +38,8 @@ type Notif struct {
 	Title string `json:"title,omitempty"`
 	// Content holds the value of the "content" field.
 	Content string `json:"content,omitempty"`
-	// Channels holds the value of the "channels" field.
-	Channels []string `json:"channels,omitempty"`
-	// EmailSend holds the value of the "email_send" field.
-	EmailSend bool `json:"email_send,omitempty"`
+	// Channel holds the value of the "channel" field.
+	Channel string `json:"channel,omitempty"`
 	// Extra holds the value of the "extra" field.
 	Extra string `json:"extra,omitempty"`
 }
@@ -52,13 +49,11 @@ func (*Notif) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case notif.FieldChannels:
-			values[i] = new([]byte)
-		case notif.FieldAlreadyRead, notif.FieldUseTemplate, notif.FieldEmailSend:
+		case notif.FieldNotified, notif.FieldUseTemplate:
 			values[i] = new(sql.NullBool)
 		case notif.FieldCreatedAt, notif.FieldUpdatedAt, notif.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case notif.FieldEventType, notif.FieldTitle, notif.FieldContent, notif.FieldExtra:
+		case notif.FieldEventType, notif.FieldTitle, notif.FieldContent, notif.FieldChannel, notif.FieldExtra:
 			values[i] = new(sql.NullString)
 		case notif.FieldID, notif.FieldAppID, notif.FieldUserID, notif.FieldLangID:
 			values[i] = new(uuid.UUID)
@@ -113,11 +108,11 @@ func (n *Notif) assignValues(columns []string, values []interface{}) error {
 			} else if value != nil {
 				n.UserID = *value
 			}
-		case notif.FieldAlreadyRead:
+		case notif.FieldNotified:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field already_read", values[i])
+				return fmt.Errorf("unexpected type %T for field notified", values[i])
 			} else if value.Valid {
-				n.AlreadyRead = value.Bool
+				n.Notified = value.Bool
 			}
 		case notif.FieldLangID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
@@ -149,19 +144,11 @@ func (n *Notif) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				n.Content = value.String
 			}
-		case notif.FieldChannels:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field channels", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &n.Channels); err != nil {
-					return fmt.Errorf("unmarshal field channels: %w", err)
-				}
-			}
-		case notif.FieldEmailSend:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field email_send", values[i])
+		case notif.FieldChannel:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field channel", values[i])
 			} else if value.Valid {
-				n.EmailSend = value.Bool
+				n.Channel = value.String
 			}
 		case notif.FieldExtra:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -212,8 +199,8 @@ func (n *Notif) String() string {
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", n.UserID))
 	builder.WriteString(", ")
-	builder.WriteString("already_read=")
-	builder.WriteString(fmt.Sprintf("%v", n.AlreadyRead))
+	builder.WriteString("notified=")
+	builder.WriteString(fmt.Sprintf("%v", n.Notified))
 	builder.WriteString(", ")
 	builder.WriteString("lang_id=")
 	builder.WriteString(fmt.Sprintf("%v", n.LangID))
@@ -230,11 +217,8 @@ func (n *Notif) String() string {
 	builder.WriteString("content=")
 	builder.WriteString(n.Content)
 	builder.WriteString(", ")
-	builder.WriteString("channels=")
-	builder.WriteString(fmt.Sprintf("%v", n.Channels))
-	builder.WriteString(", ")
-	builder.WriteString("email_send=")
-	builder.WriteString(fmt.Sprintf("%v", n.EmailSend))
+	builder.WriteString("channel=")
+	builder.WriteString(n.Channel)
 	builder.WriteString(", ")
 	builder.WriteString("extra=")
 	builder.WriteString(n.Extra)

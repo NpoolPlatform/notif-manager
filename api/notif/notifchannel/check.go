@@ -74,8 +74,30 @@ func validateConds(in *npool.Conds) error {
 			return fmt.Errorf("EventType is invalid")
 		}
 	}
+	for _, typ := range in.GetEventTypes().GetValue() {
+		switch typ {
+		case uint32(usedfor.UsedFor_WithdrawalRequest):
+		case uint32(usedfor.UsedFor_WithdrawalCompleted):
+		case uint32(usedfor.UsedFor_DepositReceived):
+		case uint32(usedfor.UsedFor_KYCApproved):
+		case uint32(usedfor.UsedFor_KYCRejected):
+		case uint32(usedfor.UsedFor_Announcement):
+		default:
+			return fmt.Errorf("EventType is invalid")
+		}
+	}
 	if in.Channel != nil {
 		switch in.GetChannel().GetValue() {
+		case uint32(channel.NotifChannel_ChannelFrontend):
+		case uint32(channel.NotifChannel_ChannelEmail):
+		case uint32(channel.NotifChannel_ChannelSMS):
+		default:
+			logger.Sugar().Errorw("validate", "channel", in.GetChannel(), "error", "invalid notif channel")
+			return fmt.Errorf("invalid channel")
+		}
+	}
+	for _, ch := range in.GetChannels().GetValue() {
+		switch ch {
 		case uint32(channel.NotifChannel_ChannelFrontend):
 		case uint32(channel.NotifChannel_ChannelEmail):
 		case uint32(channel.NotifChannel_ChannelSMS):

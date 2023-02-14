@@ -3,13 +3,10 @@ package notif
 import (
 	"context"
 	"fmt"
-
-	"github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
-
-	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqljson"
-
 	"time"
+
+	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
+	"github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
 
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
 	tracer "github.com/NpoolPlatform/notif-manager/pkg/tracer/notif"
@@ -38,7 +35,7 @@ func CreateSet(c *ent.NotifCreate, in *npool.NotifReq) (*ent.NotifCreate, error)
 		c.SetUserID(uuid.MustParse(in.GetUserID()))
 	}
 
-	c.SetAlreadyRead(false)
+	c.SetNotified(false)
 
 	if in.LangID != nil {
 		c.SetLangID(uuid.MustParse(in.GetLangID()))
@@ -55,14 +52,9 @@ func CreateSet(c *ent.NotifCreate, in *npool.NotifReq) (*ent.NotifCreate, error)
 	if in.Content != nil {
 		c.SetContent(in.GetContent())
 	}
-	if in.Channels != nil {
-		var channels []string
-		for _, m := range in.GetChannels() {
-			channels = append(channels, m.String())
-		}
-		c.SetChannels(channels)
+	if in.Channel != nil {
+		c.SetChannel(in.GetChannel().String())
 	}
-	c.SetEmailSend(false)
 	if in.Extra != nil {
 		c.SetExtra(in.GetExtra())
 	}
@@ -143,18 +135,11 @@ func UpdateSet(u *ent.NotifUpdateOne, in *npool.NotifReq) (*ent.NotifUpdateOne, 
 	if in.Content != nil {
 		u.SetContent(in.GetContent())
 	}
-	if in.Channels != nil {
-		var channels []string
-		for _, m := range in.GetChannels() {
-			channels = append(channels, m.String())
-		}
-		u.SetChannels(channels)
+	if in.Channel != nil {
+		u.SetChannel(in.GetChannel().String())
 	}
-	if in.GetEmailSend() {
-		u.SetEmailSend(in.GetEmailSend())
-	}
-	if in.AlreadyRead != nil {
-		u.SetAlreadyRead(in.GetAlreadyRead())
+	if in.Notified != nil {
+		u.SetNotified(in.GetNotified())
 	}
 	if in.UseTemplate != nil {
 		u.SetUseTemplate(in.GetUseTemplate())
@@ -236,16 +221,16 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 		return stm, nil
 	}
 	if len(conds.GetChannels().GetValue()) > 0 {
-		stm.Where(func(selector *sql.Selector) {
-			channels := conds.GetChannels().GetValue()
-			for i := 0; i < len(channels); i++ {
-				if i == 0 {
-					selector.Where(sqljson.ValueContains(notif.FieldChannels, channels[i]))
-				} else {
-					selector.Or().Where(sqljson.ValueContains(notif.FieldChannels, channels[i]))
-				}
-			}
-		})
+		chans := []string{}
+		for _, ch := range conds.GetChannels().GetValue() {
+			chans = append(chans, channel.NotifChannel(ch).String())
+		}
+		switch conds.GetChannels().GetOp() {
+		case cruder.IN:
+			stm.Where(notif.ChannelIn(chans...))
+		default:
+			return nil, fmt.Errorf("invalid notif field")
+		}
 	}
 	if conds.ID != nil {
 		switch conds.GetID().GetOp() {
@@ -287,10 +272,10 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 			return nil, fmt.Errorf("invalid notif field")
 		}
 	}
-	if conds.AlreadyRead != nil {
-		switch conds.GetAlreadyRead().GetOp() {
+	if conds.Notified != nil {
+		switch conds.GetNotified().GetOp() {
 		case cruder.EQ:
-			stm.Where(notif.AlreadyRead(conds.GetAlreadyRead().GetValue()))
+			stm.Where(notif.Notified(conds.GetNotified().GetValue()))
 		default:
 			return nil, fmt.Errorf("invalid notif field")
 		}
@@ -311,6 +296,18 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 			return nil, fmt.Errorf("invalid notif field")
 		}
 	}
+	if len(conds.GetEventTypes().GetValue()) > 0 {
+		types := []string{}
+		for _, typ := range conds.GetEventTypes().GetValue() {
+			types = append(types, usedfor.UsedFor(typ).String())
+		}
+		switch conds.GetEventTypes().GetOp() {
+		case cruder.IN:
+			stm.Where(notif.EventTypeIn(types...))
+		default:
+			return nil, fmt.Errorf("invalid notif field")
+		}
+	}
 	if conds.UseTemplate != nil {
 		switch conds.GetUseTemplate().GetOp() {
 		case cruder.EQ:
@@ -320,14 +317,6 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 		}
 	}
 
-	if conds.EmailSend != nil {
-		switch conds.GetEmailSend().GetOp() {
-		case cruder.EQ:
-			stm.Where(notif.EmailSend(conds.GetEmailSend().GetValue()))
-		default:
-			return nil, fmt.Errorf("invalid notif field")
-		}
-	}
 	return stm, nil
 }
 

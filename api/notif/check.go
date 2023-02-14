@@ -6,11 +6,12 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif"
 
+	channel "github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
 	usedfor "github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
 	"github.com/google/uuid"
 )
 
-func validate(in *npool.NotifReq) error {
+func validate(in *npool.NotifReq) error { //nolint
 	if in.ID != nil {
 		if _, err := uuid.Parse(in.GetID()); err != nil {
 			logger.Sugar().Errorw("validate", "ID", in.GetID(), "error", err)
@@ -38,7 +39,16 @@ func validate(in *npool.NotifReq) error {
 	case usedfor.UsedFor_KYCRejected:
 	case usedfor.UsedFor_Announcement:
 	default:
-		return fmt.Errorf("EventType is invalid")
+		return fmt.Errorf("eventtype is invalid")
+	}
+
+	switch in.GetChannel() {
+	case channel.NotifChannel_ChannelFrontend:
+	case channel.NotifChannel_ChannelEmail:
+	case channel.NotifChannel_ChannelSMS:
+	default:
+		logger.Sugar().Errorw("validate", "Channel", in.GetChannel(), "error", "invalid channel")
+		return fmt.Errorf("channel is invalid")
 	}
 
 	if in.GetTitle() == "" {
@@ -48,10 +58,6 @@ func validate(in *npool.NotifReq) error {
 	if in.GetContent() == "" {
 		logger.Sugar().Errorw("validate", "Content", in.GetContent())
 		return fmt.Errorf("title is invalid")
-	}
-	if len(in.GetChannels()) == 0 {
-		logger.Sugar().Errorw("validate", "Channels", in.GetChannels())
-		return fmt.Errorf("channels is invalid")
 	}
 	return nil
 }
@@ -91,12 +97,17 @@ func validateConds(in *npool.Conds) error {
 		case uint32(usedfor.UsedFor_KYCRejected):
 		case uint32(usedfor.UsedFor_Announcement):
 		default:
-			return fmt.Errorf("EventType is invalid")
+			return fmt.Errorf("eventtype is invalid")
 		}
 	}
-	if in.Channels != nil {
-		if len(in.GetChannels().GetValue()) == 0 {
-			return fmt.Errorf("channels is invalid")
+	if in.Channel != nil {
+		switch in.GetChannel().GetValue() {
+		case uint32(channel.NotifChannel_ChannelFrontend):
+		case uint32(channel.NotifChannel_ChannelEmail):
+		case uint32(channel.NotifChannel_ChannelSMS):
+		default:
+			logger.Sugar().Errorw("validate", "Channel", in.GetChannel(), "error", "invalid channel")
+			return fmt.Errorf("channel is invalid")
 		}
 	}
 	return nil

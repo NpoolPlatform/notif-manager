@@ -93,16 +93,16 @@ func (nc *NotifCreate) SetNillableUserID(u *uuid.UUID) *NotifCreate {
 	return nc
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (nc *NotifCreate) SetAlreadyRead(b bool) *NotifCreate {
-	nc.mutation.SetAlreadyRead(b)
+// SetNotified sets the "notified" field.
+func (nc *NotifCreate) SetNotified(b bool) *NotifCreate {
+	nc.mutation.SetNotified(b)
 	return nc
 }
 
-// SetNillableAlreadyRead sets the "already_read" field if the given value is not nil.
-func (nc *NotifCreate) SetNillableAlreadyRead(b *bool) *NotifCreate {
+// SetNillableNotified sets the "notified" field if the given value is not nil.
+func (nc *NotifCreate) SetNillableNotified(b *bool) *NotifCreate {
 	if b != nil {
-		nc.SetAlreadyRead(*b)
+		nc.SetNotified(*b)
 	}
 	return nc
 }
@@ -177,22 +177,16 @@ func (nc *NotifCreate) SetNillableContent(s *string) *NotifCreate {
 	return nc
 }
 
-// SetChannels sets the "channels" field.
-func (nc *NotifCreate) SetChannels(s []string) *NotifCreate {
-	nc.mutation.SetChannels(s)
+// SetChannel sets the "channel" field.
+func (nc *NotifCreate) SetChannel(s string) *NotifCreate {
+	nc.mutation.SetChannel(s)
 	return nc
 }
 
-// SetEmailSend sets the "email_send" field.
-func (nc *NotifCreate) SetEmailSend(b bool) *NotifCreate {
-	nc.mutation.SetEmailSend(b)
-	return nc
-}
-
-// SetNillableEmailSend sets the "email_send" field if the given value is not nil.
-func (nc *NotifCreate) SetNillableEmailSend(b *bool) *NotifCreate {
-	if b != nil {
-		nc.SetEmailSend(*b)
+// SetNillableChannel sets the "channel" field if the given value is not nil.
+func (nc *NotifCreate) SetNillableChannel(s *string) *NotifCreate {
+	if s != nil {
+		nc.SetChannel(*s)
 	}
 	return nc
 }
@@ -339,9 +333,9 @@ func (nc *NotifCreate) defaults() error {
 		v := notif.DefaultUserID()
 		nc.mutation.SetUserID(v)
 	}
-	if _, ok := nc.mutation.AlreadyRead(); !ok {
-		v := notif.DefaultAlreadyRead
-		nc.mutation.SetAlreadyRead(v)
+	if _, ok := nc.mutation.Notified(); !ok {
+		v := notif.DefaultNotified
+		nc.mutation.SetNotified(v)
 	}
 	if _, ok := nc.mutation.LangID(); !ok {
 		if notif.DefaultLangID == nil {
@@ -366,13 +360,9 @@ func (nc *NotifCreate) defaults() error {
 		v := notif.DefaultContent
 		nc.mutation.SetContent(v)
 	}
-	if _, ok := nc.mutation.Channels(); !ok {
-		v := notif.DefaultChannels
-		nc.mutation.SetChannels(v)
-	}
-	if _, ok := nc.mutation.EmailSend(); !ok {
-		v := notif.DefaultEmailSend
-		nc.mutation.SetEmailSend(v)
+	if _, ok := nc.mutation.Channel(); !ok {
+		v := notif.DefaultChannel
+		nc.mutation.SetChannel(v)
 	}
 	if _, ok := nc.mutation.Extra(); !ok {
 		v := notif.DefaultExtra
@@ -476,13 +466,13 @@ func (nc *NotifCreate) createSpec() (*Notif, *sqlgraph.CreateSpec) {
 		})
 		_node.UserID = value
 	}
-	if value, ok := nc.mutation.AlreadyRead(); ok {
+	if value, ok := nc.mutation.Notified(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: notif.FieldAlreadyRead,
+			Column: notif.FieldNotified,
 		})
-		_node.AlreadyRead = value
+		_node.Notified = value
 	}
 	if value, ok := nc.mutation.LangID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -524,21 +514,13 @@ func (nc *NotifCreate) createSpec() (*Notif, *sqlgraph.CreateSpec) {
 		})
 		_node.Content = value
 	}
-	if value, ok := nc.mutation.Channels(); ok {
+	if value, ok := nc.mutation.Channel(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: notif.FieldChannels,
+			Column: notif.FieldChannel,
 		})
-		_node.Channels = value
-	}
-	if value, ok := nc.mutation.EmailSend(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: notif.FieldEmailSend,
-		})
-		_node.EmailSend = value
+		_node.Channel = value
 	}
 	if value, ok := nc.mutation.Extra(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -692,21 +674,21 @@ func (u *NotifUpsert) ClearUserID() *NotifUpsert {
 	return u
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (u *NotifUpsert) SetAlreadyRead(v bool) *NotifUpsert {
-	u.Set(notif.FieldAlreadyRead, v)
+// SetNotified sets the "notified" field.
+func (u *NotifUpsert) SetNotified(v bool) *NotifUpsert {
+	u.Set(notif.FieldNotified, v)
 	return u
 }
 
-// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
-func (u *NotifUpsert) UpdateAlreadyRead() *NotifUpsert {
-	u.SetExcluded(notif.FieldAlreadyRead)
+// UpdateNotified sets the "notified" field to the value that was provided on create.
+func (u *NotifUpsert) UpdateNotified() *NotifUpsert {
+	u.SetExcluded(notif.FieldNotified)
 	return u
 }
 
-// ClearAlreadyRead clears the value of the "already_read" field.
-func (u *NotifUpsert) ClearAlreadyRead() *NotifUpsert {
-	u.SetNull(notif.FieldAlreadyRead)
+// ClearNotified clears the value of the "notified" field.
+func (u *NotifUpsert) ClearNotified() *NotifUpsert {
+	u.SetNull(notif.FieldNotified)
 	return u
 }
 
@@ -800,39 +782,21 @@ func (u *NotifUpsert) ClearContent() *NotifUpsert {
 	return u
 }
 
-// SetChannels sets the "channels" field.
-func (u *NotifUpsert) SetChannels(v []string) *NotifUpsert {
-	u.Set(notif.FieldChannels, v)
+// SetChannel sets the "channel" field.
+func (u *NotifUpsert) SetChannel(v string) *NotifUpsert {
+	u.Set(notif.FieldChannel, v)
 	return u
 }
 
-// UpdateChannels sets the "channels" field to the value that was provided on create.
-func (u *NotifUpsert) UpdateChannels() *NotifUpsert {
-	u.SetExcluded(notif.FieldChannels)
+// UpdateChannel sets the "channel" field to the value that was provided on create.
+func (u *NotifUpsert) UpdateChannel() *NotifUpsert {
+	u.SetExcluded(notif.FieldChannel)
 	return u
 }
 
-// ClearChannels clears the value of the "channels" field.
-func (u *NotifUpsert) ClearChannels() *NotifUpsert {
-	u.SetNull(notif.FieldChannels)
-	return u
-}
-
-// SetEmailSend sets the "email_send" field.
-func (u *NotifUpsert) SetEmailSend(v bool) *NotifUpsert {
-	u.Set(notif.FieldEmailSend, v)
-	return u
-}
-
-// UpdateEmailSend sets the "email_send" field to the value that was provided on create.
-func (u *NotifUpsert) UpdateEmailSend() *NotifUpsert {
-	u.SetExcluded(notif.FieldEmailSend)
-	return u
-}
-
-// ClearEmailSend clears the value of the "email_send" field.
-func (u *NotifUpsert) ClearEmailSend() *NotifUpsert {
-	u.SetNull(notif.FieldEmailSend)
+// ClearChannel clears the value of the "channel" field.
+func (u *NotifUpsert) ClearChannel() *NotifUpsert {
+	u.SetNull(notif.FieldChannel)
 	return u
 }
 
@@ -1009,24 +973,24 @@ func (u *NotifUpsertOne) ClearUserID() *NotifUpsertOne {
 	})
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (u *NotifUpsertOne) SetAlreadyRead(v bool) *NotifUpsertOne {
+// SetNotified sets the "notified" field.
+func (u *NotifUpsertOne) SetNotified(v bool) *NotifUpsertOne {
 	return u.Update(func(s *NotifUpsert) {
-		s.SetAlreadyRead(v)
+		s.SetNotified(v)
 	})
 }
 
-// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
-func (u *NotifUpsertOne) UpdateAlreadyRead() *NotifUpsertOne {
+// UpdateNotified sets the "notified" field to the value that was provided on create.
+func (u *NotifUpsertOne) UpdateNotified() *NotifUpsertOne {
 	return u.Update(func(s *NotifUpsert) {
-		s.UpdateAlreadyRead()
+		s.UpdateNotified()
 	})
 }
 
-// ClearAlreadyRead clears the value of the "already_read" field.
-func (u *NotifUpsertOne) ClearAlreadyRead() *NotifUpsertOne {
+// ClearNotified clears the value of the "notified" field.
+func (u *NotifUpsertOne) ClearNotified() *NotifUpsertOne {
 	return u.Update(func(s *NotifUpsert) {
-		s.ClearAlreadyRead()
+		s.ClearNotified()
 	})
 }
 
@@ -1135,45 +1099,24 @@ func (u *NotifUpsertOne) ClearContent() *NotifUpsertOne {
 	})
 }
 
-// SetChannels sets the "channels" field.
-func (u *NotifUpsertOne) SetChannels(v []string) *NotifUpsertOne {
+// SetChannel sets the "channel" field.
+func (u *NotifUpsertOne) SetChannel(v string) *NotifUpsertOne {
 	return u.Update(func(s *NotifUpsert) {
-		s.SetChannels(v)
+		s.SetChannel(v)
 	})
 }
 
-// UpdateChannels sets the "channels" field to the value that was provided on create.
-func (u *NotifUpsertOne) UpdateChannels() *NotifUpsertOne {
+// UpdateChannel sets the "channel" field to the value that was provided on create.
+func (u *NotifUpsertOne) UpdateChannel() *NotifUpsertOne {
 	return u.Update(func(s *NotifUpsert) {
-		s.UpdateChannels()
+		s.UpdateChannel()
 	})
 }
 
-// ClearChannels clears the value of the "channels" field.
-func (u *NotifUpsertOne) ClearChannels() *NotifUpsertOne {
+// ClearChannel clears the value of the "channel" field.
+func (u *NotifUpsertOne) ClearChannel() *NotifUpsertOne {
 	return u.Update(func(s *NotifUpsert) {
-		s.ClearChannels()
-	})
-}
-
-// SetEmailSend sets the "email_send" field.
-func (u *NotifUpsertOne) SetEmailSend(v bool) *NotifUpsertOne {
-	return u.Update(func(s *NotifUpsert) {
-		s.SetEmailSend(v)
-	})
-}
-
-// UpdateEmailSend sets the "email_send" field to the value that was provided on create.
-func (u *NotifUpsertOne) UpdateEmailSend() *NotifUpsertOne {
-	return u.Update(func(s *NotifUpsert) {
-		s.UpdateEmailSend()
-	})
-}
-
-// ClearEmailSend clears the value of the "email_send" field.
-func (u *NotifUpsertOne) ClearEmailSend() *NotifUpsertOne {
-	return u.Update(func(s *NotifUpsert) {
-		s.ClearEmailSend()
+		s.ClearChannel()
 	})
 }
 
@@ -1519,24 +1462,24 @@ func (u *NotifUpsertBulk) ClearUserID() *NotifUpsertBulk {
 	})
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (u *NotifUpsertBulk) SetAlreadyRead(v bool) *NotifUpsertBulk {
+// SetNotified sets the "notified" field.
+func (u *NotifUpsertBulk) SetNotified(v bool) *NotifUpsertBulk {
 	return u.Update(func(s *NotifUpsert) {
-		s.SetAlreadyRead(v)
+		s.SetNotified(v)
 	})
 }
 
-// UpdateAlreadyRead sets the "already_read" field to the value that was provided on create.
-func (u *NotifUpsertBulk) UpdateAlreadyRead() *NotifUpsertBulk {
+// UpdateNotified sets the "notified" field to the value that was provided on create.
+func (u *NotifUpsertBulk) UpdateNotified() *NotifUpsertBulk {
 	return u.Update(func(s *NotifUpsert) {
-		s.UpdateAlreadyRead()
+		s.UpdateNotified()
 	})
 }
 
-// ClearAlreadyRead clears the value of the "already_read" field.
-func (u *NotifUpsertBulk) ClearAlreadyRead() *NotifUpsertBulk {
+// ClearNotified clears the value of the "notified" field.
+func (u *NotifUpsertBulk) ClearNotified() *NotifUpsertBulk {
 	return u.Update(func(s *NotifUpsert) {
-		s.ClearAlreadyRead()
+		s.ClearNotified()
 	})
 }
 
@@ -1645,45 +1588,24 @@ func (u *NotifUpsertBulk) ClearContent() *NotifUpsertBulk {
 	})
 }
 
-// SetChannels sets the "channels" field.
-func (u *NotifUpsertBulk) SetChannels(v []string) *NotifUpsertBulk {
+// SetChannel sets the "channel" field.
+func (u *NotifUpsertBulk) SetChannel(v string) *NotifUpsertBulk {
 	return u.Update(func(s *NotifUpsert) {
-		s.SetChannels(v)
+		s.SetChannel(v)
 	})
 }
 
-// UpdateChannels sets the "channels" field to the value that was provided on create.
-func (u *NotifUpsertBulk) UpdateChannels() *NotifUpsertBulk {
+// UpdateChannel sets the "channel" field to the value that was provided on create.
+func (u *NotifUpsertBulk) UpdateChannel() *NotifUpsertBulk {
 	return u.Update(func(s *NotifUpsert) {
-		s.UpdateChannels()
+		s.UpdateChannel()
 	})
 }
 
-// ClearChannels clears the value of the "channels" field.
-func (u *NotifUpsertBulk) ClearChannels() *NotifUpsertBulk {
+// ClearChannel clears the value of the "channel" field.
+func (u *NotifUpsertBulk) ClearChannel() *NotifUpsertBulk {
 	return u.Update(func(s *NotifUpsert) {
-		s.ClearChannels()
-	})
-}
-
-// SetEmailSend sets the "email_send" field.
-func (u *NotifUpsertBulk) SetEmailSend(v bool) *NotifUpsertBulk {
-	return u.Update(func(s *NotifUpsert) {
-		s.SetEmailSend(v)
-	})
-}
-
-// UpdateEmailSend sets the "email_send" field to the value that was provided on create.
-func (u *NotifUpsertBulk) UpdateEmailSend() *NotifUpsertBulk {
-	return u.Update(func(s *NotifUpsert) {
-		s.UpdateEmailSend()
-	})
-}
-
-// ClearEmailSend clears the value of the "email_send" field.
-func (u *NotifUpsertBulk) ClearEmailSend() *NotifUpsertBulk {
-	return u.Update(func(s *NotifUpsert) {
-		s.ClearEmailSend()
+		s.ClearChannel()
 	})
 }
 

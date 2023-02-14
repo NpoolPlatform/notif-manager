@@ -6,6 +6,7 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/mixin"
 	"github.com/google/uuid"
 
+	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
 	"github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
 )
 
@@ -36,7 +37,7 @@ func (Notif) Fields() []ent.Field {
 			Optional().
 			Default(uuid.New),
 		field.
-			Bool("already_read").
+			Bool("notified").
 			Optional().
 			Default(false),
 		field.
@@ -60,13 +61,9 @@ func (Notif) Fields() []ent.Field {
 			Optional().
 			Default(""),
 		field.
-			JSON("channels", []string{}).
+			String("channel").
 			Optional().
-			Default([]string{}),
-		field.
-			Bool("email_send").
-			Optional().
-			Default(false),
+			Default(channel.NotifChannel_DefaultChannel.String()),
 		field.
 			Text("extra").
 			Optional().

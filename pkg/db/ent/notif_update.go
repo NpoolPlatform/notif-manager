@@ -124,23 +124,23 @@ func (nu *NotifUpdate) ClearUserID() *NotifUpdate {
 	return nu
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (nu *NotifUpdate) SetAlreadyRead(b bool) *NotifUpdate {
-	nu.mutation.SetAlreadyRead(b)
+// SetNotified sets the "notified" field.
+func (nu *NotifUpdate) SetNotified(b bool) *NotifUpdate {
+	nu.mutation.SetNotified(b)
 	return nu
 }
 
-// SetNillableAlreadyRead sets the "already_read" field if the given value is not nil.
-func (nu *NotifUpdate) SetNillableAlreadyRead(b *bool) *NotifUpdate {
+// SetNillableNotified sets the "notified" field if the given value is not nil.
+func (nu *NotifUpdate) SetNillableNotified(b *bool) *NotifUpdate {
 	if b != nil {
-		nu.SetAlreadyRead(*b)
+		nu.SetNotified(*b)
 	}
 	return nu
 }
 
-// ClearAlreadyRead clears the value of the "already_read" field.
-func (nu *NotifUpdate) ClearAlreadyRead() *NotifUpdate {
-	nu.mutation.ClearAlreadyRead()
+// ClearNotified clears the value of the "notified" field.
+func (nu *NotifUpdate) ClearNotified() *NotifUpdate {
+	nu.mutation.ClearNotified()
 	return nu
 }
 
@@ -244,35 +244,23 @@ func (nu *NotifUpdate) ClearContent() *NotifUpdate {
 	return nu
 }
 
-// SetChannels sets the "channels" field.
-func (nu *NotifUpdate) SetChannels(s []string) *NotifUpdate {
-	nu.mutation.SetChannels(s)
+// SetChannel sets the "channel" field.
+func (nu *NotifUpdate) SetChannel(s string) *NotifUpdate {
+	nu.mutation.SetChannel(s)
 	return nu
 }
 
-// ClearChannels clears the value of the "channels" field.
-func (nu *NotifUpdate) ClearChannels() *NotifUpdate {
-	nu.mutation.ClearChannels()
-	return nu
-}
-
-// SetEmailSend sets the "email_send" field.
-func (nu *NotifUpdate) SetEmailSend(b bool) *NotifUpdate {
-	nu.mutation.SetEmailSend(b)
-	return nu
-}
-
-// SetNillableEmailSend sets the "email_send" field if the given value is not nil.
-func (nu *NotifUpdate) SetNillableEmailSend(b *bool) *NotifUpdate {
-	if b != nil {
-		nu.SetEmailSend(*b)
+// SetNillableChannel sets the "channel" field if the given value is not nil.
+func (nu *NotifUpdate) SetNillableChannel(s *string) *NotifUpdate {
+	if s != nil {
+		nu.SetChannel(*s)
 	}
 	return nu
 }
 
-// ClearEmailSend clears the value of the "email_send" field.
-func (nu *NotifUpdate) ClearEmailSend() *NotifUpdate {
-	nu.mutation.ClearEmailSend()
+// ClearChannel clears the value of the "channel" field.
+func (nu *NotifUpdate) ClearChannel() *NotifUpdate {
+	nu.mutation.ClearChannel()
 	return nu
 }
 
@@ -462,17 +450,17 @@ func (nu *NotifUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: notif.FieldUserID,
 		})
 	}
-	if value, ok := nu.mutation.AlreadyRead(); ok {
+	if value, ok := nu.mutation.Notified(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: notif.FieldAlreadyRead,
+			Column: notif.FieldNotified,
 		})
 	}
-	if nu.mutation.AlreadyReadCleared() {
+	if nu.mutation.NotifiedCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
-			Column: notif.FieldAlreadyRead,
+			Column: notif.FieldNotified,
 		})
 	}
 	if value, ok := nu.mutation.LangID(); ok {
@@ -540,30 +528,17 @@ func (nu *NotifUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: notif.FieldContent,
 		})
 	}
-	if value, ok := nu.mutation.Channels(); ok {
+	if value, ok := nu.mutation.Channel(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: notif.FieldChannels,
+			Column: notif.FieldChannel,
 		})
 	}
-	if nu.mutation.ChannelsCleared() {
+	if nu.mutation.ChannelCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: notif.FieldChannels,
-		})
-	}
-	if value, ok := nu.mutation.EmailSend(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: notif.FieldEmailSend,
-		})
-	}
-	if nu.mutation.EmailSendCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: notif.FieldEmailSend,
+			Type:   field.TypeString,
+			Column: notif.FieldChannel,
 		})
 	}
 	if value, ok := nu.mutation.Extra(); ok {
@@ -695,23 +670,23 @@ func (nuo *NotifUpdateOne) ClearUserID() *NotifUpdateOne {
 	return nuo
 }
 
-// SetAlreadyRead sets the "already_read" field.
-func (nuo *NotifUpdateOne) SetAlreadyRead(b bool) *NotifUpdateOne {
-	nuo.mutation.SetAlreadyRead(b)
+// SetNotified sets the "notified" field.
+func (nuo *NotifUpdateOne) SetNotified(b bool) *NotifUpdateOne {
+	nuo.mutation.SetNotified(b)
 	return nuo
 }
 
-// SetNillableAlreadyRead sets the "already_read" field if the given value is not nil.
-func (nuo *NotifUpdateOne) SetNillableAlreadyRead(b *bool) *NotifUpdateOne {
+// SetNillableNotified sets the "notified" field if the given value is not nil.
+func (nuo *NotifUpdateOne) SetNillableNotified(b *bool) *NotifUpdateOne {
 	if b != nil {
-		nuo.SetAlreadyRead(*b)
+		nuo.SetNotified(*b)
 	}
 	return nuo
 }
 
-// ClearAlreadyRead clears the value of the "already_read" field.
-func (nuo *NotifUpdateOne) ClearAlreadyRead() *NotifUpdateOne {
-	nuo.mutation.ClearAlreadyRead()
+// ClearNotified clears the value of the "notified" field.
+func (nuo *NotifUpdateOne) ClearNotified() *NotifUpdateOne {
+	nuo.mutation.ClearNotified()
 	return nuo
 }
 
@@ -815,35 +790,23 @@ func (nuo *NotifUpdateOne) ClearContent() *NotifUpdateOne {
 	return nuo
 }
 
-// SetChannels sets the "channels" field.
-func (nuo *NotifUpdateOne) SetChannels(s []string) *NotifUpdateOne {
-	nuo.mutation.SetChannels(s)
+// SetChannel sets the "channel" field.
+func (nuo *NotifUpdateOne) SetChannel(s string) *NotifUpdateOne {
+	nuo.mutation.SetChannel(s)
 	return nuo
 }
 
-// ClearChannels clears the value of the "channels" field.
-func (nuo *NotifUpdateOne) ClearChannels() *NotifUpdateOne {
-	nuo.mutation.ClearChannels()
-	return nuo
-}
-
-// SetEmailSend sets the "email_send" field.
-func (nuo *NotifUpdateOne) SetEmailSend(b bool) *NotifUpdateOne {
-	nuo.mutation.SetEmailSend(b)
-	return nuo
-}
-
-// SetNillableEmailSend sets the "email_send" field if the given value is not nil.
-func (nuo *NotifUpdateOne) SetNillableEmailSend(b *bool) *NotifUpdateOne {
-	if b != nil {
-		nuo.SetEmailSend(*b)
+// SetNillableChannel sets the "channel" field if the given value is not nil.
+func (nuo *NotifUpdateOne) SetNillableChannel(s *string) *NotifUpdateOne {
+	if s != nil {
+		nuo.SetChannel(*s)
 	}
 	return nuo
 }
 
-// ClearEmailSend clears the value of the "email_send" field.
-func (nuo *NotifUpdateOne) ClearEmailSend() *NotifUpdateOne {
-	nuo.mutation.ClearEmailSend()
+// ClearChannel clears the value of the "channel" field.
+func (nuo *NotifUpdateOne) ClearChannel() *NotifUpdateOne {
+	nuo.mutation.ClearChannel()
 	return nuo
 }
 
@@ -1063,17 +1026,17 @@ func (nuo *NotifUpdateOne) sqlSave(ctx context.Context) (_node *Notif, err error
 			Column: notif.FieldUserID,
 		})
 	}
-	if value, ok := nuo.mutation.AlreadyRead(); ok {
+	if value, ok := nuo.mutation.Notified(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: notif.FieldAlreadyRead,
+			Column: notif.FieldNotified,
 		})
 	}
-	if nuo.mutation.AlreadyReadCleared() {
+	if nuo.mutation.NotifiedCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
-			Column: notif.FieldAlreadyRead,
+			Column: notif.FieldNotified,
 		})
 	}
 	if value, ok := nuo.mutation.LangID(); ok {
@@ -1141,30 +1104,17 @@ func (nuo *NotifUpdateOne) sqlSave(ctx context.Context) (_node *Notif, err error
 			Column: notif.FieldContent,
 		})
 	}
-	if value, ok := nuo.mutation.Channels(); ok {
+	if value, ok := nuo.mutation.Channel(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: notif.FieldChannels,
+			Column: notif.FieldChannel,
 		})
 	}
-	if nuo.mutation.ChannelsCleared() {
+	if nuo.mutation.ChannelCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: notif.FieldChannels,
-		})
-	}
-	if value, ok := nuo.mutation.EmailSend(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Value:  value,
-			Column: notif.FieldEmailSend,
-		})
-	}
-	if nuo.mutation.EmailSendCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: notif.FieldEmailSend,
+			Type:   field.TypeString,
+			Column: notif.FieldChannel,
 		})
 	}
 	if value, ok := nuo.mutation.Extra(); ok {
