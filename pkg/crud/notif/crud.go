@@ -316,6 +316,14 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 			return nil, fmt.Errorf("invalid notif field")
 		}
 	}
+	if conds.Channel != nil {
+		switch conds.GetChannel().GetOp() {
+		case cruder.EQ:
+			stm.Where(notif.Channel(channel.NotifChannel(conds.GetChannel().GetValue()).String()))
+		default:
+			return nil, fmt.Errorf("invalid notif field")
+		}
+	}
 
 	return stm, nil
 }
