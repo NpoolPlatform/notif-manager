@@ -7,8 +7,8 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/mixin"
 	"github.com/google/uuid"
 
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
-	eventtype "github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
 )
 
 // NotifChannel holds the schema definition for the NotifChannel entity.
@@ -36,7 +36,7 @@ func (NotifChannel) Fields() []ent.Field {
 		field.
 			String("event_type").
 			Optional().
-			Default(eventtype.UsedFor_DefaultUsedFor.String()),
+			Default(basetypes.UsedFor_DefaultUsedFor.String()),
 		field.
 			String("channel").
 			Optional().

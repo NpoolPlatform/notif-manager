@@ -22,6 +22,45 @@ func (f AnnouncementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return f(ctx, mv)
 }
 
+// The ContactFunc type is an adapter to allow the use of ordinary
+// function as Contact mutator.
+type ContactFunc func(context.Context, *ent.ContactMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ContactFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ContactMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ContactMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The EmailTemplateFunc type is an adapter to allow the use of ordinary
+// function as EmailTemplate mutator.
+type EmailTemplateFunc func(context.Context, *ent.EmailTemplateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EmailTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.EmailTemplateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EmailTemplateMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The FrontendTemplateFunc type is an adapter to allow the use of ordinary
+// function as FrontendTemplate mutator.
+type FrontendTemplateFunc func(context.Context, *ent.FrontendTemplateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FrontendTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.FrontendTemplateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FrontendTemplateMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The NotifFunc type is an adapter to allow the use of ordinary
 // function as Notif mutator.
 type NotifFunc func(context.Context, *ent.NotifMutation) (ent.Value, error)
@@ -57,6 +96,19 @@ func (f ReadAnnouncementFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.V
 	mv, ok := m.(*ent.ReadAnnouncementMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ReadAnnouncementMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The SMSTemplateFunc type is an adapter to allow the use of ordinary
+// function as SMSTemplate mutator.
+type SMSTemplateFunc func(context.Context, *ent.SMSTemplateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SMSTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.SMSTemplateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SMSTemplateMutation", m)
 	}
 	return f(ctx, mv)
 }

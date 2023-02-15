@@ -124,23 +124,23 @@ func (tnsu *TxNotifStateUpdate) ClearNotifState() *TxNotifStateUpdate {
 	return tnsu
 }
 
-// SetNotifType sets the "notif_type" field.
-func (tnsu *TxNotifStateUpdate) SetNotifType(s string) *TxNotifStateUpdate {
-	tnsu.mutation.SetNotifType(s)
+// SetTxType sets the "tx_type" field.
+func (tnsu *TxNotifStateUpdate) SetTxType(s string) *TxNotifStateUpdate {
+	tnsu.mutation.SetTxType(s)
 	return tnsu
 }
 
-// SetNillableNotifType sets the "notif_type" field if the given value is not nil.
-func (tnsu *TxNotifStateUpdate) SetNillableNotifType(s *string) *TxNotifStateUpdate {
+// SetNillableTxType sets the "tx_type" field if the given value is not nil.
+func (tnsu *TxNotifStateUpdate) SetNillableTxType(s *string) *TxNotifStateUpdate {
 	if s != nil {
-		tnsu.SetNotifType(*s)
+		tnsu.SetTxType(*s)
 	}
 	return tnsu
 }
 
-// ClearNotifType clears the value of the "notif_type" field.
-func (tnsu *TxNotifStateUpdate) ClearNotifType() *TxNotifStateUpdate {
-	tnsu.mutation.ClearNotifType()
+// ClearTxType clears the value of the "tx_type" field.
+func (tnsu *TxNotifStateUpdate) ClearTxType() *TxNotifStateUpdate {
+	tnsu.mutation.ClearTxType()
 	return tnsu
 }
 
@@ -310,17 +310,17 @@ func (tnsu *TxNotifStateUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Column: txnotifstate.FieldNotifState,
 		})
 	}
-	if value, ok := tnsu.mutation.NotifType(); ok {
+	if value, ok := tnsu.mutation.TxType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: txnotifstate.FieldNotifType,
+			Column: txnotifstate.FieldTxType,
 		})
 	}
-	if tnsu.mutation.NotifTypeCleared() {
+	if tnsu.mutation.TxTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: txnotifstate.FieldNotifType,
+			Column: txnotifstate.FieldTxType,
 		})
 	}
 	_spec.Modifiers = tnsu.modifiers
@@ -439,23 +439,23 @@ func (tnsuo *TxNotifStateUpdateOne) ClearNotifState() *TxNotifStateUpdateOne {
 	return tnsuo
 }
 
-// SetNotifType sets the "notif_type" field.
-func (tnsuo *TxNotifStateUpdateOne) SetNotifType(s string) *TxNotifStateUpdateOne {
-	tnsuo.mutation.SetNotifType(s)
+// SetTxType sets the "tx_type" field.
+func (tnsuo *TxNotifStateUpdateOne) SetTxType(s string) *TxNotifStateUpdateOne {
+	tnsuo.mutation.SetTxType(s)
 	return tnsuo
 }
 
-// SetNillableNotifType sets the "notif_type" field if the given value is not nil.
-func (tnsuo *TxNotifStateUpdateOne) SetNillableNotifType(s *string) *TxNotifStateUpdateOne {
+// SetNillableTxType sets the "tx_type" field if the given value is not nil.
+func (tnsuo *TxNotifStateUpdateOne) SetNillableTxType(s *string) *TxNotifStateUpdateOne {
 	if s != nil {
-		tnsuo.SetNotifType(*s)
+		tnsuo.SetTxType(*s)
 	}
 	return tnsuo
 }
 
-// ClearNotifType clears the value of the "notif_type" field.
-func (tnsuo *TxNotifStateUpdateOne) ClearNotifType() *TxNotifStateUpdateOne {
-	tnsuo.mutation.ClearNotifType()
+// ClearTxType clears the value of the "tx_type" field.
+func (tnsuo *TxNotifStateUpdateOne) ClearTxType() *TxNotifStateUpdateOne {
+	tnsuo.mutation.ClearTxType()
 	return tnsuo
 }
 
@@ -655,17 +655,17 @@ func (tnsuo *TxNotifStateUpdateOne) sqlSave(ctx context.Context) (_node *TxNotif
 			Column: txnotifstate.FieldNotifState,
 		})
 	}
-	if value, ok := tnsuo.mutation.NotifType(); ok {
+	if value, ok := tnsuo.mutation.TxType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: txnotifstate.FieldNotifType,
+			Column: txnotifstate.FieldTxType,
 		})
 	}
-	if tnsuo.mutation.NotifTypeCleared() {
+	if tnsuo.mutation.TxTypeCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: txnotifstate.FieldNotifType,
+			Column: txnotifstate.FieldTxType,
 		})
 	}
 	_spec.Modifiers = tnsuo.modifiers

@@ -1,12 +1,13 @@
 package notif
 
+/*
 import (
 	"context"
 	"fmt"
 	"time"
 
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
-	"github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
 
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
 	tracer "github.com/NpoolPlatform/notif-manager/pkg/tracer/notif"
@@ -291,7 +292,7 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 	if conds.EventType != nil {
 		switch conds.GetEventType().GetOp() {
 		case cruder.EQ:
-			stm.Where(notif.EventType(usedfor.UsedFor(conds.GetEventType().GetValue()).String()))
+			stm.Where(notif.EventType(basetypes.UsedFor(conds.GetEventType().GetValue()).String()))
 		default:
 			return nil, fmt.Errorf("invalid notif field")
 		}
@@ -299,7 +300,7 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 	if len(conds.GetEventTypes().GetValue()) > 0 {
 		types := []string{}
 		for _, typ := range conds.GetEventTypes().GetValue() {
-			types = append(types, usedfor.UsedFor(typ).String())
+			types = append(types, basetypes.UsedFor(typ).String())
 		}
 		switch conds.GetEventTypes().GetOp() {
 		case cruder.IN:
@@ -536,3 +537,4 @@ func Delete(ctx context.Context, id uuid.UUID) (*ent.Notif, error) {
 
 	return info, nil
 }
+*/

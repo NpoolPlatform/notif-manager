@@ -6,8 +6,9 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif"
 
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	channel "github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
-	usedfor "github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
+
 	"github.com/google/uuid"
 )
 
@@ -32,12 +33,12 @@ func validate(in *npool.NotifReq) error { //nolint
 	}
 
 	switch in.GetEventType() {
-	case usedfor.UsedFor_WithdrawalRequest:
-	case usedfor.UsedFor_WithdrawalCompleted:
-	case usedfor.UsedFor_DepositReceived:
-	case usedfor.UsedFor_KYCApproved:
-	case usedfor.UsedFor_KYCRejected:
-	case usedfor.UsedFor_Announcement:
+	case basetypes.UsedFor_WithdrawalRequest:
+	case basetypes.UsedFor_WithdrawalCompleted:
+	case basetypes.UsedFor_DepositReceived:
+	case basetypes.UsedFor_KYCApproved:
+	case basetypes.UsedFor_KYCRejected:
+	case basetypes.UsedFor_Announcement:
 	default:
 		return fmt.Errorf("eventtype is invalid")
 	}
@@ -90,12 +91,12 @@ func validateConds(in *npool.Conds) error {
 	}
 	if in.EventType != nil {
 		switch in.GetEventType().GetValue() {
-		case uint32(usedfor.UsedFor_WithdrawalRequest):
-		case uint32(usedfor.UsedFor_WithdrawalCompleted):
-		case uint32(usedfor.UsedFor_DepositReceived):
-		case uint32(usedfor.UsedFor_KYCApproved):
-		case uint32(usedfor.UsedFor_KYCRejected):
-		case uint32(usedfor.UsedFor_Announcement):
+		case uint32(basetypes.UsedFor_WithdrawalRequest):
+		case uint32(basetypes.UsedFor_WithdrawalCompleted):
+		case uint32(basetypes.UsedFor_DepositReceived):
+		case uint32(basetypes.UsedFor_KYCApproved):
+		case uint32(basetypes.UsedFor_KYCRejected):
+		case uint32(basetypes.UsedFor_Announcement):
 		default:
 			return fmt.Errorf("eventtype is invalid")
 		}

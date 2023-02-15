@@ -93,16 +93,16 @@ func (tnsc *TxNotifStateCreate) SetNillableNotifState(s *string) *TxNotifStateCr
 	return tnsc
 }
 
-// SetNotifType sets the "notif_type" field.
-func (tnsc *TxNotifStateCreate) SetNotifType(s string) *TxNotifStateCreate {
-	tnsc.mutation.SetNotifType(s)
+// SetTxType sets the "tx_type" field.
+func (tnsc *TxNotifStateCreate) SetTxType(s string) *TxNotifStateCreate {
+	tnsc.mutation.SetTxType(s)
 	return tnsc
 }
 
-// SetNillableNotifType sets the "notif_type" field if the given value is not nil.
-func (tnsc *TxNotifStateCreate) SetNillableNotifType(s *string) *TxNotifStateCreate {
+// SetNillableTxType sets the "tx_type" field if the given value is not nil.
+func (tnsc *TxNotifStateCreate) SetNillableTxType(s *string) *TxNotifStateCreate {
 	if s != nil {
-		tnsc.SetNotifType(*s)
+		tnsc.SetTxType(*s)
 	}
 	return tnsc
 }
@@ -232,9 +232,9 @@ func (tnsc *TxNotifStateCreate) defaults() error {
 		v := txnotifstate.DefaultNotifState
 		tnsc.mutation.SetNotifState(v)
 	}
-	if _, ok := tnsc.mutation.NotifType(); !ok {
-		v := txnotifstate.DefaultNotifType
-		tnsc.mutation.SetNotifType(v)
+	if _, ok := tnsc.mutation.TxType(); !ok {
+		v := txnotifstate.DefaultTxType
+		tnsc.mutation.SetTxType(v)
 	}
 	if _, ok := tnsc.mutation.ID(); !ok {
 		if txnotifstate.DefaultID == nil {
@@ -334,13 +334,13 @@ func (tnsc *TxNotifStateCreate) createSpec() (*TxNotifState, *sqlgraph.CreateSpe
 		})
 		_node.NotifState = value
 	}
-	if value, ok := tnsc.mutation.NotifType(); ok {
+	if value, ok := tnsc.mutation.TxType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: txnotifstate.FieldNotifType,
+			Column: txnotifstate.FieldTxType,
 		})
-		_node.NotifType = value
+		_node.TxType = value
 	}
 	return _node, _spec
 }
@@ -486,21 +486,21 @@ func (u *TxNotifStateUpsert) ClearNotifState() *TxNotifStateUpsert {
 	return u
 }
 
-// SetNotifType sets the "notif_type" field.
-func (u *TxNotifStateUpsert) SetNotifType(v string) *TxNotifStateUpsert {
-	u.Set(txnotifstate.FieldNotifType, v)
+// SetTxType sets the "tx_type" field.
+func (u *TxNotifStateUpsert) SetTxType(v string) *TxNotifStateUpsert {
+	u.Set(txnotifstate.FieldTxType, v)
 	return u
 }
 
-// UpdateNotifType sets the "notif_type" field to the value that was provided on create.
-func (u *TxNotifStateUpsert) UpdateNotifType() *TxNotifStateUpsert {
-	u.SetExcluded(txnotifstate.FieldNotifType)
+// UpdateTxType sets the "tx_type" field to the value that was provided on create.
+func (u *TxNotifStateUpsert) UpdateTxType() *TxNotifStateUpsert {
+	u.SetExcluded(txnotifstate.FieldTxType)
 	return u
 }
 
-// ClearNotifType clears the value of the "notif_type" field.
-func (u *TxNotifStateUpsert) ClearNotifType() *TxNotifStateUpsert {
-	u.SetNull(txnotifstate.FieldNotifType)
+// ClearTxType clears the value of the "tx_type" field.
+func (u *TxNotifStateUpsert) ClearTxType() *TxNotifStateUpsert {
+	u.SetNull(txnotifstate.FieldTxType)
 	return u
 }
 
@@ -659,24 +659,24 @@ func (u *TxNotifStateUpsertOne) ClearNotifState() *TxNotifStateUpsertOne {
 	})
 }
 
-// SetNotifType sets the "notif_type" field.
-func (u *TxNotifStateUpsertOne) SetNotifType(v string) *TxNotifStateUpsertOne {
+// SetTxType sets the "tx_type" field.
+func (u *TxNotifStateUpsertOne) SetTxType(v string) *TxNotifStateUpsertOne {
 	return u.Update(func(s *TxNotifStateUpsert) {
-		s.SetNotifType(v)
+		s.SetTxType(v)
 	})
 }
 
-// UpdateNotifType sets the "notif_type" field to the value that was provided on create.
-func (u *TxNotifStateUpsertOne) UpdateNotifType() *TxNotifStateUpsertOne {
+// UpdateTxType sets the "tx_type" field to the value that was provided on create.
+func (u *TxNotifStateUpsertOne) UpdateTxType() *TxNotifStateUpsertOne {
 	return u.Update(func(s *TxNotifStateUpsert) {
-		s.UpdateNotifType()
+		s.UpdateTxType()
 	})
 }
 
-// ClearNotifType clears the value of the "notif_type" field.
-func (u *TxNotifStateUpsertOne) ClearNotifType() *TxNotifStateUpsertOne {
+// ClearTxType clears the value of the "tx_type" field.
+func (u *TxNotifStateUpsertOne) ClearTxType() *TxNotifStateUpsertOne {
 	return u.Update(func(s *TxNotifStateUpsert) {
-		s.ClearNotifType()
+		s.ClearTxType()
 	})
 }
 
@@ -1001,24 +1001,24 @@ func (u *TxNotifStateUpsertBulk) ClearNotifState() *TxNotifStateUpsertBulk {
 	})
 }
 
-// SetNotifType sets the "notif_type" field.
-func (u *TxNotifStateUpsertBulk) SetNotifType(v string) *TxNotifStateUpsertBulk {
+// SetTxType sets the "tx_type" field.
+func (u *TxNotifStateUpsertBulk) SetTxType(v string) *TxNotifStateUpsertBulk {
 	return u.Update(func(s *TxNotifStateUpsert) {
-		s.SetNotifType(v)
+		s.SetTxType(v)
 	})
 }
 
-// UpdateNotifType sets the "notif_type" field to the value that was provided on create.
-func (u *TxNotifStateUpsertBulk) UpdateNotifType() *TxNotifStateUpsertBulk {
+// UpdateTxType sets the "tx_type" field to the value that was provided on create.
+func (u *TxNotifStateUpsertBulk) UpdateTxType() *TxNotifStateUpsertBulk {
 	return u.Update(func(s *TxNotifStateUpsert) {
-		s.UpdateNotifType()
+		s.UpdateTxType()
 	})
 }
 
-// ClearNotifType clears the value of the "notif_type" field.
-func (u *TxNotifStateUpsertBulk) ClearNotifType() *TxNotifStateUpsertBulk {
+// ClearTxType clears the value of the "tx_type" field.
+func (u *TxNotifStateUpsertBulk) ClearTxType() *TxNotifStateUpsertBulk {
 	return u.Update(func(s *TxNotifStateUpsert) {
-		s.ClearNotifType()
+		s.ClearTxType()
 	})
 }
 

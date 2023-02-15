@@ -12,10 +12,14 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/announcement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/contact"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/emailtemplate"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/frontendtemplate"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notifchannel"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/smstemplate"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/txnotifstate"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/userannouncement"
 
@@ -30,12 +34,20 @@ type Client struct {
 	Schema *migrate.Schema
 	// Announcement is the client for interacting with the Announcement builders.
 	Announcement *AnnouncementClient
+	// Contact is the client for interacting with the Contact builders.
+	Contact *ContactClient
+	// EmailTemplate is the client for interacting with the EmailTemplate builders.
+	EmailTemplate *EmailTemplateClient
+	// FrontendTemplate is the client for interacting with the FrontendTemplate builders.
+	FrontendTemplate *FrontendTemplateClient
 	// Notif is the client for interacting with the Notif builders.
 	Notif *NotifClient
 	// NotifChannel is the client for interacting with the NotifChannel builders.
 	NotifChannel *NotifChannelClient
 	// ReadAnnouncement is the client for interacting with the ReadAnnouncement builders.
 	ReadAnnouncement *ReadAnnouncementClient
+	// SMSTemplate is the client for interacting with the SMSTemplate builders.
+	SMSTemplate *SMSTemplateClient
 	// SendAnnouncement is the client for interacting with the SendAnnouncement builders.
 	SendAnnouncement *SendAnnouncementClient
 	// TxNotifState is the client for interacting with the TxNotifState builders.
@@ -56,9 +68,13 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Announcement = NewAnnouncementClient(c.config)
+	c.Contact = NewContactClient(c.config)
+	c.EmailTemplate = NewEmailTemplateClient(c.config)
+	c.FrontendTemplate = NewFrontendTemplateClient(c.config)
 	c.Notif = NewNotifClient(c.config)
 	c.NotifChannel = NewNotifChannelClient(c.config)
 	c.ReadAnnouncement = NewReadAnnouncementClient(c.config)
+	c.SMSTemplate = NewSMSTemplateClient(c.config)
 	c.SendAnnouncement = NewSendAnnouncementClient(c.config)
 	c.TxNotifState = NewTxNotifStateClient(c.config)
 	c.UserAnnouncement = NewUserAnnouncementClient(c.config)
@@ -96,9 +112,13 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:              ctx,
 		config:           cfg,
 		Announcement:     NewAnnouncementClient(cfg),
+		Contact:          NewContactClient(cfg),
+		EmailTemplate:    NewEmailTemplateClient(cfg),
+		FrontendTemplate: NewFrontendTemplateClient(cfg),
 		Notif:            NewNotifClient(cfg),
 		NotifChannel:     NewNotifChannelClient(cfg),
 		ReadAnnouncement: NewReadAnnouncementClient(cfg),
+		SMSTemplate:      NewSMSTemplateClient(cfg),
 		SendAnnouncement: NewSendAnnouncementClient(cfg),
 		TxNotifState:     NewTxNotifStateClient(cfg),
 		UserAnnouncement: NewUserAnnouncementClient(cfg),
@@ -122,9 +142,13 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:              ctx,
 		config:           cfg,
 		Announcement:     NewAnnouncementClient(cfg),
+		Contact:          NewContactClient(cfg),
+		EmailTemplate:    NewEmailTemplateClient(cfg),
+		FrontendTemplate: NewFrontendTemplateClient(cfg),
 		Notif:            NewNotifClient(cfg),
 		NotifChannel:     NewNotifChannelClient(cfg),
 		ReadAnnouncement: NewReadAnnouncementClient(cfg),
+		SMSTemplate:      NewSMSTemplateClient(cfg),
 		SendAnnouncement: NewSendAnnouncementClient(cfg),
 		TxNotifState:     NewTxNotifStateClient(cfg),
 		UserAnnouncement: NewUserAnnouncementClient(cfg),
@@ -158,9 +182,13 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Announcement.Use(hooks...)
+	c.Contact.Use(hooks...)
+	c.EmailTemplate.Use(hooks...)
+	c.FrontendTemplate.Use(hooks...)
 	c.Notif.Use(hooks...)
 	c.NotifChannel.Use(hooks...)
 	c.ReadAnnouncement.Use(hooks...)
+	c.SMSTemplate.Use(hooks...)
 	c.SendAnnouncement.Use(hooks...)
 	c.TxNotifState.Use(hooks...)
 	c.UserAnnouncement.Use(hooks...)
@@ -255,6 +283,279 @@ func (c *AnnouncementClient) GetX(ctx context.Context, id uuid.UUID) *Announceme
 func (c *AnnouncementClient) Hooks() []Hook {
 	hooks := c.hooks.Announcement
 	return append(hooks[:len(hooks):len(hooks)], announcement.Hooks[:]...)
+}
+
+// ContactClient is a client for the Contact schema.
+type ContactClient struct {
+	config
+}
+
+// NewContactClient returns a client for the Contact from the given config.
+func NewContactClient(c config) *ContactClient {
+	return &ContactClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `contact.Hooks(f(g(h())))`.
+func (c *ContactClient) Use(hooks ...Hook) {
+	c.hooks.Contact = append(c.hooks.Contact, hooks...)
+}
+
+// Create returns a builder for creating a Contact entity.
+func (c *ContactClient) Create() *ContactCreate {
+	mutation := newContactMutation(c.config, OpCreate)
+	return &ContactCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Contact entities.
+func (c *ContactClient) CreateBulk(builders ...*ContactCreate) *ContactCreateBulk {
+	return &ContactCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Contact.
+func (c *ContactClient) Update() *ContactUpdate {
+	mutation := newContactMutation(c.config, OpUpdate)
+	return &ContactUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ContactClient) UpdateOne(co *Contact) *ContactUpdateOne {
+	mutation := newContactMutation(c.config, OpUpdateOne, withContact(co))
+	return &ContactUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ContactClient) UpdateOneID(id uuid.UUID) *ContactUpdateOne {
+	mutation := newContactMutation(c.config, OpUpdateOne, withContactID(id))
+	return &ContactUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Contact.
+func (c *ContactClient) Delete() *ContactDelete {
+	mutation := newContactMutation(c.config, OpDelete)
+	return &ContactDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ContactClient) DeleteOne(co *Contact) *ContactDeleteOne {
+	return c.DeleteOneID(co.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *ContactClient) DeleteOneID(id uuid.UUID) *ContactDeleteOne {
+	builder := c.Delete().Where(contact.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ContactDeleteOne{builder}
+}
+
+// Query returns a query builder for Contact.
+func (c *ContactClient) Query() *ContactQuery {
+	return &ContactQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Contact entity by its id.
+func (c *ContactClient) Get(ctx context.Context, id uuid.UUID) (*Contact, error) {
+	return c.Query().Where(contact.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ContactClient) GetX(ctx context.Context, id uuid.UUID) *Contact {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ContactClient) Hooks() []Hook {
+	hooks := c.hooks.Contact
+	return append(hooks[:len(hooks):len(hooks)], contact.Hooks[:]...)
+}
+
+// EmailTemplateClient is a client for the EmailTemplate schema.
+type EmailTemplateClient struct {
+	config
+}
+
+// NewEmailTemplateClient returns a client for the EmailTemplate from the given config.
+func NewEmailTemplateClient(c config) *EmailTemplateClient {
+	return &EmailTemplateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `emailtemplate.Hooks(f(g(h())))`.
+func (c *EmailTemplateClient) Use(hooks ...Hook) {
+	c.hooks.EmailTemplate = append(c.hooks.EmailTemplate, hooks...)
+}
+
+// Create returns a builder for creating a EmailTemplate entity.
+func (c *EmailTemplateClient) Create() *EmailTemplateCreate {
+	mutation := newEmailTemplateMutation(c.config, OpCreate)
+	return &EmailTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EmailTemplate entities.
+func (c *EmailTemplateClient) CreateBulk(builders ...*EmailTemplateCreate) *EmailTemplateCreateBulk {
+	return &EmailTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EmailTemplate.
+func (c *EmailTemplateClient) Update() *EmailTemplateUpdate {
+	mutation := newEmailTemplateMutation(c.config, OpUpdate)
+	return &EmailTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EmailTemplateClient) UpdateOne(et *EmailTemplate) *EmailTemplateUpdateOne {
+	mutation := newEmailTemplateMutation(c.config, OpUpdateOne, withEmailTemplate(et))
+	return &EmailTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EmailTemplateClient) UpdateOneID(id uuid.UUID) *EmailTemplateUpdateOne {
+	mutation := newEmailTemplateMutation(c.config, OpUpdateOne, withEmailTemplateID(id))
+	return &EmailTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EmailTemplate.
+func (c *EmailTemplateClient) Delete() *EmailTemplateDelete {
+	mutation := newEmailTemplateMutation(c.config, OpDelete)
+	return &EmailTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EmailTemplateClient) DeleteOne(et *EmailTemplate) *EmailTemplateDeleteOne {
+	return c.DeleteOneID(et.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *EmailTemplateClient) DeleteOneID(id uuid.UUID) *EmailTemplateDeleteOne {
+	builder := c.Delete().Where(emailtemplate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EmailTemplateDeleteOne{builder}
+}
+
+// Query returns a query builder for EmailTemplate.
+func (c *EmailTemplateClient) Query() *EmailTemplateQuery {
+	return &EmailTemplateQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a EmailTemplate entity by its id.
+func (c *EmailTemplateClient) Get(ctx context.Context, id uuid.UUID) (*EmailTemplate, error) {
+	return c.Query().Where(emailtemplate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EmailTemplateClient) GetX(ctx context.Context, id uuid.UUID) *EmailTemplate {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EmailTemplateClient) Hooks() []Hook {
+	hooks := c.hooks.EmailTemplate
+	return append(hooks[:len(hooks):len(hooks)], emailtemplate.Hooks[:]...)
+}
+
+// FrontendTemplateClient is a client for the FrontendTemplate schema.
+type FrontendTemplateClient struct {
+	config
+}
+
+// NewFrontendTemplateClient returns a client for the FrontendTemplate from the given config.
+func NewFrontendTemplateClient(c config) *FrontendTemplateClient {
+	return &FrontendTemplateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `frontendtemplate.Hooks(f(g(h())))`.
+func (c *FrontendTemplateClient) Use(hooks ...Hook) {
+	c.hooks.FrontendTemplate = append(c.hooks.FrontendTemplate, hooks...)
+}
+
+// Create returns a builder for creating a FrontendTemplate entity.
+func (c *FrontendTemplateClient) Create() *FrontendTemplateCreate {
+	mutation := newFrontendTemplateMutation(c.config, OpCreate)
+	return &FrontendTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FrontendTemplate entities.
+func (c *FrontendTemplateClient) CreateBulk(builders ...*FrontendTemplateCreate) *FrontendTemplateCreateBulk {
+	return &FrontendTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FrontendTemplate.
+func (c *FrontendTemplateClient) Update() *FrontendTemplateUpdate {
+	mutation := newFrontendTemplateMutation(c.config, OpUpdate)
+	return &FrontendTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FrontendTemplateClient) UpdateOne(ft *FrontendTemplate) *FrontendTemplateUpdateOne {
+	mutation := newFrontendTemplateMutation(c.config, OpUpdateOne, withFrontendTemplate(ft))
+	return &FrontendTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FrontendTemplateClient) UpdateOneID(id uuid.UUID) *FrontendTemplateUpdateOne {
+	mutation := newFrontendTemplateMutation(c.config, OpUpdateOne, withFrontendTemplateID(id))
+	return &FrontendTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FrontendTemplate.
+func (c *FrontendTemplateClient) Delete() *FrontendTemplateDelete {
+	mutation := newFrontendTemplateMutation(c.config, OpDelete)
+	return &FrontendTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FrontendTemplateClient) DeleteOne(ft *FrontendTemplate) *FrontendTemplateDeleteOne {
+	return c.DeleteOneID(ft.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *FrontendTemplateClient) DeleteOneID(id uuid.UUID) *FrontendTemplateDeleteOne {
+	builder := c.Delete().Where(frontendtemplate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FrontendTemplateDeleteOne{builder}
+}
+
+// Query returns a query builder for FrontendTemplate.
+func (c *FrontendTemplateClient) Query() *FrontendTemplateQuery {
+	return &FrontendTemplateQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a FrontendTemplate entity by its id.
+func (c *FrontendTemplateClient) Get(ctx context.Context, id uuid.UUID) (*FrontendTemplate, error) {
+	return c.Query().Where(frontendtemplate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FrontendTemplateClient) GetX(ctx context.Context, id uuid.UUID) *FrontendTemplate {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *FrontendTemplateClient) Hooks() []Hook {
+	hooks := c.hooks.FrontendTemplate
+	return append(hooks[:len(hooks):len(hooks)], frontendtemplate.Hooks[:]...)
 }
 
 // NotifClient is a client for the Notif schema.
@@ -528,6 +829,97 @@ func (c *ReadAnnouncementClient) GetX(ctx context.Context, id uuid.UUID) *ReadAn
 func (c *ReadAnnouncementClient) Hooks() []Hook {
 	hooks := c.hooks.ReadAnnouncement
 	return append(hooks[:len(hooks):len(hooks)], readannouncement.Hooks[:]...)
+}
+
+// SMSTemplateClient is a client for the SMSTemplate schema.
+type SMSTemplateClient struct {
+	config
+}
+
+// NewSMSTemplateClient returns a client for the SMSTemplate from the given config.
+func NewSMSTemplateClient(c config) *SMSTemplateClient {
+	return &SMSTemplateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `smstemplate.Hooks(f(g(h())))`.
+func (c *SMSTemplateClient) Use(hooks ...Hook) {
+	c.hooks.SMSTemplate = append(c.hooks.SMSTemplate, hooks...)
+}
+
+// Create returns a builder for creating a SMSTemplate entity.
+func (c *SMSTemplateClient) Create() *SMSTemplateCreate {
+	mutation := newSMSTemplateMutation(c.config, OpCreate)
+	return &SMSTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SMSTemplate entities.
+func (c *SMSTemplateClient) CreateBulk(builders ...*SMSTemplateCreate) *SMSTemplateCreateBulk {
+	return &SMSTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SMSTemplate.
+func (c *SMSTemplateClient) Update() *SMSTemplateUpdate {
+	mutation := newSMSTemplateMutation(c.config, OpUpdate)
+	return &SMSTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SMSTemplateClient) UpdateOne(st *SMSTemplate) *SMSTemplateUpdateOne {
+	mutation := newSMSTemplateMutation(c.config, OpUpdateOne, withSMSTemplate(st))
+	return &SMSTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SMSTemplateClient) UpdateOneID(id uuid.UUID) *SMSTemplateUpdateOne {
+	mutation := newSMSTemplateMutation(c.config, OpUpdateOne, withSMSTemplateID(id))
+	return &SMSTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SMSTemplate.
+func (c *SMSTemplateClient) Delete() *SMSTemplateDelete {
+	mutation := newSMSTemplateMutation(c.config, OpDelete)
+	return &SMSTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SMSTemplateClient) DeleteOne(st *SMSTemplate) *SMSTemplateDeleteOne {
+	return c.DeleteOneID(st.ID)
+}
+
+// DeleteOne returns a builder for deleting the given entity by its id.
+func (c *SMSTemplateClient) DeleteOneID(id uuid.UUID) *SMSTemplateDeleteOne {
+	builder := c.Delete().Where(smstemplate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SMSTemplateDeleteOne{builder}
+}
+
+// Query returns a query builder for SMSTemplate.
+func (c *SMSTemplateClient) Query() *SMSTemplateQuery {
+	return &SMSTemplateQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a SMSTemplate entity by its id.
+func (c *SMSTemplateClient) Get(ctx context.Context, id uuid.UUID) (*SMSTemplate, error) {
+	return c.Query().Where(smstemplate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SMSTemplateClient) GetX(ctx context.Context, id uuid.UUID) *SMSTemplate {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SMSTemplateClient) Hooks() []Hook {
+	hooks := c.hooks.SMSTemplate
+	return append(hooks[:len(hooks):len(hooks)], smstemplate.Hooks[:]...)
 }
 
 // SendAnnouncementClient is a client for the SendAnnouncement schema.
