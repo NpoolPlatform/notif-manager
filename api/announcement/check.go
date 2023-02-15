@@ -5,6 +5,7 @@ import (
 
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/announcement"
+	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
 
 	"github.com/google/uuid"
 )
@@ -32,9 +33,13 @@ func validate(in *npool.AnnouncementReq) error {
 		logger.Sugar().Errorw("validate", "Content", in.GetContent())
 		return fmt.Errorf("title is invalid")
 	}
-	if len(in.GetChannels()) == 0 {
-		logger.Sugar().Errorw("validate", "Channels", in.GetChannels())
-		return fmt.Errorf("channels is invalid")
+	switch in.GetChannel() {
+	case channel.NotifChannel_ChannelEmail:
+	case channel.NotifChannel_ChannelFrontend:
+	case channel.NotifChannel_ChannelSMS:
+	default:
+		logger.Sugar().Errorw("validate", "Channel", in.GetChannel())
+		return fmt.Errorf("channel is invalid")
 	}
 	return nil
 }
@@ -52,9 +57,14 @@ func validateConds(in *npool.Conds) error {
 			return err
 		}
 	}
-	if in.Channels != nil {
-		if len(in.GetChannels().GetValue()) == 0 {
-			return fmt.Errorf("channels is invalid")
+	if in.Channel != nil {
+		switch in.GetChannel().GetValue() {
+		case uint32(channel.NotifChannel_ChannelEmail):
+		case uint32(channel.NotifChannel_ChannelFrontend):
+		case uint32(channel.NotifChannel_ChannelSMS):
+		default:
+			logger.Sugar().Errorw("validate", "Channel", in.GetChannel().GetValue())
+			return fmt.Errorf("channel is invalid")
 		}
 	}
 	return nil

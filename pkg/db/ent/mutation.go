@@ -63,7 +63,7 @@ type AnnouncementMutation struct {
 	lang_id       *uuid.UUID
 	title         *string
 	content       *string
-	channels      *[]string
+	channel       *string
 	end_at        *uint32
 	addend_at     *int32
 	_type         *string
@@ -541,53 +541,53 @@ func (m *AnnouncementMutation) ResetContent() {
 	delete(m.clearedFields, announcement.FieldContent)
 }
 
-// SetChannels sets the "channels" field.
-func (m *AnnouncementMutation) SetChannels(s []string) {
-	m.channels = &s
+// SetChannel sets the "channel" field.
+func (m *AnnouncementMutation) SetChannel(s string) {
+	m.channel = &s
 }
 
-// Channels returns the value of the "channels" field in the mutation.
-func (m *AnnouncementMutation) Channels() (r []string, exists bool) {
-	v := m.channels
+// Channel returns the value of the "channel" field in the mutation.
+func (m *AnnouncementMutation) Channel() (r string, exists bool) {
+	v := m.channel
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldChannels returns the old "channels" field's value of the Announcement entity.
+// OldChannel returns the old "channel" field's value of the Announcement entity.
 // If the Announcement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AnnouncementMutation) OldChannels(ctx context.Context) (v []string, err error) {
+func (m *AnnouncementMutation) OldChannel(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldChannels is only allowed on UpdateOne operations")
+		return v, errors.New("OldChannel is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldChannels requires an ID field in the mutation")
+		return v, errors.New("OldChannel requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChannels: %w", err)
+		return v, fmt.Errorf("querying old value for OldChannel: %w", err)
 	}
-	return oldValue.Channels, nil
+	return oldValue.Channel, nil
 }
 
-// ClearChannels clears the value of the "channels" field.
-func (m *AnnouncementMutation) ClearChannels() {
-	m.channels = nil
-	m.clearedFields[announcement.FieldChannels] = struct{}{}
+// ClearChannel clears the value of the "channel" field.
+func (m *AnnouncementMutation) ClearChannel() {
+	m.channel = nil
+	m.clearedFields[announcement.FieldChannel] = struct{}{}
 }
 
-// ChannelsCleared returns if the "channels" field was cleared in this mutation.
-func (m *AnnouncementMutation) ChannelsCleared() bool {
-	_, ok := m.clearedFields[announcement.FieldChannels]
+// ChannelCleared returns if the "channel" field was cleared in this mutation.
+func (m *AnnouncementMutation) ChannelCleared() bool {
+	_, ok := m.clearedFields[announcement.FieldChannel]
 	return ok
 }
 
-// ResetChannels resets all changes to the "channels" field.
-func (m *AnnouncementMutation) ResetChannels() {
-	m.channels = nil
-	delete(m.clearedFields, announcement.FieldChannels)
+// ResetChannel resets all changes to the "channel" field.
+func (m *AnnouncementMutation) ResetChannel() {
+	m.channel = nil
+	delete(m.clearedFields, announcement.FieldChannel)
 }
 
 // SetEndAt sets the "end_at" field.
@@ -750,8 +750,8 @@ func (m *AnnouncementMutation) Fields() []string {
 	if m.content != nil {
 		fields = append(fields, announcement.FieldContent)
 	}
-	if m.channels != nil {
-		fields = append(fields, announcement.FieldChannels)
+	if m.channel != nil {
+		fields = append(fields, announcement.FieldChannel)
 	}
 	if m.end_at != nil {
 		fields = append(fields, announcement.FieldEndAt)
@@ -781,8 +781,8 @@ func (m *AnnouncementMutation) Field(name string) (ent.Value, bool) {
 		return m.Title()
 	case announcement.FieldContent:
 		return m.Content()
-	case announcement.FieldChannels:
-		return m.Channels()
+	case announcement.FieldChannel:
+		return m.Channel()
 	case announcement.FieldEndAt:
 		return m.EndAt()
 	case announcement.FieldType:
@@ -810,8 +810,8 @@ func (m *AnnouncementMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldTitle(ctx)
 	case announcement.FieldContent:
 		return m.OldContent(ctx)
-	case announcement.FieldChannels:
-		return m.OldChannels(ctx)
+	case announcement.FieldChannel:
+		return m.OldChannel(ctx)
 	case announcement.FieldEndAt:
 		return m.OldEndAt(ctx)
 	case announcement.FieldType:
@@ -874,12 +874,12 @@ func (m *AnnouncementMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetContent(v)
 		return nil
-	case announcement.FieldChannels:
-		v, ok := value.([]string)
+	case announcement.FieldChannel:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetChannels(v)
+		m.SetChannel(v)
 		return nil
 	case announcement.FieldEndAt:
 		v, ok := value.(uint32)
@@ -988,8 +988,8 @@ func (m *AnnouncementMutation) ClearedFields() []string {
 	if m.FieldCleared(announcement.FieldContent) {
 		fields = append(fields, announcement.FieldContent)
 	}
-	if m.FieldCleared(announcement.FieldChannels) {
-		fields = append(fields, announcement.FieldChannels)
+	if m.FieldCleared(announcement.FieldChannel) {
+		fields = append(fields, announcement.FieldChannel)
 	}
 	if m.FieldCleared(announcement.FieldEndAt) {
 		fields = append(fields, announcement.FieldEndAt)
@@ -1023,8 +1023,8 @@ func (m *AnnouncementMutation) ClearField(name string) error {
 	case announcement.FieldContent:
 		m.ClearContent()
 		return nil
-	case announcement.FieldChannels:
-		m.ClearChannels()
+	case announcement.FieldChannel:
+		m.ClearChannel()
 		return nil
 	case announcement.FieldEndAt:
 		m.ClearEndAt()
@@ -1061,8 +1061,8 @@ func (m *AnnouncementMutation) ResetField(name string) error {
 	case announcement.FieldContent:
 		m.ResetContent()
 		return nil
-	case announcement.FieldChannels:
-		m.ResetChannels()
+	case announcement.FieldChannel:
+		m.ResetChannel()
 		return nil
 	case announcement.FieldEndAt:
 		m.ResetEndAt()

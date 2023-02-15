@@ -41,9 +41,9 @@ var data = &npool.Announcement{
 	LangID:           uuid.NewString(),
 	Title:            uuid.NewString(),
 	Content:          uuid.NewString(),
-	Channels:         []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
+	Channel:          channel.NotifChannel_ChannelEmail,
 	EndAt:            99999999,
-	AnnouncementType: npool.AnnouncementType_AppointUsers,
+	AnnouncementType: npool.AnnouncementType_Multicast,
 }
 
 var dataReq = &npool.AnnouncementReq{
@@ -52,7 +52,7 @@ var dataReq = &npool.AnnouncementReq{
 	LangID:           &data.LangID,
 	Title:            &data.Title,
 	Content:          &data.Content,
-	Channels:         data.Channels,
+	Channel:          &data.Channel,
 	EndAt:            &data.EndAt,
 	AnnouncementType: &data.AnnouncementType,
 }
@@ -82,9 +82,9 @@ func createAnnouncements(t *testing.T) {
 			LangID:           uuid.NewString(),
 			Title:            uuid.NewString(),
 			Content:          uuid.NewString(),
-			Channels:         []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
+			Channel:          channel.NotifChannel_ChannelEmail,
 			EndAt:            99999999,
-			AnnouncementType: npool.AnnouncementType_AppointUsers,
+			AnnouncementType: npool.AnnouncementType_Multicast,
 		},
 		{
 			ID:               uuid.NewString(),
@@ -92,9 +92,9 @@ func createAnnouncements(t *testing.T) {
 			LangID:           uuid.NewString(),
 			Title:            uuid.NewString(),
 			Content:          uuid.NewString(),
-			Channels:         []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
+			Channel:          channel.NotifChannel_ChannelEmail,
 			EndAt:            99999999,
-			AnnouncementType: npool.AnnouncementType_AppointUsers,
+			AnnouncementType: npool.AnnouncementType_Multicast,
 		},
 	}
 
@@ -106,7 +106,7 @@ func createAnnouncements(t *testing.T) {
 			LangID:           &datas[key].LangID,
 			Title:            &datas[key].Title,
 			Content:          &datas[key].Content,
-			Channels:         datas[key].Channels,
+			Channel:          &datas[key].Channel,
 			EndAt:            &datas[key].EndAt,
 			AnnouncementType: &datas[key].AnnouncementType,
 		})

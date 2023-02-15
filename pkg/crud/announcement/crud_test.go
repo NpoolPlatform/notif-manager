@@ -32,30 +32,31 @@ func init() {
 }
 
 var (
-	aType = npool.AnnouncementType_AppointUsers
+	aType = npool.AnnouncementType_Multicast
 	amt   = ent.Announcement{
-		ID:       uuid.New(),
-		AppID:    uuid.New(),
-		LangID:   uuid.New(),
-		Title:    uuid.NewString(),
-		Content:  uuid.NewString(),
-		Channels: []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-		EndAt:    9999999,
-		Type:     aType.String(),
+		ID:      uuid.New(),
+		AppID:   uuid.New(),
+		LangID:  uuid.New(),
+		Title:   uuid.NewString(),
+		Content: uuid.NewString(),
+		Channel: channel.NotifChannel_ChannelEmail.String(),
+		EndAt:   9999999,
+		Type:    aType.String(),
 	}
 )
 
 var (
-	id     = amt.ID.String()
-	appID  = amt.AppID.String()
-	langID = amt.LangID.String()
-	req    = npool.AnnouncementReq{
+	id       = amt.ID.String()
+	appID    = amt.AppID.String()
+	langID   = amt.LangID.String()
+	channel1 = channel.NotifChannel_ChannelEmail
+	req      = npool.AnnouncementReq{
 		ID:               &id,
 		AppID:            &appID,
 		LangID:           &langID,
 		Title:            &amt.Title,
 		Content:          &amt.Content,
-		Channels:         []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
+		Channel:          &channel1,
 		EndAt:            &amt.EndAt,
 		AnnouncementType: &aType,
 	}
@@ -76,24 +77,24 @@ func create(t *testing.T) {
 func createBulk(t *testing.T) {
 	entities := []*ent.Announcement{
 		{
-			ID:       uuid.New(),
-			AppID:    uuid.New(),
-			LangID:   uuid.New(),
-			Title:    uuid.NewString(),
-			Content:  uuid.NewString(),
-			Channels: []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-			EndAt:    9999999,
-			Type:     aType.String(),
+			ID:      uuid.New(),
+			AppID:   uuid.New(),
+			LangID:  uuid.New(),
+			Title:   uuid.NewString(),
+			Content: uuid.NewString(),
+			Channel: channel.NotifChannel_ChannelEmail.String(),
+			EndAt:   9999999,
+			Type:    aType.String(),
 		},
 		{
-			ID:       uuid.New(),
-			AppID:    uuid.New(),
-			LangID:   uuid.New(),
-			Title:    uuid.NewString(),
-			Content:  uuid.NewString(),
-			Channels: []string{channel.NotifChannel_ChannelEmail.String(), channel.NotifChannel_ChannelSMS.String()},
-			EndAt:    9999999,
-			Type:     aType.String(),
+			ID:      uuid.New(),
+			AppID:   uuid.New(),
+			LangID:  uuid.New(),
+			Title:   uuid.NewString(),
+			Content: uuid.NewString(),
+			Channel: channel.NotifChannel_ChannelEmail.String(),
+			EndAt:   9999999,
+			Type:    aType.String(),
 		},
 	}
 
@@ -102,13 +103,14 @@ func createBulk(t *testing.T) {
 		_id := _amt.ID.String()
 		_appID := _amt.AppID.String()
 		_langID := _amt.LangID.String()
+		_channel := channel.NotifChannel_ChannelEmail
 		reqs = append(reqs, &npool.AnnouncementReq{
 			ID:               &_id,
 			AppID:            &_appID,
 			LangID:           &_langID,
 			Title:            &_amt.Title,
 			Content:          &_amt.Content,
-			Channels:         []channel.NotifChannel{channel.NotifChannel_ChannelEmail, channel.NotifChannel_ChannelSMS},
+			Channel:          &_channel,
 			EndAt:            &_amt.EndAt,
 			AnnouncementType: &aType,
 		})

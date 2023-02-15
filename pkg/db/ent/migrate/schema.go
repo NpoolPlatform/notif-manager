@@ -18,9 +18,9 @@ var (
 		{Name: "lang_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "title", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
-		{Name: "channels", Type: field.TypeJSON, Nullable: true},
+		{Name: "channel", Type: field.TypeString, Nullable: true, Default: "DefaultChannel"},
 		{Name: "end_at", Type: field.TypeUint32, Nullable: true, Default: 0},
-		{Name: "type", Type: field.TypeString, Nullable: true, Default: "DefaultAnnouncementType"},
+		{Name: "type", Type: field.TypeString, Nullable: true, Default: "DefaultType"},
 	}
 	// AnnouncementsTable holds the schema information for the "announcements" table.
 	AnnouncementsTable = &schema.Table{

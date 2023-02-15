@@ -26,8 +26,8 @@ const (
 	FieldTitle = "title"
 	// FieldContent holds the string denoting the content field in the database.
 	FieldContent = "content"
-	// FieldChannels holds the string denoting the channels field in the database.
-	FieldChannels = "channels"
+	// FieldChannel holds the string denoting the channel field in the database.
+	FieldChannel = "channel"
 	// FieldEndAt holds the string denoting the end_at field in the database.
 	FieldEndAt = "end_at"
 	// FieldType holds the string denoting the type field in the database.
@@ -46,7 +46,7 @@ var Columns = []string{
 	FieldLangID,
 	FieldTitle,
 	FieldContent,
-	FieldChannels,
+	FieldChannel,
 	FieldEndAt,
 	FieldType,
 }
@@ -86,8 +86,8 @@ var (
 	DefaultTitle string
 	// DefaultContent holds the default value on creation for the "content" field.
 	DefaultContent string
-	// DefaultChannels holds the default value on creation for the "channels" field.
-	DefaultChannels []string
+	// DefaultChannel holds the default value on creation for the "channel" field.
+	DefaultChannel string
 	// DefaultEndAt holds the default value on creation for the "end_at" field.
 	DefaultEndAt uint32
 	// DefaultType holds the default value on creation for the "type" field.

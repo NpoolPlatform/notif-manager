@@ -71,10 +71,10 @@ func init() {
 	announcementDescContent := announcementFields[4].Descriptor()
 	// announcement.DefaultContent holds the default value on creation for the content field.
 	announcement.DefaultContent = announcementDescContent.Default.(string)
-	// announcementDescChannels is the schema descriptor for channels field.
-	announcementDescChannels := announcementFields[5].Descriptor()
-	// announcement.DefaultChannels holds the default value on creation for the channels field.
-	announcement.DefaultChannels = announcementDescChannels.Default.([]string)
+	// announcementDescChannel is the schema descriptor for channel field.
+	announcementDescChannel := announcementFields[5].Descriptor()
+	// announcement.DefaultChannel holds the default value on creation for the channel field.
+	announcement.DefaultChannel = announcementDescChannel.Default.(string)
 	// announcementDescEndAt is the schema descriptor for end_at field.
 	announcementDescEndAt := announcementFields[6].Descriptor()
 	// announcement.DefaultEndAt holds the default value on creation for the end_at field.

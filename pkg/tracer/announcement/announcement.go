@@ -7,6 +7,7 @@ import (
 	trace1 "go.opentelemetry.io/otel/trace"
 
 	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/announcement"
+	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
 )
 
 func trace(span trace1.Span, in *npool.AnnouncementReq, index int) trace1.Span {
@@ -30,8 +31,8 @@ func TraceConds(span trace1.Span, in *npool.Conds) trace1.Span {
 		attribute.String("ID.Value", in.GetID().GetValue()),
 		attribute.String("AppID.Op", in.GetAppID().GetOp()),
 		attribute.String("AppID.Value", in.GetAppID().GetValue()),
-		attribute.String("Channels.Op", in.GetChannels().GetOp()),
-		attribute.StringSlice("Channels.Value", in.GetChannels().GetValue()),
+		attribute.String("Channel.Op", in.GetChannel().GetOp()),
+		attribute.String("Channel.Value", channel.NotifChannel(in.GetChannel().GetValue()).String()),
 		attribute.String("EndAt.Op", in.GetEndAt().GetOp()),
 		attribute.Int("EndAt.Value", int(in.GetEndAt().GetValue())),
 	)

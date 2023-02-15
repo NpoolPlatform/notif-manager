@@ -42,7 +42,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			announcement.FieldLangID:    {Type: field.TypeUUID, Column: announcement.FieldLangID},
 			announcement.FieldTitle:     {Type: field.TypeString, Column: announcement.FieldTitle},
 			announcement.FieldContent:   {Type: field.TypeString, Column: announcement.FieldContent},
-			announcement.FieldChannels:  {Type: field.TypeJSON, Column: announcement.FieldChannels},
+			announcement.FieldChannel:   {Type: field.TypeString, Column: announcement.FieldChannel},
 			announcement.FieldEndAt:     {Type: field.TypeUint32, Column: announcement.FieldEndAt},
 			announcement.FieldType:      {Type: field.TypeString, Column: announcement.FieldType},
 		},
@@ -342,9 +342,9 @@ func (f *AnnouncementFilter) WhereContent(p entql.StringP) {
 	f.Where(p.Field(announcement.FieldContent))
 }
 
-// WhereChannels applies the entql json.RawMessage predicate on the channels field.
-func (f *AnnouncementFilter) WhereChannels(p entql.BytesP) {
-	f.Where(p.Field(announcement.FieldChannels))
+// WhereChannel applies the entql string predicate on the channel field.
+func (f *AnnouncementFilter) WhereChannel(p entql.StringP) {
+	f.Where(p.Field(announcement.FieldChannel))
 }
 
 // WhereEndAt applies the entql uint32 predicate on the end_at field.

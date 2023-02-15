@@ -3,10 +3,6 @@ package announcement
 import (
 	"context"
 	"fmt"
-
-	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqljson"
-
 	"time"
 
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/announcement"
@@ -17,8 +13,11 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 
-	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/announcement"
+	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
+
+	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
+
 	"github.com/NpoolPlatform/notif-manager/pkg/db"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent"
 
@@ -41,12 +40,8 @@ func CreateSet(c *ent.AnnouncementCreate, in *npool.AnnouncementReq) (*ent.Annou
 	if in.Content != nil {
 		c.SetContent(in.GetContent())
 	}
-	if in.Channels != nil {
-		channels := []string{}
-		for _, m := range in.GetChannels() {
-			channels = append(channels, m.String())
-		}
-		c.SetChannels(channels)
+	if in.Channel != nil {
+		c.SetChannel(in.GetChannel().String())
 	}
 	if in.EndAt != nil {
 		c.SetEndAt(in.GetEndAt())
@@ -134,12 +129,8 @@ func UpdateSet(u *ent.AnnouncementUpdateOne, in *npool.AnnouncementReq) (*ent.An
 	if in.Content != nil {
 		u.SetContent(in.GetContent())
 	}
-	if in.Channels != nil {
-		channels := []string{}
-		for _, m := range in.GetChannels() {
-			channels = append(channels, m.String())
-		}
-		u.SetChannels(channels)
+	if in.Channel != nil {
+		u.SetChannel(in.GetChannel().String())
 	}
 	if in.EndAt != nil {
 		u.SetEndAt(in.GetEndAt())
@@ -214,22 +205,30 @@ func Row(ctx context.Context, id uuid.UUID) (*ent.Announcement, error) {
 	return info, nil
 }
 
-func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.AnnouncementQuery, error) {
+func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.AnnouncementQuery, error) { //nolint
 	stm := cli.Announcement.Query()
 	if conds == nil {
 		return stm, nil
 	}
 	if len(conds.GetChannels().GetValue()) > 0 {
-		stm.Where(func(selector *sql.Selector) {
-			channels := conds.GetChannels().GetValue()
-			for i := 0; i < len(channels); i++ {
-				if i == 0 {
-					selector.Where(sqljson.ValueContains(announcement.FieldChannels, channels[i]))
-				} else {
-					selector.Or().Where(sqljson.ValueContains(announcement.FieldChannels, channels[i]))
-				}
-			}
-		})
+		chans := []string{}
+		for _, ch := range conds.GetChannels().GetValue() {
+			chans = append(chans, channel.NotifChannel(ch).String())
+		}
+		switch conds.GetID().GetOp() {
+		case cruder.IN:
+			stm.Where(announcement.ChannelIn(chans...))
+		default:
+			return nil, fmt.Errorf("invalid announcement field")
+		}
+	}
+	if conds.Channel != nil {
+		switch conds.GetID().GetOp() {
+		case cruder.EQ:
+			stm.Where(announcement.Channel(channel.NotifChannel(conds.GetChannel().GetValue()).String()))
+		default:
+			return nil, fmt.Errorf("invalid announcement field")
+		}
 	}
 	if conds.ID != nil {
 		switch conds.GetID().GetOp() {
