@@ -51,7 +51,7 @@ var (
 	appID     = amt.AppID.String()
 	userID    = amt.UserID.String()
 	langID    = amt.LangID.String()
-	eventType = usedfor.UsedFor(usedfor.UsedFor_value[amt.EventType])
+	eventType = basetypes.UsedFor(basetypes.UsedFor_value[amt.EventType])
 	channel1  = channel.NotifChannel_ChannelEmail
 	req       = npool.NotifReq{
 		ID:          &id,
@@ -116,7 +116,7 @@ func createBulk(t *testing.T) {
 		_appID := _amt.AppID.String()
 		_userID := _amt.UserID.String()
 		_langID := _amt.LangID.String()
-		_eventType := usedfor.UsedFor(usedfor.UsedFor_value[_amt.EventType])
+		_eventType := basetypes.UsedFor(basetypes.UsedFor_value[_amt.EventType])
 		_channel1 := channel.NotifChannel_ChannelEmail
 		reqs = append(reqs, &npool.NotifReq{
 			ID:          &_id,

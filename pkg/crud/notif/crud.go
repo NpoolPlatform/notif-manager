@@ -1,6 +1,5 @@
 package notif
 
-/*
 import (
 	"context"
 	"fmt"
@@ -537,4 +536,3 @@ func Delete(ctx context.Context, id uuid.UUID) (*ent.Notif, error) {
 
 	return info, nil
 }
-*/

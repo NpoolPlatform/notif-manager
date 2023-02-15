@@ -9,8 +9,10 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/txnotifstate"
 	tracer "github.com/NpoolPlatform/notif-manager/pkg/tracer/notif/tx"
 
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	constant "github.com/NpoolPlatform/notif-manager/pkg/message/const"
 	commontracer "github.com/NpoolPlatform/notif-manager/pkg/tracer"
+
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 
@@ -22,7 +24,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func CreateSet(c *ent.TxNotifStateCreate, in *npool.TxNotifStateReq) (*ent.TxNotifStateCreate, error) {
+func CreateSet(c *ent.TxNotifStateCreate, in *npool.TxReq) (*ent.TxNotifStateCreate, error) {
 	if in.ID != nil {
 		c.SetID(uuid.MustParse(in.GetID()))
 	}
@@ -32,13 +34,13 @@ func CreateSet(c *ent.TxNotifStateCreate, in *npool.TxNotifStateReq) (*ent.TxNot
 	if in.NotifState != nil {
 		c.SetNotifState(in.GetNotifState().String())
 	}
-	if in.NotifType != nil {
-		c.SetNotifType(in.GetNotifType().String())
+	if in.TxType != nil {
+		c.SetTxType(in.GetTxType().String())
 	}
 	return c, nil
 }
 
-func Create(ctx context.Context, in *npool.TxNotifStateReq) (*ent.TxNotifState, error) {
+func Create(ctx context.Context, in *npool.TxReq) (*ent.TxNotifState, error) {
 	var info *ent.TxNotifState
 	var err error
 
@@ -70,7 +72,7 @@ func Create(ctx context.Context, in *npool.TxNotifStateReq) (*ent.TxNotifState, 
 	return info, nil
 }
 
-func CreateBulk(ctx context.Context, in []*npool.TxNotifStateReq) ([]*ent.TxNotifState, error) {
+func CreateBulk(ctx context.Context, in []*npool.TxReq) ([]*ent.TxNotifState, error) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CreateBulk")
@@ -104,17 +106,17 @@ func CreateBulk(ctx context.Context, in []*npool.TxNotifStateReq) ([]*ent.TxNoti
 	return rows, nil
 }
 
-func UpdateSet(u *ent.TxNotifStateUpdateOne, in *npool.TxNotifStateReq) (*ent.TxNotifStateUpdateOne, error) {
+func UpdateSet(u *ent.TxNotifStateUpdateOne, in *npool.TxReq) (*ent.TxNotifStateUpdateOne, error) {
 	if in.NotifState != nil {
 		u.SetNotifState(in.GetNotifState().String())
 	}
-	if in.NotifType != nil {
-		u.SetNotifType(in.GetNotifType().String())
+	if in.TxType != nil {
+		u.SetTxType(in.GetTxType().String())
 	}
 	return u, nil
 }
 
-func Update(ctx context.Context, in *npool.TxNotifStateReq) (*ent.TxNotifState, error) {
+func Update(ctx context.Context, in *npool.TxReq) (*ent.TxNotifState, error) {
 	var info *ent.TxNotifState
 	var err error
 
@@ -210,10 +212,10 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.TxNotifStateQuery,
 		}
 	}
 
-	if conds.NotifType != nil {
-		switch conds.GetNotifType().GetOp() {
+	if conds.TxType != nil {
+		switch conds.GetTxType().GetOp() {
 		case cruder.EQ:
-			stm.Where(txnotifstate.NotifType(npool.TxType(conds.GetNotifType().GetValue()).String()))
+			stm.Where(txnotifstate.TxType(basetypes.TxType(conds.GetTxType().GetValue()).String()))
 		default:
 			return nil, fmt.Errorf("invalid txnotifstate field")
 		}

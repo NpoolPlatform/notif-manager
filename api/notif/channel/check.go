@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func validate(in *npool.NotifChannelReq) error {
+func validate(in *npool.ChannelReq) error {
 	if in.ID != nil {
 		if _, err := uuid.Parse(in.GetID()); err != nil {
 			logger.Sugar().Errorw("validate", "ID", in.GetID(), "error", err)

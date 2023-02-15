@@ -12,6 +12,7 @@ import (
 	"github.com/NpoolPlatform/libent-cruder/pkg/cruder"
 
 	valuedef "github.com/NpoolPlatform/message/npool"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif/tx"
 
 	testinit "github.com/NpoolPlatform/notif-manager/pkg/testinit"
@@ -30,24 +31,24 @@ func init() {
 }
 
 var (
-	notifState = npool.TxState_WaitSend
-	notifType  = npool.TxType_Withdraw
+	notifState = npool.TxState_WaitNotified
+	notifType  = basetypes.TxType_TxWithdraw
 	amt        = ent.TxNotifState{
 		ID:         uuid.New(),
 		TxID:       uuid.New(),
 		NotifState: notifState.String(),
-		NotifType:  notifType.String(),
+		TxType:     notifType.String(),
 	}
 )
 
 var (
 	id   = amt.ID.String()
 	txID = amt.TxID.String()
-	req  = npool.TxNotifStateReq{
+	req  = npool.TxReq{
 		ID:         &id,
 		TxID:       &txID,
 		NotifState: &notifState,
-		NotifType:  &notifType,
+		TxType:     &notifType,
 	}
 )
 
@@ -69,25 +70,25 @@ func createBulk(t *testing.T) {
 			ID:         uuid.New(),
 			TxID:       uuid.New(),
 			NotifState: notifState.String(),
-			NotifType:  notifType.String(),
+			TxType:     notifType.String(),
 		},
 		{
 			ID:         uuid.New(),
 			TxID:       uuid.New(),
 			NotifState: notifState.String(),
-			NotifType:  notifType.String(),
+			TxType:     notifType.String(),
 		},
 	}
 
-	reqs := []*npool.TxNotifStateReq{}
+	reqs := []*npool.TxReq{}
 	for _, _amt := range entities {
 		_id := _amt.ID.String()
 		_txID := _amt.TxID.String()
-		reqs = append(reqs, &npool.TxNotifStateReq{
+		reqs = append(reqs, &npool.TxReq{
 			ID:         &_id,
 			TxID:       &_txID,
 			NotifState: &notifState,
-			NotifType:  &notifType,
+			TxType:     &notifType,
 		})
 	}
 	infos, err := CreateBulk(context.Background(), reqs)

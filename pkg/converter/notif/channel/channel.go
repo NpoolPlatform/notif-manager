@@ -7,11 +7,11 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent"
 )
 
-func Ent2Grpc(row *ent.NotifChannel) *npool.NotifChannel {
+func Ent2Grpc(row *ent.NotifChannel) *npool.Channel {
 	if row == nil {
 		return nil
 	}
-	return &npool.NotifChannel{
+	return &npool.Channel{
 		ID:        row.ID.String(),
 		AppID:     row.AppID.String(),
 		EventType: basetypes.UsedFor(basetypes.UsedFor_value[row.EventType]),
@@ -21,8 +21,8 @@ func Ent2Grpc(row *ent.NotifChannel) *npool.NotifChannel {
 	}
 }
 
-func Ent2GrpcMany(rows []*ent.NotifChannel) []*npool.NotifChannel {
-	var infos []*npool.NotifChannel
+func Ent2GrpcMany(rows []*ent.NotifChannel) []*npool.Channel {
+	var infos []*npool.Channel
 	for _, row := range rows {
 		infos = append(infos, Ent2Grpc(row))
 	}

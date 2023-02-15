@@ -6,10 +6,12 @@ import (
 	"github.com/NpoolPlatform/go-service-framework/pkg/logger"
 	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif/tx"
 
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+
 	"github.com/google/uuid"
 )
 
-func validate(in *npool.TxNotifStateReq) error {
+func validate(in *npool.TxReq) error {
 	if in.ID != nil {
 		if _, err := uuid.Parse(in.GetID()); err != nil {
 			logger.Sugar().Errorw("validate", "ID", in.GetID(), "error", err)
@@ -24,17 +26,17 @@ func validate(in *npool.TxNotifStateReq) error {
 	}
 	if in.NotifState != nil {
 		switch in.GetNotifState() {
-		case npool.TxState_WaitSend:
-		case npool.TxState_WaitTxSuccess:
-		case npool.TxState_AlreadySend:
+		case npool.TxState_WaitNotified:
+		case npool.TxState_WaitSuccess:
+		case npool.TxState_Notified:
 		default:
 			logger.Sugar().Errorw("validate", "TxID", in.GetTxID(), "error", "invalid notif statu")
 			return fmt.Errorf("invalid notif statu")
 		}
 	}
-	if in.NotifType != nil {
-		switch in.GetNotifType() {
-		case npool.TxType_Withdraw:
+	if in.TxType != nil {
+		switch in.GetTxType() {
+		case basetypes.TxType_TxWithdraw:
 		default:
 			logger.Sugar().Errorw("validate", "TxID", in.GetTxID(), "error", "invalid notif statu")
 			return fmt.Errorf("invalid notif statu")
@@ -58,17 +60,17 @@ func validateConds(in *npool.Conds) error {
 	}
 	if in.NotifState != nil {
 		switch in.GetNotifState().GetValue() {
-		case uint32(npool.TxState_WaitTxSuccess):
-		case uint32(npool.TxState_WaitSend):
-		case uint32(npool.TxState_AlreadySend):
+		case uint32(npool.TxState_WaitSuccess):
+		case uint32(npool.TxState_WaitNotified):
+		case uint32(npool.TxState_Notified):
 		default:
 			logger.Sugar().Errorw("validate", "TxID", in.GetTxID(), "error", "invalid notif statu")
 			return fmt.Errorf("invalid notif statu")
 		}
 	}
-	if in.NotifType != nil {
-		switch in.GetNotifType().GetValue() {
-		case uint32(npool.TxType_Withdraw):
+	if in.TxType != nil {
+		switch in.GetTxType().GetValue() {
+		case uint32(basetypes.TxType_TxWithdraw):
 		default:
 			logger.Sugar().Errorw("validate", "TxID", in.GetTxID(), "error", "invalid notif statu")
 			return fmt.Errorf("invalid notif statu")

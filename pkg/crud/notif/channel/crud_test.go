@@ -46,7 +46,7 @@ var (
 var (
 	id    = amt.ID.String()
 	appID = amt.AppID.String()
-	req   = npool.NotifChannelReq{
+	req   = npool.ChannelReq{
 		ID:        &id,
 		AppID:     &appID,
 		EventType: &eventType,
@@ -82,11 +82,11 @@ func createBulk(t *testing.T) {
 		},
 	}
 
-	reqs := []*npool.NotifChannelReq{}
+	reqs := []*npool.ChannelReq{}
 	for _, _amt := range entities {
 		_id := _amt.ID.String()
 		_appID := _amt.AppID.String()
-		reqs = append(reqs, &npool.NotifChannelReq{
+		reqs = append(reqs, &npool.ChannelReq{
 			ID:        &_id,
 			AppID:     &_appID,
 			EventType: &eventType,

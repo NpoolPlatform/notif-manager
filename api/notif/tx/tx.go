@@ -9,6 +9,7 @@ import (
 	commontracer "github.com/NpoolPlatform/notif-manager/pkg/tracer"
 	tracer "github.com/NpoolPlatform/notif-manager/pkg/tracer/notif/tx"
 
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	constant "github.com/NpoolPlatform/notif-manager/pkg/message/const"
 
 	"go.opentelemetry.io/otel"
@@ -22,16 +23,16 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *Server) CreateTran(
+func (s *Server) CreateTx(
 	ctx context.Context,
-	in *npool.CreateTranRequest,
+	in *npool.CreateTxRequest,
 ) (
-	*npool.CreateTranResponse,
+	*npool.CreateTxResponse,
 	error,
 ) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CreateTran")
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CreateTx")
 	defer span.End()
 
 	defer func() {
@@ -44,32 +45,32 @@ func (s *Server) CreateTran(
 	span = tracer.Trace(span, in.GetInfo())
 
 	if err := validate(in.GetInfo()); err != nil {
-		return &npool.CreateTranResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.CreateTxResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	span = commontracer.TraceInvoker(span, "tx", "crud", "Create")
 
 	info, err := crud.Create(ctx, in.GetInfo())
 	if err != nil {
-		logger.Sugar().Errorw("CreateTran", "error", err)
-		return &npool.CreateTranResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw("CreateTx", "error", err)
+		return &npool.CreateTxResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.CreateTranResponse{
+	return &npool.CreateTxResponse{
 		Info: converter.Ent2Grpc(info),
 	}, nil
 }
 
-func (s *Server) CreateTrans(
+func (s *Server) CreateTxs(
 	ctx context.Context,
-	in *npool.CreateTransRequest,
+	in *npool.CreateTxsRequest,
 ) (
-	*npool.CreateTransResponse,
+	*npool.CreateTxsResponse,
 	error,
 ) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CreateTrans")
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CreateTxs")
 	defer span.End()
 
 	defer func() {
@@ -80,7 +81,7 @@ func (s *Server) CreateTrans(
 	}()
 
 	if len(in.GetInfos()) == 0 {
-		return &npool.CreateTransResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
+		return &npool.CreateTxsResponse{}, status.Error(codes.InvalidArgument, "Infos is empty")
 	}
 
 	span = tracer.TraceMany(span, in.GetInfos())
@@ -88,25 +89,25 @@ func (s *Server) CreateTrans(
 
 	rows, err := crud.CreateBulk(ctx, in.GetInfos())
 	if err != nil {
-		logger.Sugar().Errorw("CreateTrans", "error", err)
-		return &npool.CreateTransResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw("CreateTxs", "error", err)
+		return &npool.CreateTxsResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.CreateTransResponse{
+	return &npool.CreateTxsResponse{
 		Infos: converter.Ent2GrpcMany(rows),
 	}, nil
 }
 
-func (s *Server) UpdateTran(
+func (s *Server) UpdateTx(
 	ctx context.Context,
-	in *npool.UpdateTranRequest,
+	in *npool.UpdateTxRequest,
 ) (
-	*npool.UpdateTranResponse,
+	*npool.UpdateTxResponse,
 	error,
 ) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "UpdateTran")
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "UpdateTx")
 	defer span.End()
 
 	defer func() {
@@ -119,32 +120,32 @@ func (s *Server) UpdateTran(
 	span = tracer.Trace(span, in.GetInfo())
 
 	if _, err := uuid.Parse(in.GetInfo().GetID()); err != nil {
-		logger.Sugar().Errorw("UpdateTran", "ID", in.GetInfo().GetID(), "error", err)
-		return &npool.UpdateTranResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		logger.Sugar().Errorw("UpdateTx", "ID", in.GetInfo().GetID(), "error", err)
+		return &npool.UpdateTxResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	if in.Info == nil {
-		logger.Sugar().Errorw("UpdateTran", "error", err)
-		return &npool.UpdateTranResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
+		logger.Sugar().Errorw("UpdateTx", "error", err)
+		return &npool.UpdateTxResponse{}, status.Error(codes.InvalidArgument, "Info is empty")
 	}
 
 	if in.GetInfo().NotifState != nil {
 		switch in.GetInfo().GetNotifState() {
-		case npool.TxState_WaitTxSuccess:
-		case npool.TxState_WaitSend:
-		case npool.TxState_AlreadySend:
+		case npool.TxState_WaitSuccess:
+		case npool.TxState_WaitNotified:
+		case npool.TxState_Notified:
 		default:
-			logger.Sugar().Errorw("UpdateTran", "ID", in.GetInfo().GetID(), "error", err)
-			return &npool.UpdateTranResponse{}, status.Error(codes.InvalidArgument, "NotifState is invalid")
+			logger.Sugar().Errorw("UpdateTx", "ID", in.GetInfo().GetID(), "error", err)
+			return &npool.UpdateTxResponse{}, status.Error(codes.InvalidArgument, "NotifState is invalid")
 		}
 	}
 
-	if in.GetInfo().NotifType != nil {
-		switch in.GetInfo().GetNotifType() {
-		case npool.TxType_Withdraw:
+	if in.GetInfo().TxType != nil {
+		switch in.GetInfo().GetTxType() {
+		case basetypes.TxType_TxWithdraw:
 		default:
-			logger.Sugar().Errorw("UpdateTxNotifType", "ID", in.GetInfo().GetID(), "error", err)
-			return &npool.UpdateTranResponse{}, status.Error(codes.InvalidArgument, "NotifType is invalid")
+			logger.Sugar().Errorw("UpdateTxTxType", "ID", in.GetInfo().GetID(), "error", err)
+			return &npool.UpdateTxResponse{}, status.Error(codes.InvalidArgument, "TxType is invalid")
 		}
 	}
 
@@ -152,19 +153,19 @@ func (s *Server) UpdateTran(
 
 	info, err := crud.Update(ctx, in.GetInfo())
 	if err != nil {
-		logger.Sugar().Errorw("UpdateTran", "error", err)
-		return &npool.UpdateTranResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw("UpdateTx", "error", err)
+		return &npool.UpdateTxResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.UpdateTranResponse{
+	return &npool.UpdateTxResponse{
 		Info: converter.Ent2Grpc(info),
 	}, nil
 }
 
-func (s *Server) GetTran(ctx context.Context, in *npool.GetTranRequest) (*npool.GetTranResponse, error) {
+func (s *Server) GetTx(ctx context.Context, in *npool.GetTxRequest) (*npool.GetTxResponse, error) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetTran")
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetTx")
 	defer span.End()
 
 	defer func() {
@@ -178,33 +179,33 @@ func (s *Server) GetTran(ctx context.Context, in *npool.GetTranRequest) (*npool.
 
 	id, err := uuid.Parse(in.GetID())
 	if err != nil {
-		logger.Sugar().Errorw("GetTran", "ID", in.GetID(), "error", err)
-		return &npool.GetTranResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		logger.Sugar().Errorw("GetTx", "ID", in.GetID(), "error", err)
+		return &npool.GetTxResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	span = commontracer.TraceInvoker(span, "tx", "crud", "Row")
 
 	info, err := crud.Row(ctx, id)
 	if err != nil {
-		logger.Sugar().Errorw("GetTran", "error", err)
-		return &npool.GetTranResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw("GetTx", "error", err)
+		return &npool.GetTxResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.GetTranResponse{
+	return &npool.GetTxResponse{
 		Info: converter.Ent2Grpc(info),
 	}, nil
 }
 
-func (s *Server) GetTranOnly(
+func (s *Server) GetTxOnly(
 	ctx context.Context,
-	in *npool.GetTranOnlyRequest,
+	in *npool.GetTxOnlyRequest,
 ) (
-	*npool.GetTranOnlyResponse,
+	*npool.GetTxOnlyResponse,
 	error,
 ) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetTranOnly")
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetTxOnly")
 	defer span.End()
 
 	defer func() {
@@ -215,7 +216,7 @@ func (s *Server) GetTranOnly(
 	}()
 
 	if err := validateConds(in.GetConds()); err != nil {
-		return &npool.GetTranOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.GetTxOnlyResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	span = tracer.TraceConds(span, in.GetConds())
@@ -223,25 +224,25 @@ func (s *Server) GetTranOnly(
 
 	info, err := crud.RowOnly(ctx, in.GetConds())
 	if err != nil {
-		logger.Sugar().Errorw("GetTranOnly", "error", err)
-		return &npool.GetTranOnlyResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw("GetTxOnly", "error", err)
+		return &npool.GetTxOnlyResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.GetTranOnlyResponse{
+	return &npool.GetTxOnlyResponse{
 		Info: converter.Ent2Grpc(info),
 	}, nil
 }
 
-func (s *Server) GetTrans(
+func (s *Server) GetTxs(
 	ctx context.Context,
-	in *npool.GetTransRequest,
+	in *npool.GetTxsRequest,
 ) (
-	*npool.GetTransResponse,
+	*npool.GetTxsResponse,
 	error,
 ) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetTrans")
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "GetTxs")
 	defer span.End()
 
 	defer func() {
@@ -255,33 +256,33 @@ func (s *Server) GetTrans(
 	span = commontracer.TraceOffsetLimit(span, int(in.GetOffset()), int(in.GetLimit()))
 
 	if err := validateConds(in.GetConds()); err != nil {
-		return &npool.GetTransResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.GetTxsResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	span = commontracer.TraceInvoker(span, "tx", "crud", "Rows")
 
 	rows, total, err := crud.Rows(ctx, in.GetConds(), int(in.GetOffset()), int(in.GetLimit()))
 	if err != nil {
-		logger.Sugar().Errorw("GetTrans", "error", err)
-		return &npool.GetTransResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw("GetTxs", "error", err)
+		return &npool.GetTxsResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.GetTransResponse{
+	return &npool.GetTxsResponse{
 		Infos: converter.Ent2GrpcMany(rows),
 		Total: uint32(total),
 	}, nil
 }
 
-func (s *Server) ExistTran(
+func (s *Server) ExistTx(
 	ctx context.Context,
-	in *npool.ExistTranRequest,
+	in *npool.ExistTxRequest,
 ) (
-	*npool.ExistTranResponse,
+	*npool.ExistTxResponse,
 	error,
 ) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "ExistTran")
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "ExistTx")
 	defer span.End()
 
 	defer func() {
@@ -295,29 +296,29 @@ func (s *Server) ExistTran(
 
 	id, err := uuid.Parse(in.GetID())
 	if err != nil {
-		return &npool.ExistTranResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.ExistTxResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	span = commontracer.TraceInvoker(span, "tx", "crud", "Exist")
 
 	exist, err := crud.Exist(ctx, id)
 	if err != nil {
-		logger.Sugar().Errorw("ExistTran", "error", err)
-		return &npool.ExistTranResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw("ExistTx", "error", err)
+		return &npool.ExistTxResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.ExistTranResponse{
+	return &npool.ExistTxResponse{
 		Info: exist,
 	}, nil
 }
 
-func (s *Server) ExistTranConds(
+func (s *Server) ExistTxConds(
 	ctx context.Context,
-	in *npool.ExistTranCondsRequest,
-) (*npool.ExistTranCondsResponse, error) {
+	in *npool.ExistTxCondsRequest,
+) (*npool.ExistTxCondsResponse, error) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "ExistTranConds")
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "ExistTxConds")
 	defer span.End()
 
 	defer func() {
@@ -331,24 +332,24 @@ func (s *Server) ExistTranConds(
 	span = commontracer.TraceInvoker(span, "tx", "crud", "ExistConds")
 
 	if err := validateConds(in.GetConds()); err != nil {
-		return &npool.ExistTranCondsResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.ExistTxCondsResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	exist, err := crud.ExistConds(ctx, in.GetConds())
 	if err != nil {
-		logger.Sugar().Errorw("ExistTranConds", "error", err)
-		return &npool.ExistTranCondsResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw("ExistTxConds", "error", err)
+		return &npool.ExistTxCondsResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.ExistTranCondsResponse{
+	return &npool.ExistTxCondsResponse{
 		Info: exist,
 	}, nil
 }
 
-func (s *Server) CountTrans(ctx context.Context, in *npool.CountTransRequest) (*npool.CountTransResponse, error) {
+func (s *Server) CountTxs(ctx context.Context, in *npool.CountTxsRequest) (*npool.CountTxsResponse, error) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CountTrans")
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CountTxs")
 	defer span.End()
 
 	defer func() {
@@ -362,24 +363,24 @@ func (s *Server) CountTrans(ctx context.Context, in *npool.CountTransRequest) (*
 	span = commontracer.TraceInvoker(span, "tx", "crud", "Count")
 
 	if err := validateConds(in.GetConds()); err != nil {
-		return &npool.CountTransResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.CountTxsResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	total, err := crud.Count(ctx, in.GetConds())
 	if err != nil {
-		logger.Sugar().Errorw("CountTrans", "error", err)
-		return &npool.CountTransResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw("CountTxs", "error", err)
+		return &npool.CountTxsResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.CountTransResponse{
+	return &npool.CountTxsResponse{
 		Info: total,
 	}, nil
 }
 
-func (s *Server) DeleteTran(ctx context.Context, in *npool.DeleteTranRequest) (*npool.DeleteTranResponse, error) {
+func (s *Server) DeleteTx(ctx context.Context, in *npool.DeleteTxRequest) (*npool.DeleteTxResponse, error) {
 	var err error
 
-	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "DeleteTran")
+	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "DeleteTx")
 	defer span.End()
 
 	defer func() {
@@ -393,18 +394,18 @@ func (s *Server) DeleteTran(ctx context.Context, in *npool.DeleteTranRequest) (*
 
 	id, err := uuid.Parse(in.GetID())
 	if err != nil {
-		return &npool.DeleteTranResponse{}, status.Error(codes.InvalidArgument, err.Error())
+		return &npool.DeleteTxResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	span = commontracer.TraceInvoker(span, "tx", "crud", "Delete")
 
 	info, err := crud.Delete(ctx, id)
 	if err != nil {
-		logger.Sugar().Errorw("DeleteTran", "error", err)
-		return &npool.DeleteTranResponse{}, status.Error(codes.Internal, err.Error())
+		logger.Sugar().Errorw("DeleteTx", "error", err)
+		return &npool.DeleteTxResponse{}, status.Error(codes.Internal, err.Error())
 	}
 
-	return &npool.DeleteTranResponse{
+	return &npool.DeleteTxResponse{
 		Info: converter.Ent2Grpc(info),
 	}, nil
 }

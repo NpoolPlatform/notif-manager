@@ -210,7 +210,7 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.ContactQuery, erro
 	if conds.AccountType != nil {
 		switch conds.GetAccountType().GetOp() {
 		case cruder.EQ:
-			stm.Where(contact.AccountType(basetypes.SignMethodType(conds.GetAccountType().GetValue()).String()))
+			stm.Where(contact.AccountType(basetypes.SignMethod(conds.GetAccountType().GetValue()).String()))
 		default:
 			return nil, fmt.Errorf("invalid contact field")
 		}

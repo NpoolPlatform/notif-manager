@@ -18,6 +18,7 @@ import (
 
 	"github.com/NpoolPlatform/notif-manager/pkg/testinit"
 
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif/tx"
 	"github.com/stretchr/testify/assert"
 
@@ -34,25 +35,25 @@ func init() {
 }
 
 var (
-	txState = npool.TxState_WaitSend
-	txType  = npool.TxType_Withdraw
-	data    = &npool.TxNotifState{
+	txState = npool.TxState_WaitNotified
+	txType  = basetypes.TxType_TxWithdraw
+	data    = &npool.Tx{
 		ID:         uuid.NewString(),
 		TxID:       uuid.NewString(),
 		NotifState: txState,
-		NotifType:  txType,
+		TxType:     txType,
 	}
 )
 
-var dataReq = &npool.TxNotifStateReq{
+var dataReq = &npool.TxReq{
 	ID:         &data.ID,
 	TxID:       &data.TxID,
 	NotifState: &txState,
-	NotifType:  &txType,
+	TxType:     &txType,
 }
 
-func createTxNotifState(t *testing.T) {
-	info, err := CreateTxNotifState(context.Background(), dataReq)
+func createTx(t *testing.T) {
+	info, err := CreateTx(context.Background(), dataReq)
 	if assert.Nil(t, err) {
 		data.CreatedAt = info.CreatedAt
 		data.UpdatedAt = info.UpdatedAt
@@ -60,55 +61,55 @@ func createTxNotifState(t *testing.T) {
 	}
 }
 
-func updateTxNotifState(t *testing.T) {
-	info, err := UpdateTxNotifState(context.Background(), dataReq)
+func updateTx(t *testing.T) {
+	info, err := UpdateTx(context.Background(), dataReq)
 	if assert.Nil(t, err) {
 		data.UpdatedAt = info.UpdatedAt
 		assert.Equal(t, data, info)
 	}
 }
 
-func createTxNotifStates(t *testing.T) {
-	datas := []npool.TxNotifState{
+func createTxs(t *testing.T) {
+	datas := []npool.Tx{
 		{
 			ID:         uuid.NewString(),
 			TxID:       uuid.NewString(),
 			NotifState: txState,
-			NotifType:  txType,
+			TxType:     txType,
 		},
 		{
 			ID:         uuid.NewString(),
 			TxID:       uuid.NewString(),
 			NotifState: txState,
-			NotifType:  txType,
+			TxType:     txType,
 		},
 	}
 
-	apps := []*npool.TxNotifStateReq{}
+	apps := []*npool.TxReq{}
 	for key := range datas {
-		apps = append(apps, &npool.TxNotifStateReq{
+		apps = append(apps, &npool.TxReq{
 			ID:         &datas[key].ID,
 			TxID:       &datas[key].TxID,
 			NotifState: &datas[key].NotifState,
-			NotifType:  &datas[key].NotifType,
+			TxType:     &datas[key].TxType,
 		})
 	}
 
-	infos, err := CreateTxNotifStates(context.Background(), apps)
+	infos, err := CreateTxs(context.Background(), apps)
 	if assert.Nil(t, err) {
 		assert.Equal(t, len(infos), 2)
 	}
 }
 
-func getTxNotifState(t *testing.T) {
-	info, err := GetTxNotifState(context.Background(), data.ID)
+func getTx(t *testing.T) {
+	info, err := GetTx(context.Background(), data.ID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, data, info)
 	}
 }
 
-func getTxNotifStates(t *testing.T) {
-	infos, total, err := GetTxNotifStates(context.Background(), &npool.Conds{
+func getTxs(t *testing.T) {
+	infos, total, err := GetTxs(context.Background(), &npool.Conds{
 		ID: &valuedef.StringVal{
 			Op:    cruder.EQ,
 			Value: data.ID,
@@ -120,8 +121,8 @@ func getTxNotifStates(t *testing.T) {
 	}
 }
 
-func getTxNotifStateOnly(t *testing.T) {
-	info, err := GetTxNotifStateOnly(context.Background(), &npool.Conds{
+func getTxOnly(t *testing.T) {
+	info, err := GetTxOnly(context.Background(), &npool.Conds{
 		ID: &valuedef.StringVal{
 			Op:    cruder.EQ,
 			Value: data.ID,
@@ -133,14 +134,14 @@ func getTxNotifStateOnly(t *testing.T) {
 }
 
 func existAppGood(t *testing.T) {
-	exist, err := ExistTxNotifState(context.Background(), data.ID)
+	exist, err := ExistTx(context.Background(), data.ID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, exist, true)
 	}
 }
 
 func existAppGoodConds(t *testing.T) {
-	exist, err := ExistTxNotifStateConds(context.Background(), &npool.Conds{
+	exist, err := ExistTxConds(context.Background(), &npool.Conds{
 		ID: &valuedef.StringVal{
 			Op:    cruder.EQ,
 			Value: data.ID,
@@ -151,13 +152,13 @@ func existAppGoodConds(t *testing.T) {
 	}
 }
 
-func deleteTxNotifState(t *testing.T) {
-	info, err := DeleteTxNotifState(context.Background(), data.ID)
+func deleteTx(t *testing.T) {
+	info, err := DeleteTx(context.Background(), data.ID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, data, info)
 	}
 
-	_, err = GetTxNotifState(context.Background(), info.ID)
+	_, err = GetTx(context.Background(), info.ID)
 	assert.NotNil(t, err)
 }
 
@@ -172,13 +173,13 @@ func TestClient(t *testing.T) {
 		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	})
 
-	t.Run("createTxNotifState", createTxNotifState)
-	t.Run("createTxNotifStates", createTxNotifStates)
-	t.Run("getTxNotifState", getTxNotifState)
-	t.Run("getTxNotifStates", getTxNotifStates)
-	t.Run("getTxNotifStateOnly", getTxNotifStateOnly)
-	t.Run("updateTxNotifState", updateTxNotifState)
+	t.Run("createTx", createTx)
+	t.Run("createTxs", createTxs)
+	t.Run("getTx", getTx)
+	t.Run("getTxs", getTxs)
+	t.Run("getTxOnly", getTxOnly)
+	t.Run("updateTx", updateTx)
 	t.Run("existAppGood", existAppGood)
 	t.Run("existAppGoodConds", existAppGoodConds)
-	t.Run("deleteTxNotifState", deleteTxNotifState)
+	t.Run("deleteTx", deleteTx)
 }

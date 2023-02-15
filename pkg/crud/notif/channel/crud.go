@@ -26,7 +26,7 @@ import (
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 )
 
-func CreateSet(c *ent.NotifChannelCreate, in *npool.NotifChannelReq) (*ent.NotifChannelCreate, error) {
+func CreateSet(c *ent.NotifChannelCreate, in *npool.ChannelReq) (*ent.NotifChannelCreate, error) {
 	if in.ID != nil {
 		c.SetID(uuid.MustParse(in.GetID()))
 	}
@@ -43,7 +43,7 @@ func CreateSet(c *ent.NotifChannelCreate, in *npool.NotifChannelReq) (*ent.Notif
 	return c, nil
 }
 
-func Create(ctx context.Context, in *npool.NotifChannelReq) (*ent.NotifChannel, error) {
+func Create(ctx context.Context, in *npool.ChannelReq) (*ent.NotifChannel, error) {
 	var info *ent.NotifChannel
 	var err error
 
@@ -75,7 +75,7 @@ func Create(ctx context.Context, in *npool.NotifChannelReq) (*ent.NotifChannel, 
 	return info, nil
 }
 
-func CreateBulk(ctx context.Context, in []*npool.NotifChannelReq) ([]*ent.NotifChannel, error) {
+func CreateBulk(ctx context.Context, in []*npool.ChannelReq) ([]*ent.NotifChannel, error) {
 	var err error
 
 	_, span := otel.Tracer(constant.ServiceName).Start(ctx, "CreateBulk")
@@ -109,11 +109,11 @@ func CreateBulk(ctx context.Context, in []*npool.NotifChannelReq) ([]*ent.NotifC
 	return rows, nil
 }
 
-func UpdateSet(u *ent.NotifChannelUpdateOne, in *npool.NotifChannelReq) (*ent.NotifChannelUpdateOne, error) {
+func UpdateSet(u *ent.NotifChannelUpdateOne, in *npool.ChannelReq) (*ent.NotifChannelUpdateOne, error) {
 	return u, nil
 }
 
-func Update(ctx context.Context, in *npool.NotifChannelReq) (*ent.NotifChannel, error) {
+func Update(ctx context.Context, in *npool.ChannelReq) (*ent.NotifChannel, error) {
 	var info *ent.NotifChannel
 	var err error
 

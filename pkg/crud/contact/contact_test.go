@@ -36,14 +36,14 @@ var entContact = ent.Contact{
 	UsedFor:     basetypes.UsedFor_Signin.String(),
 	Sender:      uuid.NewString(),
 	Account:     uuid.NewString(),
-	AccountType: basetypes.SignMethodType_Mobile.String(),
+	AccountType: basetypes.SignMethod_Mobile.String(),
 }
 
 var (
 	id          = entContact.ID.String()
 	appID       = entContact.AppID.String()
 	usedFor     = basetypes.UsedFor_Signin
-	accountType = basetypes.SignMethodType_Mobile
+	accountType = basetypes.SignMethod_Mobile
 	Contact     = contact.ContactReq{
 		ID:          &id,
 		AppID:       &appID,

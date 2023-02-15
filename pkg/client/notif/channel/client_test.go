@@ -39,7 +39,7 @@ func init() {
 var (
 	eventType = basetypes.UsedFor_KYCApproved
 	channel1  = channel.NotifChannel_ChannelFrontend
-	data      = &npool.NotifChannel{
+	data      = &npool.Channel{
 		ID:        uuid.NewString(),
 		AppID:     uuid.NewString(),
 		EventType: eventType,
@@ -47,15 +47,15 @@ var (
 	}
 )
 
-var dataReq = &npool.NotifChannelReq{
+var dataReq = &npool.ChannelReq{
 	ID:        &data.ID,
 	AppID:     &data.AppID,
 	EventType: &data.EventType,
 	Channel:   &data.Channel,
 }
 
-func createNotifChannel(t *testing.T) {
-	info, err := CreateNotifChannel(context.Background(), dataReq)
+func createChannel(t *testing.T) {
+	info, err := CreateChannel(context.Background(), dataReq)
 	if assert.Nil(t, err) {
 		data.CreatedAt = info.CreatedAt
 		data.UpdatedAt = info.UpdatedAt
@@ -63,8 +63,8 @@ func createNotifChannel(t *testing.T) {
 	}
 }
 
-func createNotifChannels(t *testing.T) {
-	datas := []npool.NotifChannel{
+func createChannels(t *testing.T) {
+	datas := []npool.Channel{
 		{
 			ID:        uuid.NewString(),
 			AppID:     uuid.NewString(),
@@ -79,9 +79,9 @@ func createNotifChannels(t *testing.T) {
 		},
 	}
 
-	apps := []*npool.NotifChannelReq{}
+	apps := []*npool.ChannelReq{}
 	for key := range datas {
-		apps = append(apps, &npool.NotifChannelReq{
+		apps = append(apps, &npool.ChannelReq{
 			ID:        &datas[key].ID,
 			AppID:     &datas[key].AppID,
 			EventType: &datas[key].EventType,
@@ -89,21 +89,21 @@ func createNotifChannels(t *testing.T) {
 		})
 	}
 
-	infos, err := CreateNotifChannels(context.Background(), apps)
+	infos, err := CreateChannels(context.Background(), apps)
 	if assert.Nil(t, err) {
 		assert.Equal(t, len(infos), 2)
 	}
 }
 
-func getNotifChannel(t *testing.T) {
-	info, err := GetNotifChannel(context.Background(), data.ID)
+func getChannel(t *testing.T) {
+	info, err := GetChannel(context.Background(), data.ID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, data, info)
 	}
 }
 
-func getNotifChannels(t *testing.T) {
-	infos, total, err := GetNotifChannels(context.Background(), &npool.Conds{
+func getChannels(t *testing.T) {
+	infos, total, err := GetChannels(context.Background(), &npool.Conds{
 		ID: &valuedef.StringVal{
 			Op:    cruder.EQ,
 			Value: data.ID,
@@ -115,8 +115,8 @@ func getNotifChannels(t *testing.T) {
 	}
 }
 
-func getNotifChannelOnly(t *testing.T) {
-	info, err := GetNotifChannelOnly(context.Background(), &npool.Conds{
+func getChannelOnly(t *testing.T) {
+	info, err := GetChannelOnly(context.Background(), &npool.Conds{
 		ID: &valuedef.StringVal{
 			Op:    cruder.EQ,
 			Value: data.ID,
@@ -128,14 +128,14 @@ func getNotifChannelOnly(t *testing.T) {
 }
 
 func existAppGood(t *testing.T) {
-	exist, err := ExistNotifChannel(context.Background(), data.ID)
+	exist, err := ExistChannel(context.Background(), data.ID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, exist, true)
 	}
 }
 
 func existAppGoodConds(t *testing.T) {
-	exist, err := ExistNotifChannelConds(context.Background(), &npool.Conds{
+	exist, err := ExistChannelConds(context.Background(), &npool.Conds{
 		ID: &valuedef.StringVal{
 			Op:    cruder.EQ,
 			Value: data.ID,
@@ -146,13 +146,13 @@ func existAppGoodConds(t *testing.T) {
 	}
 }
 
-func deleteNotifChannel(t *testing.T) {
-	info, err := DeleteNotifChannel(context.Background(), data.ID)
+func deleteChannel(t *testing.T) {
+	info, err := DeleteChannel(context.Background(), data.ID)
 	if assert.Nil(t, err) {
 		assert.Equal(t, data, info)
 	}
 
-	_, err = GetNotifChannel(context.Background(), info.ID)
+	_, err = GetChannel(context.Background(), info.ID)
 	assert.NotNil(t, err)
 }
 
@@ -167,12 +167,12 @@ func TestClient(t *testing.T) {
 		return grpc.Dial(fmt.Sprintf("localhost:%v", gport), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	})
 
-	t.Run("createNotifChannel", createNotifChannel)
-	t.Run("createNotifChannels", createNotifChannels)
-	t.Run("getNotifChannel", getNotifChannel)
-	t.Run("getNotifChannels", getNotifChannels)
-	t.Run("getNotifChannelOnly", getNotifChannelOnly)
+	t.Run("createChannel", createChannel)
+	t.Run("createChannels", createChannels)
+	t.Run("getChannel", getChannel)
+	t.Run("getChannels", getChannels)
+	t.Run("getChannelOnly", getChannelOnly)
 	t.Run("existAppGood", existAppGood)
 	t.Run("existAppGoodConds", existAppGoodConds)
-	t.Run("deleteNotifChannel", deleteNotifChannel)
+	t.Run("deleteChannel", deleteChannel)
 }

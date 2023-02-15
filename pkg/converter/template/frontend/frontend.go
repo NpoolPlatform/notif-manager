@@ -4,7 +4,7 @@ import (
 	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/template/frontend"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent"
 
-	bsaetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 )
 
 func Ent2Grpc(row *ent.FrontendTemplate) *npool.FrontendTemplate {
