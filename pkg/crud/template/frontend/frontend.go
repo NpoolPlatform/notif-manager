@@ -266,9 +266,14 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.FrontendTemplateQu
 		}
 	}
 	if conds.UsedFors != nil {
+		usedFors := []string{}
+		for _, usedFor := range conds.GetUsedFors().GetValue() {
+			usedFors = append(usedFors, basetypes.UsedFor(usedFor).String())
+		}
+
 		switch conds.GetUsedFors().GetOp() {
 		case cruder.IN:
-			stm.Where(frontendtemplate.UsedForIn(conds.GetUsedFors().GetValue()...))
+			stm.Where(frontendtemplate.UsedForIn(usedFors...))
 		default:
 			return nil, fmt.Errorf("invalid frontend field")
 		}

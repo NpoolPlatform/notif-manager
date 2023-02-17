@@ -300,11 +300,16 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.EmailTemplateQuery
 	}
 
 	if conds.UsedFors != nil {
+		usedFors := []string{}
+		for _, usedFor := range conds.GetUsedFors().GetValue() {
+			usedFors = append(usedFors, basetypes.UsedFor(usedFor).String())
+		}
+
 		switch conds.GetUsedFors().GetOp() {
 		case cruder.IN:
-			stm.Where(emailtemplate.UsedForIn(conds.GetUsedFors().GetValue()...))
+			stm.Where(emailtemplate.UsedForIn(usedFors...))
 		default:
-			return nil, fmt.Errorf("invalid email field")
+			return nil, fmt.Errorf("invalid frontend field")
 		}
 	}
 
