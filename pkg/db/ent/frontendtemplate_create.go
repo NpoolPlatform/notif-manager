@@ -119,20 +119,6 @@ func (ftc *FrontendTemplateCreate) SetNillableContent(s *string) *FrontendTempla
 	return ftc
 }
 
-// SetSender sets the "sender" field.
-func (ftc *FrontendTemplateCreate) SetSender(s string) *FrontendTemplateCreate {
-	ftc.mutation.SetSender(s)
-	return ftc
-}
-
-// SetNillableSender sets the "sender" field if the given value is not nil.
-func (ftc *FrontendTemplateCreate) SetNillableSender(s *string) *FrontendTemplateCreate {
-	if s != nil {
-		ftc.SetSender(*s)
-	}
-	return ftc
-}
-
 // SetID sets the "id" field.
 func (ftc *FrontendTemplateCreate) SetID(u uuid.UUID) *FrontendTemplateCreate {
 	ftc.mutation.SetID(u)
@@ -258,10 +244,6 @@ func (ftc *FrontendTemplateCreate) defaults() error {
 	if _, ok := ftc.mutation.Content(); !ok {
 		v := frontendtemplate.DefaultContent
 		ftc.mutation.SetContent(v)
-	}
-	if _, ok := ftc.mutation.Sender(); !ok {
-		v := frontendtemplate.DefaultSender
-		ftc.mutation.SetSender(v)
 	}
 	if _, ok := ftc.mutation.ID(); !ok {
 		if frontendtemplate.DefaultID == nil {
@@ -390,14 +372,6 @@ func (ftc *FrontendTemplateCreate) createSpec() (*FrontendTemplate, *sqlgraph.Cr
 			Column: frontendtemplate.FieldContent,
 		})
 		_node.Content = value
-	}
-	if value, ok := ftc.mutation.Sender(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: frontendtemplate.FieldSender,
-		})
-		_node.Sender = value
 	}
 	return _node, _spec
 }
@@ -582,24 +556,6 @@ func (u *FrontendTemplateUpsert) UpdateContent() *FrontendTemplateUpsert {
 // ClearContent clears the value of the "content" field.
 func (u *FrontendTemplateUpsert) ClearContent() *FrontendTemplateUpsert {
 	u.SetNull(frontendtemplate.FieldContent)
-	return u
-}
-
-// SetSender sets the "sender" field.
-func (u *FrontendTemplateUpsert) SetSender(v string) *FrontendTemplateUpsert {
-	u.Set(frontendtemplate.FieldSender, v)
-	return u
-}
-
-// UpdateSender sets the "sender" field to the value that was provided on create.
-func (u *FrontendTemplateUpsert) UpdateSender() *FrontendTemplateUpsert {
-	u.SetExcluded(frontendtemplate.FieldSender)
-	return u
-}
-
-// ClearSender clears the value of the "sender" field.
-func (u *FrontendTemplateUpsert) ClearSender() *FrontendTemplateUpsert {
-	u.SetNull(frontendtemplate.FieldSender)
 	return u
 }
 
@@ -804,27 +760,6 @@ func (u *FrontendTemplateUpsertOne) UpdateContent() *FrontendTemplateUpsertOne {
 func (u *FrontendTemplateUpsertOne) ClearContent() *FrontendTemplateUpsertOne {
 	return u.Update(func(s *FrontendTemplateUpsert) {
 		s.ClearContent()
-	})
-}
-
-// SetSender sets the "sender" field.
-func (u *FrontendTemplateUpsertOne) SetSender(v string) *FrontendTemplateUpsertOne {
-	return u.Update(func(s *FrontendTemplateUpsert) {
-		s.SetSender(v)
-	})
-}
-
-// UpdateSender sets the "sender" field to the value that was provided on create.
-func (u *FrontendTemplateUpsertOne) UpdateSender() *FrontendTemplateUpsertOne {
-	return u.Update(func(s *FrontendTemplateUpsert) {
-		s.UpdateSender()
-	})
-}
-
-// ClearSender clears the value of the "sender" field.
-func (u *FrontendTemplateUpsertOne) ClearSender() *FrontendTemplateUpsertOne {
-	return u.Update(func(s *FrontendTemplateUpsert) {
-		s.ClearSender()
 	})
 }
 
@@ -1195,27 +1130,6 @@ func (u *FrontendTemplateUpsertBulk) UpdateContent() *FrontendTemplateUpsertBulk
 func (u *FrontendTemplateUpsertBulk) ClearContent() *FrontendTemplateUpsertBulk {
 	return u.Update(func(s *FrontendTemplateUpsert) {
 		s.ClearContent()
-	})
-}
-
-// SetSender sets the "sender" field.
-func (u *FrontendTemplateUpsertBulk) SetSender(v string) *FrontendTemplateUpsertBulk {
-	return u.Update(func(s *FrontendTemplateUpsert) {
-		s.SetSender(v)
-	})
-}
-
-// UpdateSender sets the "sender" field to the value that was provided on create.
-func (u *FrontendTemplateUpsertBulk) UpdateSender() *FrontendTemplateUpsertBulk {
-	return u.Update(func(s *FrontendTemplateUpsert) {
-		s.UpdateSender()
-	})
-}
-
-// ClearSender clears the value of the "sender" field.
-func (u *FrontendTemplateUpsertBulk) ClearSender() *FrontendTemplateUpsertBulk {
-	return u.Update(func(s *FrontendTemplateUpsert) {
-		s.ClearSender()
 	})
 }
 

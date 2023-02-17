@@ -1,13 +1,12 @@
+//nolint:dupl
 package schema
 
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
-	"github.com/NpoolPlatform/notif-manager/pkg/db/mixin"
-
-	"github.com/google/uuid"
-
 	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/mixin"
+	"github.com/google/uuid"
 )
 
 // SMSTemplate holds the schema definition for the SMSTemplate entity.

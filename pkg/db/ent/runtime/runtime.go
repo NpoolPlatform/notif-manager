@@ -231,10 +231,6 @@ func init() {
 	frontendtemplateDescContent := frontendtemplateFields[5].Descriptor()
 	// frontendtemplate.DefaultContent holds the default value on creation for the content field.
 	frontendtemplate.DefaultContent = frontendtemplateDescContent.Default.(string)
-	// frontendtemplateDescSender is the schema descriptor for sender field.
-	frontendtemplateDescSender := frontendtemplateFields[6].Descriptor()
-	// frontendtemplate.DefaultSender holds the default value on creation for the sender field.
-	frontendtemplate.DefaultSender = frontendtemplateDescSender.Default.(string)
 	// frontendtemplateDescID is the schema descriptor for id field.
 	frontendtemplateDescID := frontendtemplateFields[0].Descriptor()
 	// frontendtemplate.DefaultID holds the default value on creation for the id field.

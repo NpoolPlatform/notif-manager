@@ -19,7 +19,6 @@ func Ent2Grpc(row *ent.FrontendTemplate) *npool.FrontendTemplate {
 		UsedFor:   basetypes.UsedFor(basetypes.UsedFor_value[row.UsedFor]),
 		Title:     row.Title,
 		Content:   row.Content,
-		Sender:    row.Sender,
 		CreatedAt: row.CreatedAt,
 		UpdatedAt: row.UpdatedAt,
 	}

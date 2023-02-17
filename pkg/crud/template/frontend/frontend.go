@@ -42,9 +42,6 @@ func CreateSet(c *ent.FrontendTemplateCreate, info *npool.FrontendTemplateReq) *
 	if info.Content != nil {
 		c.SetContent(info.GetContent())
 	}
-	if info.Sender != nil {
-		c.SetSender(info.GetSender())
-	}
 
 	return c
 }
@@ -146,9 +143,6 @@ func UpdateSet(u *ent.FrontendTemplateUpdateOne, in *npool.FrontendTemplateReq) 
 	}
 	if in.Content != nil {
 		u.SetContent(in.GetContent())
-	}
-	if in.Sender != nil {
-		u.SetSender(in.GetSender())
 	}
 	return u
 }

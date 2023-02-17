@@ -3145,7 +3145,6 @@ type FrontendTemplateMutation struct {
 	used_for      *string
 	title         *string
 	content       *string
-	sender        *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*FrontendTemplate, error)
@@ -3643,55 +3642,6 @@ func (m *FrontendTemplateMutation) ResetContent() {
 	delete(m.clearedFields, frontendtemplate.FieldContent)
 }
 
-// SetSender sets the "sender" field.
-func (m *FrontendTemplateMutation) SetSender(s string) {
-	m.sender = &s
-}
-
-// Sender returns the value of the "sender" field in the mutation.
-func (m *FrontendTemplateMutation) Sender() (r string, exists bool) {
-	v := m.sender
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSender returns the old "sender" field's value of the FrontendTemplate entity.
-// If the FrontendTemplate object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *FrontendTemplateMutation) OldSender(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSender is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSender requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSender: %w", err)
-	}
-	return oldValue.Sender, nil
-}
-
-// ClearSender clears the value of the "sender" field.
-func (m *FrontendTemplateMutation) ClearSender() {
-	m.sender = nil
-	m.clearedFields[frontendtemplate.FieldSender] = struct{}{}
-}
-
-// SenderCleared returns if the "sender" field was cleared in this mutation.
-func (m *FrontendTemplateMutation) SenderCleared() bool {
-	_, ok := m.clearedFields[frontendtemplate.FieldSender]
-	return ok
-}
-
-// ResetSender resets all changes to the "sender" field.
-func (m *FrontendTemplateMutation) ResetSender() {
-	m.sender = nil
-	delete(m.clearedFields, frontendtemplate.FieldSender)
-}
-
 // Where appends a list predicates to the FrontendTemplateMutation builder.
 func (m *FrontendTemplateMutation) Where(ps ...predicate.FrontendTemplate) {
 	m.predicates = append(m.predicates, ps...)
@@ -3711,7 +3661,7 @@ func (m *FrontendTemplateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FrontendTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, frontendtemplate.FieldCreatedAt)
 	}
@@ -3735,9 +3685,6 @@ func (m *FrontendTemplateMutation) Fields() []string {
 	}
 	if m.content != nil {
 		fields = append(fields, frontendtemplate.FieldContent)
-	}
-	if m.sender != nil {
-		fields = append(fields, frontendtemplate.FieldSender)
 	}
 	return fields
 }
@@ -3763,8 +3710,6 @@ func (m *FrontendTemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.Title()
 	case frontendtemplate.FieldContent:
 		return m.Content()
-	case frontendtemplate.FieldSender:
-		return m.Sender()
 	}
 	return nil, false
 }
@@ -3790,8 +3735,6 @@ func (m *FrontendTemplateMutation) OldField(ctx context.Context, name string) (e
 		return m.OldTitle(ctx)
 	case frontendtemplate.FieldContent:
 		return m.OldContent(ctx)
-	case frontendtemplate.FieldSender:
-		return m.OldSender(ctx)
 	}
 	return nil, fmt.Errorf("unknown FrontendTemplate field %s", name)
 }
@@ -3856,13 +3799,6 @@ func (m *FrontendTemplateMutation) SetField(name string, value ent.Value) error 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetContent(v)
-		return nil
-	case frontendtemplate.FieldSender:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSender(v)
 		return nil
 	}
 	return fmt.Errorf("unknown FrontendTemplate field %s", name)
@@ -3942,9 +3878,6 @@ func (m *FrontendTemplateMutation) ClearedFields() []string {
 	if m.FieldCleared(frontendtemplate.FieldContent) {
 		fields = append(fields, frontendtemplate.FieldContent)
 	}
-	if m.FieldCleared(frontendtemplate.FieldSender) {
-		fields = append(fields, frontendtemplate.FieldSender)
-	}
 	return fields
 }
 
@@ -3967,9 +3900,6 @@ func (m *FrontendTemplateMutation) ClearField(name string) error {
 		return nil
 	case frontendtemplate.FieldContent:
 		m.ClearContent()
-		return nil
-	case frontendtemplate.FieldSender:
-		m.ClearSender()
 		return nil
 	}
 	return fmt.Errorf("unknown FrontendTemplate nullable field %s", name)
@@ -4002,9 +3932,6 @@ func (m *FrontendTemplateMutation) ResetField(name string) error {
 		return nil
 	case frontendtemplate.FieldContent:
 		m.ResetContent()
-		return nil
-	case frontendtemplate.FieldSender:
-		m.ResetSender()
 		return nil
 	}
 	return fmt.Errorf("unknown FrontendTemplate field %s", name)

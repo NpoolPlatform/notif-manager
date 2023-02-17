@@ -1,3 +1,4 @@
+//nolint:dupl
 package schema
 
 import (
@@ -42,10 +43,6 @@ func (FrontendTemplate) Fields() []ent.Field {
 			Default(""),
 		field.
 			Text("content").
-			Optional().
-			Default(""),
-		field.
-			String("sender").
 			Optional().
 			Default(""),
 	}

@@ -156,26 +156,6 @@ func (ftu *FrontendTemplateUpdate) ClearContent() *FrontendTemplateUpdate {
 	return ftu
 }
 
-// SetSender sets the "sender" field.
-func (ftu *FrontendTemplateUpdate) SetSender(s string) *FrontendTemplateUpdate {
-	ftu.mutation.SetSender(s)
-	return ftu
-}
-
-// SetNillableSender sets the "sender" field if the given value is not nil.
-func (ftu *FrontendTemplateUpdate) SetNillableSender(s *string) *FrontendTemplateUpdate {
-	if s != nil {
-		ftu.SetSender(*s)
-	}
-	return ftu
-}
-
-// ClearSender clears the value of the "sender" field.
-func (ftu *FrontendTemplateUpdate) ClearSender() *FrontendTemplateUpdate {
-	ftu.mutation.ClearSender()
-	return ftu
-}
-
 // Mutation returns the FrontendTemplateMutation object of the builder.
 func (ftu *FrontendTemplateUpdate) Mutation() *FrontendTemplateMutation {
 	return ftu.mutation
@@ -369,19 +349,6 @@ func (ftu *FrontendTemplateUpdate) sqlSave(ctx context.Context) (n int, err erro
 			Column: frontendtemplate.FieldContent,
 		})
 	}
-	if value, ok := ftu.mutation.Sender(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: frontendtemplate.FieldSender,
-		})
-	}
-	if ftu.mutation.SenderCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: frontendtemplate.FieldSender,
-		})
-	}
 	_spec.Modifiers = ftu.modifiers
 	if n, err = sqlgraph.UpdateNodes(ctx, ftu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -527,26 +494,6 @@ func (ftuo *FrontendTemplateUpdateOne) SetNillableContent(s *string) *FrontendTe
 // ClearContent clears the value of the "content" field.
 func (ftuo *FrontendTemplateUpdateOne) ClearContent() *FrontendTemplateUpdateOne {
 	ftuo.mutation.ClearContent()
-	return ftuo
-}
-
-// SetSender sets the "sender" field.
-func (ftuo *FrontendTemplateUpdateOne) SetSender(s string) *FrontendTemplateUpdateOne {
-	ftuo.mutation.SetSender(s)
-	return ftuo
-}
-
-// SetNillableSender sets the "sender" field if the given value is not nil.
-func (ftuo *FrontendTemplateUpdateOne) SetNillableSender(s *string) *FrontendTemplateUpdateOne {
-	if s != nil {
-		ftuo.SetSender(*s)
-	}
-	return ftuo
-}
-
-// ClearSender clears the value of the "sender" field.
-func (ftuo *FrontendTemplateUpdateOne) ClearSender() *FrontendTemplateUpdateOne {
-	ftuo.mutation.ClearSender()
 	return ftuo
 }
 
@@ -771,19 +718,6 @@ func (ftuo *FrontendTemplateUpdateOne) sqlSave(ctx context.Context) (_node *Fron
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: frontendtemplate.FieldContent,
-		})
-	}
-	if value, ok := ftuo.mutation.Sender(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: frontendtemplate.FieldSender,
-		})
-	}
-	if ftuo.mutation.SenderCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Column: frontendtemplate.FieldSender,
 		})
 	}
 	_spec.Modifiers = ftuo.modifiers

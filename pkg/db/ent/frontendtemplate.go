@@ -32,8 +32,6 @@ type FrontendTemplate struct {
 	Title string `json:"title,omitempty"`
 	// Content holds the value of the "content" field.
 	Content string `json:"content,omitempty"`
-	// Sender holds the value of the "sender" field.
-	Sender string `json:"sender,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -43,7 +41,7 @@ func (*FrontendTemplate) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case frontendtemplate.FieldCreatedAt, frontendtemplate.FieldUpdatedAt, frontendtemplate.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case frontendtemplate.FieldUsedFor, frontendtemplate.FieldTitle, frontendtemplate.FieldContent, frontendtemplate.FieldSender:
+		case frontendtemplate.FieldUsedFor, frontendtemplate.FieldTitle, frontendtemplate.FieldContent:
 			values[i] = new(sql.NullString)
 		case frontendtemplate.FieldID, frontendtemplate.FieldAppID, frontendtemplate.FieldLangID:
 			values[i] = new(uuid.UUID)
@@ -116,12 +114,6 @@ func (ft *FrontendTemplate) assignValues(columns []string, values []interface{})
 			} else if value.Valid {
 				ft.Content = value.String
 			}
-		case frontendtemplate.FieldSender:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field sender", values[i])
-			} else if value.Valid {
-				ft.Sender = value.String
-			}
 		}
 	}
 	return nil
@@ -173,9 +165,6 @@ func (ft *FrontendTemplate) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("content=")
 	builder.WriteString(ft.Content)
-	builder.WriteString(", ")
-	builder.WriteString("sender=")
-	builder.WriteString(ft.Sender)
 	builder.WriteByte(')')
 	return builder.String()
 }

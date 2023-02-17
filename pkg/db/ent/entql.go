@@ -112,7 +112,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			frontendtemplate.FieldUsedFor:   {Type: field.TypeString, Column: frontendtemplate.FieldUsedFor},
 			frontendtemplate.FieldTitle:     {Type: field.TypeString, Column: frontendtemplate.FieldTitle},
 			frontendtemplate.FieldContent:   {Type: field.TypeString, Column: frontendtemplate.FieldContent},
-			frontendtemplate.FieldSender:    {Type: field.TypeString, Column: frontendtemplate.FieldSender},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -615,11 +614,6 @@ func (f *FrontendTemplateFilter) WhereTitle(p entql.StringP) {
 // WhereContent applies the entql string predicate on the content field.
 func (f *FrontendTemplateFilter) WhereContent(p entql.StringP) {
 	f.Where(p.Field(frontendtemplate.FieldContent))
-}
-
-// WhereSender applies the entql string predicate on the sender field.
-func (f *FrontendTemplateFilter) WhereSender(p entql.StringP) {
-	f.Where(p.Field(frontendtemplate.FieldSender))
 }
 
 // addPredicate implements the predicateAdder interface.
