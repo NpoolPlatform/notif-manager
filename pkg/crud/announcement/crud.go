@@ -215,7 +215,7 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.AnnouncementQuery,
 		for _, ch := range conds.GetChannels().GetValue() {
 			chans = append(chans, channel.NotifChannel(ch).String())
 		}
-		switch conds.GetID().GetOp() {
+		switch conds.GetChannels().GetOp() {
 		case cruder.IN:
 			stm.Where(announcement.ChannelIn(chans...))
 		default:
@@ -223,7 +223,7 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.AnnouncementQuery,
 		}
 	}
 	if conds.Channel != nil {
-		switch conds.GetID().GetOp() {
+		switch conds.GetChannel().GetOp() {
 		case cruder.EQ:
 			stm.Where(announcement.Channel(channel.NotifChannel(conds.GetChannel().GetValue()).String()))
 		default:
