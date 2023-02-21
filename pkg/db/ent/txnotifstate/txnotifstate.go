@@ -22,8 +22,8 @@ const (
 	FieldTxID = "tx_id"
 	// FieldNotifState holds the string denoting the notif_state field in the database.
 	FieldNotifState = "notif_state"
-	// FieldNotifType holds the string denoting the notif_type field in the database.
-	FieldNotifType = "notif_type"
+	// FieldTxType holds the string denoting the tx_type field in the database.
+	FieldTxType = "tx_type"
 	// Table holds the table name of the txnotifstate in the database.
 	Table = "tx_notif_states"
 )
@@ -36,7 +36,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldTxID,
 	FieldNotifState,
-	FieldNotifType,
+	FieldTxType,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -70,8 +70,8 @@ var (
 	DefaultTxID func() uuid.UUID
 	// DefaultNotifState holds the default value on creation for the "notif_state" field.
 	DefaultNotifState string
-	// DefaultNotifType holds the default value on creation for the "notif_type" field.
-	DefaultNotifType string
+	// DefaultTxType holds the default value on creation for the "tx_type" field.
+	DefaultTxType string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

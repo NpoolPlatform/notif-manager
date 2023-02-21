@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 
 	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/announcement"
+	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
 )
 
 // Announcement holds the schema definition for the Announcement entity.
@@ -44,9 +45,9 @@ func (Announcement) Fields() []ent.Field {
 			Optional().
 			Default(""),
 		field.
-			JSON("channels", []string{}).
+			String("channel").
 			Optional().
-			Default([]string{}),
+			Default(channel.NotifChannel_DefaultChannel.String()),
 		field.
 			Uint32("end_at").
 			Optional().
@@ -54,7 +55,7 @@ func (Announcement) Fields() []ent.Field {
 		field.
 			String("type").
 			Optional().
-			Default(npool.AnnouncementType_DefaultAnnouncementType.String()),
+			Default(npool.AnnouncementType_DefaultType.String()),
 	}
 }
 

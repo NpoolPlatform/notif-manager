@@ -6,7 +6,8 @@ import (
 	"github.com/NpoolPlatform/notif-manager/pkg/db/mixin"
 	"github.com/google/uuid"
 
-	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif/txnotifstate"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
+	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif/tx"
 )
 
 // TxNotifState holds the schema definition for the TxNotifState entity.
@@ -34,11 +35,11 @@ func (TxNotifState) Fields() []ent.Field {
 		field.
 			String("notif_state").
 			Optional().
-			Default(npool.TxState_DefaultNotifState.String()),
+			Default(npool.TxState_DefaultState.String()),
 		field.
-			String("notif_type").
+			String("tx_type").
 			Optional().
-			Default(npool.TxType_DefaultType.String()),
+			Default(basetypes.TxType_DefaultTxType.String()),
 	}
 }
 

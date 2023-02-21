@@ -3,16 +3,17 @@ package api
 import (
 	"context"
 
-	"github.com/NpoolPlatform/notif-manager/api/notif/notifchannel"
-
-	"github.com/NpoolPlatform/notif-manager/api/notif/txnotifstate"
-
-	"github.com/NpoolPlatform/notif-manager/api/announcement/sendstate"
-	"github.com/NpoolPlatform/notif-manager/api/announcement/user"
-
 	"github.com/NpoolPlatform/notif-manager/api/announcement"
 	"github.com/NpoolPlatform/notif-manager/api/announcement/readstate"
+	"github.com/NpoolPlatform/notif-manager/api/announcement/sendstate"
+	"github.com/NpoolPlatform/notif-manager/api/announcement/user"
+	"github.com/NpoolPlatform/notif-manager/api/contact"
 	"github.com/NpoolPlatform/notif-manager/api/notif"
+	"github.com/NpoolPlatform/notif-manager/api/notif/channel"
+	"github.com/NpoolPlatform/notif-manager/api/notif/tx"
+	"github.com/NpoolPlatform/notif-manager/api/template/email"
+	"github.com/NpoolPlatform/notif-manager/api/template/frontend"
+	"github.com/NpoolPlatform/notif-manager/api/template/sms"
 
 	v1 "github.com/NpoolPlatform/message/npool/notif/mgr/v1"
 
@@ -31,8 +32,12 @@ func Register(server grpc.ServiceRegistrar) {
 	readstate.Register(server)
 	sendstate.Register(server)
 	user.Register(server)
-	txnotifstate.Register(server)
-	notifchannel.Register(server)
+	tx.Register(server)
+	contact.Register(server)
+	email.Register(server)
+	frontend.Register(server)
+	sms.Register(server)
+	channel.Register(server)
 }
 
 func RegisterGateway(mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error {

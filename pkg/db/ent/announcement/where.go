@@ -128,6 +128,13 @@ func Content(v string) predicate.Announcement {
 	})
 }
 
+// Channel applies equality check predicate on the "channel" field. It's identical to ChannelEQ.
+func Channel(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldChannel), v))
+	})
+}
+
 // EndAt applies equality check predicate on the "end_at" field. It's identical to EndAtEQ.
 func EndAt(v uint32) predicate.Announcement {
 	return predicate.Announcement(func(s *sql.Selector) {
@@ -716,17 +723,116 @@ func ContentContainsFold(v string) predicate.Announcement {
 	})
 }
 
-// ChannelsIsNil applies the IsNil predicate on the "channels" field.
-func ChannelsIsNil() predicate.Announcement {
+// ChannelEQ applies the EQ predicate on the "channel" field.
+func ChannelEQ(v string) predicate.Announcement {
 	return predicate.Announcement(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldChannels)))
+		s.Where(sql.EQ(s.C(FieldChannel), v))
 	})
 }
 
-// ChannelsNotNil applies the NotNil predicate on the "channels" field.
-func ChannelsNotNil() predicate.Announcement {
+// ChannelNEQ applies the NEQ predicate on the "channel" field.
+func ChannelNEQ(v string) predicate.Announcement {
 	return predicate.Announcement(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldChannels)))
+		s.Where(sql.NEQ(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelIn applies the In predicate on the "channel" field.
+func ChannelIn(vs ...string) predicate.Announcement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldChannel), v...))
+	})
+}
+
+// ChannelNotIn applies the NotIn predicate on the "channel" field.
+func ChannelNotIn(vs ...string) predicate.Announcement {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldChannel), v...))
+	})
+}
+
+// ChannelGT applies the GT predicate on the "channel" field.
+func ChannelGT(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelGTE applies the GTE predicate on the "channel" field.
+func ChannelGTE(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelLT applies the LT predicate on the "channel" field.
+func ChannelLT(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelLTE applies the LTE predicate on the "channel" field.
+func ChannelLTE(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelContains applies the Contains predicate on the "channel" field.
+func ChannelContains(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelHasPrefix applies the HasPrefix predicate on the "channel" field.
+func ChannelHasPrefix(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelHasSuffix applies the HasSuffix predicate on the "channel" field.
+func ChannelHasSuffix(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelIsNil applies the IsNil predicate on the "channel" field.
+func ChannelIsNil() predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldChannel)))
+	})
+}
+
+// ChannelNotNil applies the NotNil predicate on the "channel" field.
+func ChannelNotNil() predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldChannel)))
+	})
+}
+
+// ChannelEqualFold applies the EqualFold predicate on the "channel" field.
+func ChannelEqualFold(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldChannel), v))
+	})
+}
+
+// ChannelContainsFold applies the ContainsFold predicate on the "channel" field.
+func ChannelContainsFold(v string) predicate.Announcement {
+	return predicate.Announcement(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldChannel), v))
 	})
 }
 

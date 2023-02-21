@@ -121,9 +121,17 @@ func (ac *AnnouncementCreate) SetNillableContent(s *string) *AnnouncementCreate 
 	return ac
 }
 
-// SetChannels sets the "channels" field.
-func (ac *AnnouncementCreate) SetChannels(s []string) *AnnouncementCreate {
-	ac.mutation.SetChannels(s)
+// SetChannel sets the "channel" field.
+func (ac *AnnouncementCreate) SetChannel(s string) *AnnouncementCreate {
+	ac.mutation.SetChannel(s)
+	return ac
+}
+
+// SetNillableChannel sets the "channel" field if the given value is not nil.
+func (ac *AnnouncementCreate) SetNillableChannel(s *string) *AnnouncementCreate {
+	if s != nil {
+		ac.SetChannel(*s)
+	}
 	return ac
 }
 
@@ -291,9 +299,9 @@ func (ac *AnnouncementCreate) defaults() error {
 		v := announcement.DefaultContent
 		ac.mutation.SetContent(v)
 	}
-	if _, ok := ac.mutation.Channels(); !ok {
-		v := announcement.DefaultChannels
-		ac.mutation.SetChannels(v)
+	if _, ok := ac.mutation.Channel(); !ok {
+		v := announcement.DefaultChannel
+		ac.mutation.SetChannel(v)
 	}
 	if _, ok := ac.mutation.EndAt(); !ok {
 		v := announcement.DefaultEndAt
@@ -417,13 +425,13 @@ func (ac *AnnouncementCreate) createSpec() (*Announcement, *sqlgraph.CreateSpec)
 		})
 		_node.Content = value
 	}
-	if value, ok := ac.mutation.Channels(); ok {
+	if value, ok := ac.mutation.Channel(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: announcement.FieldChannels,
+			Column: announcement.FieldChannel,
 		})
-		_node.Channels = value
+		_node.Channel = value
 	}
 	if value, ok := ac.mutation.EndAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -621,21 +629,21 @@ func (u *AnnouncementUpsert) ClearContent() *AnnouncementUpsert {
 	return u
 }
 
-// SetChannels sets the "channels" field.
-func (u *AnnouncementUpsert) SetChannels(v []string) *AnnouncementUpsert {
-	u.Set(announcement.FieldChannels, v)
+// SetChannel sets the "channel" field.
+func (u *AnnouncementUpsert) SetChannel(v string) *AnnouncementUpsert {
+	u.Set(announcement.FieldChannel, v)
 	return u
 }
 
-// UpdateChannels sets the "channels" field to the value that was provided on create.
-func (u *AnnouncementUpsert) UpdateChannels() *AnnouncementUpsert {
-	u.SetExcluded(announcement.FieldChannels)
+// UpdateChannel sets the "channel" field to the value that was provided on create.
+func (u *AnnouncementUpsert) UpdateChannel() *AnnouncementUpsert {
+	u.SetExcluded(announcement.FieldChannel)
 	return u
 }
 
-// ClearChannels clears the value of the "channels" field.
-func (u *AnnouncementUpsert) ClearChannels() *AnnouncementUpsert {
-	u.SetNull(announcement.FieldChannels)
+// ClearChannel clears the value of the "channel" field.
+func (u *AnnouncementUpsert) ClearChannel() *AnnouncementUpsert {
+	u.SetNull(announcement.FieldChannel)
 	return u
 }
 
@@ -878,24 +886,24 @@ func (u *AnnouncementUpsertOne) ClearContent() *AnnouncementUpsertOne {
 	})
 }
 
-// SetChannels sets the "channels" field.
-func (u *AnnouncementUpsertOne) SetChannels(v []string) *AnnouncementUpsertOne {
+// SetChannel sets the "channel" field.
+func (u *AnnouncementUpsertOne) SetChannel(v string) *AnnouncementUpsertOne {
 	return u.Update(func(s *AnnouncementUpsert) {
-		s.SetChannels(v)
+		s.SetChannel(v)
 	})
 }
 
-// UpdateChannels sets the "channels" field to the value that was provided on create.
-func (u *AnnouncementUpsertOne) UpdateChannels() *AnnouncementUpsertOne {
+// UpdateChannel sets the "channel" field to the value that was provided on create.
+func (u *AnnouncementUpsertOne) UpdateChannel() *AnnouncementUpsertOne {
 	return u.Update(func(s *AnnouncementUpsert) {
-		s.UpdateChannels()
+		s.UpdateChannel()
 	})
 }
 
-// ClearChannels clears the value of the "channels" field.
-func (u *AnnouncementUpsertOne) ClearChannels() *AnnouncementUpsertOne {
+// ClearChannel clears the value of the "channel" field.
+func (u *AnnouncementUpsertOne) ClearChannel() *AnnouncementUpsertOne {
 	return u.Update(func(s *AnnouncementUpsert) {
-		s.ClearChannels()
+		s.ClearChannel()
 	})
 }
 
@@ -1311,24 +1319,24 @@ func (u *AnnouncementUpsertBulk) ClearContent() *AnnouncementUpsertBulk {
 	})
 }
 
-// SetChannels sets the "channels" field.
-func (u *AnnouncementUpsertBulk) SetChannels(v []string) *AnnouncementUpsertBulk {
+// SetChannel sets the "channel" field.
+func (u *AnnouncementUpsertBulk) SetChannel(v string) *AnnouncementUpsertBulk {
 	return u.Update(func(s *AnnouncementUpsert) {
-		s.SetChannels(v)
+		s.SetChannel(v)
 	})
 }
 
-// UpdateChannels sets the "channels" field to the value that was provided on create.
-func (u *AnnouncementUpsertBulk) UpdateChannels() *AnnouncementUpsertBulk {
+// UpdateChannel sets the "channel" field to the value that was provided on create.
+func (u *AnnouncementUpsertBulk) UpdateChannel() *AnnouncementUpsertBulk {
 	return u.Update(func(s *AnnouncementUpsert) {
-		s.UpdateChannels()
+		s.UpdateChannel()
 	})
 }
 
-// ClearChannels clears the value of the "channels" field.
-func (u *AnnouncementUpsertBulk) ClearChannels() *AnnouncementUpsertBulk {
+// ClearChannel clears the value of the "channel" field.
+func (u *AnnouncementUpsertBulk) ClearChannel() *AnnouncementUpsertBulk {
 	return u.Update(func(s *AnnouncementUpsert) {
-		s.ClearChannels()
+		s.ClearChannel()
 	})
 }
 

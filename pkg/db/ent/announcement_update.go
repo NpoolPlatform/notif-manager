@@ -164,15 +164,23 @@ func (au *AnnouncementUpdate) ClearContent() *AnnouncementUpdate {
 	return au
 }
 
-// SetChannels sets the "channels" field.
-func (au *AnnouncementUpdate) SetChannels(s []string) *AnnouncementUpdate {
-	au.mutation.SetChannels(s)
+// SetChannel sets the "channel" field.
+func (au *AnnouncementUpdate) SetChannel(s string) *AnnouncementUpdate {
+	au.mutation.SetChannel(s)
 	return au
 }
 
-// ClearChannels clears the value of the "channels" field.
-func (au *AnnouncementUpdate) ClearChannels() *AnnouncementUpdate {
-	au.mutation.ClearChannels()
+// SetNillableChannel sets the "channel" field if the given value is not nil.
+func (au *AnnouncementUpdate) SetNillableChannel(s *string) *AnnouncementUpdate {
+	if s != nil {
+		au.SetChannel(*s)
+	}
+	return au
+}
+
+// ClearChannel clears the value of the "channel" field.
+func (au *AnnouncementUpdate) ClearChannel() *AnnouncementUpdate {
+	au.mutation.ClearChannel()
 	return au
 }
 
@@ -415,17 +423,17 @@ func (au *AnnouncementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: announcement.FieldContent,
 		})
 	}
-	if value, ok := au.mutation.Channels(); ok {
+	if value, ok := au.mutation.Channel(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: announcement.FieldChannels,
+			Column: announcement.FieldChannel,
 		})
 	}
-	if au.mutation.ChannelsCleared() {
+	if au.mutation.ChannelCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: announcement.FieldChannels,
+			Type:   field.TypeString,
+			Column: announcement.FieldChannel,
 		})
 	}
 	if value, ok := au.mutation.EndAt(); ok {
@@ -617,15 +625,23 @@ func (auo *AnnouncementUpdateOne) ClearContent() *AnnouncementUpdateOne {
 	return auo
 }
 
-// SetChannels sets the "channels" field.
-func (auo *AnnouncementUpdateOne) SetChannels(s []string) *AnnouncementUpdateOne {
-	auo.mutation.SetChannels(s)
+// SetChannel sets the "channel" field.
+func (auo *AnnouncementUpdateOne) SetChannel(s string) *AnnouncementUpdateOne {
+	auo.mutation.SetChannel(s)
 	return auo
 }
 
-// ClearChannels clears the value of the "channels" field.
-func (auo *AnnouncementUpdateOne) ClearChannels() *AnnouncementUpdateOne {
-	auo.mutation.ClearChannels()
+// SetNillableChannel sets the "channel" field if the given value is not nil.
+func (auo *AnnouncementUpdateOne) SetNillableChannel(s *string) *AnnouncementUpdateOne {
+	if s != nil {
+		auo.SetChannel(*s)
+	}
+	return auo
+}
+
+// ClearChannel clears the value of the "channel" field.
+func (auo *AnnouncementUpdateOne) ClearChannel() *AnnouncementUpdateOne {
+	auo.mutation.ClearChannel()
 	return auo
 }
 
@@ -898,17 +914,17 @@ func (auo *AnnouncementUpdateOne) sqlSave(ctx context.Context) (_node *Announcem
 			Column: announcement.FieldContent,
 		})
 	}
-	if value, ok := auo.mutation.Channels(); ok {
+	if value, ok := auo.mutation.Channel(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
+			Type:   field.TypeString,
 			Value:  value,
-			Column: announcement.FieldChannels,
+			Column: announcement.FieldChannel,
 		})
 	}
-	if auo.mutation.ChannelsCleared() {
+	if auo.mutation.ChannelCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeJSON,
-			Column: announcement.FieldChannels,
+			Type:   field.TypeString,
+			Column: announcement.FieldChannel,
 		})
 	}
 	if value, ok := auo.mutation.EndAt(); ok {

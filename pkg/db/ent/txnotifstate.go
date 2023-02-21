@@ -26,8 +26,8 @@ type TxNotifState struct {
 	TxID uuid.UUID `json:"tx_id,omitempty"`
 	// NotifState holds the value of the "notif_state" field.
 	NotifState string `json:"notif_state,omitempty"`
-	// NotifType holds the value of the "notif_type" field.
-	NotifType string `json:"notif_type,omitempty"`
+	// TxType holds the value of the "tx_type" field.
+	TxType string `json:"tx_type,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -37,7 +37,7 @@ func (*TxNotifState) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case txnotifstate.FieldCreatedAt, txnotifstate.FieldUpdatedAt, txnotifstate.FieldDeletedAt:
 			values[i] = new(sql.NullInt64)
-		case txnotifstate.FieldNotifState, txnotifstate.FieldNotifType:
+		case txnotifstate.FieldNotifState, txnotifstate.FieldTxType:
 			values[i] = new(sql.NullString)
 		case txnotifstate.FieldID, txnotifstate.FieldTxID:
 			values[i] = new(uuid.UUID)
@@ -92,11 +92,11 @@ func (tns *TxNotifState) assignValues(columns []string, values []interface{}) er
 			} else if value.Valid {
 				tns.NotifState = value.String
 			}
-		case txnotifstate.FieldNotifType:
+		case txnotifstate.FieldTxType:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field notif_type", values[i])
+				return fmt.Errorf("unexpected type %T for field tx_type", values[i])
 			} else if value.Valid {
-				tns.NotifType = value.String
+				tns.TxType = value.String
 			}
 		}
 	}
@@ -141,8 +141,8 @@ func (tns *TxNotifState) String() string {
 	builder.WriteString("notif_state=")
 	builder.WriteString(tns.NotifState)
 	builder.WriteString(", ")
-	builder.WriteString("notif_type=")
-	builder.WriteString(tns.NotifType)
+	builder.WriteString("tx_type=")
+	builder.WriteString(tns.TxType)
 	builder.WriteByte(')')
 	return builder.String()
 }

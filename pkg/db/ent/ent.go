@@ -11,10 +11,14 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/announcement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/contact"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/emailtemplate"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/frontendtemplate"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notif"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/notifchannel"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/readannouncement"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/sendannouncement"
+	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/smstemplate"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/txnotifstate"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent/userannouncement"
 )
@@ -38,9 +42,13 @@ type OrderFunc func(*sql.Selector)
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		announcement.Table:     announcement.ValidColumn,
+		contact.Table:          contact.ValidColumn,
+		emailtemplate.Table:    emailtemplate.ValidColumn,
+		frontendtemplate.Table: frontendtemplate.ValidColumn,
 		notif.Table:            notif.ValidColumn,
 		notifchannel.Table:     notifchannel.ValidColumn,
 		readannouncement.Table: readannouncement.ValidColumn,
+		smstemplate.Table:      smstemplate.ValidColumn,
 		sendannouncement.Table: sendannouncement.ValidColumn,
 		txnotifstate.Table:     txnotifstate.ValidColumn,
 		userannouncement.Table: userannouncement.ValidColumn,

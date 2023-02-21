@@ -114,10 +114,10 @@ func NotifState(v string) predicate.TxNotifState {
 	})
 }
 
-// NotifType applies equality check predicate on the "notif_type" field. It's identical to NotifTypeEQ.
-func NotifType(v string) predicate.TxNotifState {
+// TxType applies equality check predicate on the "tx_type" field. It's identical to TxTypeEQ.
+func TxType(v string) predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldNotifType), v))
+		s.Where(sql.EQ(s.C(FieldTxType), v))
 	})
 }
 
@@ -504,116 +504,116 @@ func NotifStateContainsFold(v string) predicate.TxNotifState {
 	})
 }
 
-// NotifTypeEQ applies the EQ predicate on the "notif_type" field.
-func NotifTypeEQ(v string) predicate.TxNotifState {
+// TxTypeEQ applies the EQ predicate on the "tx_type" field.
+func TxTypeEQ(v string) predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldNotifType), v))
+		s.Where(sql.EQ(s.C(FieldTxType), v))
 	})
 }
 
-// NotifTypeNEQ applies the NEQ predicate on the "notif_type" field.
-func NotifTypeNEQ(v string) predicate.TxNotifState {
+// TxTypeNEQ applies the NEQ predicate on the "tx_type" field.
+func TxTypeNEQ(v string) predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldNotifType), v))
+		s.Where(sql.NEQ(s.C(FieldTxType), v))
 	})
 }
 
-// NotifTypeIn applies the In predicate on the "notif_type" field.
-func NotifTypeIn(vs ...string) predicate.TxNotifState {
+// TxTypeIn applies the In predicate on the "tx_type" field.
+func TxTypeIn(vs ...string) predicate.TxNotifState {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldNotifType), v...))
+		s.Where(sql.In(s.C(FieldTxType), v...))
 	})
 }
 
-// NotifTypeNotIn applies the NotIn predicate on the "notif_type" field.
-func NotifTypeNotIn(vs ...string) predicate.TxNotifState {
+// TxTypeNotIn applies the NotIn predicate on the "tx_type" field.
+func TxTypeNotIn(vs ...string) predicate.TxNotifState {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldNotifType), v...))
+		s.Where(sql.NotIn(s.C(FieldTxType), v...))
 	})
 }
 
-// NotifTypeGT applies the GT predicate on the "notif_type" field.
-func NotifTypeGT(v string) predicate.TxNotifState {
+// TxTypeGT applies the GT predicate on the "tx_type" field.
+func TxTypeGT(v string) predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldNotifType), v))
+		s.Where(sql.GT(s.C(FieldTxType), v))
 	})
 }
 
-// NotifTypeGTE applies the GTE predicate on the "notif_type" field.
-func NotifTypeGTE(v string) predicate.TxNotifState {
+// TxTypeGTE applies the GTE predicate on the "tx_type" field.
+func TxTypeGTE(v string) predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldNotifType), v))
+		s.Where(sql.GTE(s.C(FieldTxType), v))
 	})
 }
 
-// NotifTypeLT applies the LT predicate on the "notif_type" field.
-func NotifTypeLT(v string) predicate.TxNotifState {
+// TxTypeLT applies the LT predicate on the "tx_type" field.
+func TxTypeLT(v string) predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldNotifType), v))
+		s.Where(sql.LT(s.C(FieldTxType), v))
 	})
 }
 
-// NotifTypeLTE applies the LTE predicate on the "notif_type" field.
-func NotifTypeLTE(v string) predicate.TxNotifState {
+// TxTypeLTE applies the LTE predicate on the "tx_type" field.
+func TxTypeLTE(v string) predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldNotifType), v))
+		s.Where(sql.LTE(s.C(FieldTxType), v))
 	})
 }
 
-// NotifTypeContains applies the Contains predicate on the "notif_type" field.
-func NotifTypeContains(v string) predicate.TxNotifState {
+// TxTypeContains applies the Contains predicate on the "tx_type" field.
+func TxTypeContains(v string) predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldNotifType), v))
+		s.Where(sql.Contains(s.C(FieldTxType), v))
 	})
 }
 
-// NotifTypeHasPrefix applies the HasPrefix predicate on the "notif_type" field.
-func NotifTypeHasPrefix(v string) predicate.TxNotifState {
+// TxTypeHasPrefix applies the HasPrefix predicate on the "tx_type" field.
+func TxTypeHasPrefix(v string) predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldNotifType), v))
+		s.Where(sql.HasPrefix(s.C(FieldTxType), v))
 	})
 }
 
-// NotifTypeHasSuffix applies the HasSuffix predicate on the "notif_type" field.
-func NotifTypeHasSuffix(v string) predicate.TxNotifState {
+// TxTypeHasSuffix applies the HasSuffix predicate on the "tx_type" field.
+func TxTypeHasSuffix(v string) predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldNotifType), v))
+		s.Where(sql.HasSuffix(s.C(FieldTxType), v))
 	})
 }
 
-// NotifTypeIsNil applies the IsNil predicate on the "notif_type" field.
-func NotifTypeIsNil() predicate.TxNotifState {
+// TxTypeIsNil applies the IsNil predicate on the "tx_type" field.
+func TxTypeIsNil() predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldNotifType)))
+		s.Where(sql.IsNull(s.C(FieldTxType)))
 	})
 }
 
-// NotifTypeNotNil applies the NotNil predicate on the "notif_type" field.
-func NotifTypeNotNil() predicate.TxNotifState {
+// TxTypeNotNil applies the NotNil predicate on the "tx_type" field.
+func TxTypeNotNil() predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldNotifType)))
+		s.Where(sql.NotNull(s.C(FieldTxType)))
 	})
 }
 
-// NotifTypeEqualFold applies the EqualFold predicate on the "notif_type" field.
-func NotifTypeEqualFold(v string) predicate.TxNotifState {
+// TxTypeEqualFold applies the EqualFold predicate on the "tx_type" field.
+func TxTypeEqualFold(v string) predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldNotifType), v))
+		s.Where(sql.EqualFold(s.C(FieldTxType), v))
 	})
 }
 
-// NotifTypeContainsFold applies the ContainsFold predicate on the "notif_type" field.
-func NotifTypeContainsFold(v string) predicate.TxNotifState {
+// TxTypeContainsFold applies the ContainsFold predicate on the "tx_type" field.
+func TxTypeContainsFold(v string) predicate.TxNotifState {
 	return predicate.TxNotifState(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldNotifType), v))
+		s.Where(sql.ContainsFold(s.C(FieldTxType), v))
 	})
 }
 

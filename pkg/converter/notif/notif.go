@@ -1,9 +1,9 @@
 package notif
 
 import (
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 	"github.com/NpoolPlatform/message/npool/notif/mgr/v1/channel"
 	npool "github.com/NpoolPlatform/message/npool/notif/mgr/v1/notif"
-	"github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
 	"github.com/NpoolPlatform/notif-manager/pkg/db/ent"
 )
 
@@ -18,7 +18,7 @@ func Ent2Grpc(row *ent.Notif) *npool.Notif {
 		UserID:      row.UserID.String(),
 		Notified:    row.Notified,
 		LangID:      row.LangID.String(),
-		EventType:   usedfor.UsedFor(usedfor.UsedFor_value[row.EventType]),
+		EventType:   basetypes.UsedFor(basetypes.UsedFor_value[row.EventType]),
 		UseTemplate: row.UseTemplate,
 		Title:       row.Title,
 		Content:     row.Content,

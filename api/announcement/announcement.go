@@ -130,10 +130,6 @@ func (s *Server) UpdateAnnouncement(
 		logger.Sugar().Errorw("UpdateAnnouncement", "Content", in.GetInfo().GetContent())
 		return &npool.UpdateAnnouncementResponse{}, status.Error(codes.InvalidArgument, err.Error())
 	}
-	if in.GetInfo().Channels != nil && len(in.GetInfo().GetChannels()) == 0 {
-		logger.Sugar().Errorw("UpdateAnnouncement", "Channels", in.GetInfo().GetChannels())
-		return &npool.UpdateAnnouncementResponse{}, status.Error(codes.InvalidArgument, "Channels is empty")
-	}
 
 	span = commontracer.TraceInvoker(span, "announcement", "crud", "Update")
 

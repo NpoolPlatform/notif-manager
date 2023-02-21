@@ -3,7 +3,6 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -31,8 +30,8 @@ type Announcement struct {
 	Title string `json:"title,omitempty"`
 	// Content holds the value of the "content" field.
 	Content string `json:"content,omitempty"`
-	// Channels holds the value of the "channels" field.
-	Channels []string `json:"channels,omitempty"`
+	// Channel holds the value of the "channel" field.
+	Channel string `json:"channel,omitempty"`
 	// EndAt holds the value of the "end_at" field.
 	EndAt uint32 `json:"end_at,omitempty"`
 	// Type holds the value of the "type" field.
@@ -44,11 +43,9 @@ func (*Announcement) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case announcement.FieldChannels:
-			values[i] = new([]byte)
 		case announcement.FieldCreatedAt, announcement.FieldUpdatedAt, announcement.FieldDeletedAt, announcement.FieldEndAt:
 			values[i] = new(sql.NullInt64)
-		case announcement.FieldTitle, announcement.FieldContent, announcement.FieldType:
+		case announcement.FieldTitle, announcement.FieldContent, announcement.FieldChannel, announcement.FieldType:
 			values[i] = new(sql.NullString)
 		case announcement.FieldID, announcement.FieldAppID, announcement.FieldLangID:
 			values[i] = new(uuid.UUID)
@@ -115,13 +112,11 @@ func (a *Announcement) assignValues(columns []string, values []interface{}) erro
 			} else if value.Valid {
 				a.Content = value.String
 			}
-		case announcement.FieldChannels:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field channels", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &a.Channels); err != nil {
-					return fmt.Errorf("unmarshal field channels: %w", err)
-				}
+		case announcement.FieldChannel:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field channel", values[i])
+			} else if value.Valid {
+				a.Channel = value.String
 			}
 		case announcement.FieldEndAt:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -184,8 +179,8 @@ func (a *Announcement) String() string {
 	builder.WriteString("content=")
 	builder.WriteString(a.Content)
 	builder.WriteString(", ")
-	builder.WriteString("channels=")
-	builder.WriteString(fmt.Sprintf("%v", a.Channels))
+	builder.WriteString("channel=")
+	builder.WriteString(a.Channel)
 	builder.WriteString(", ")
 	builder.WriteString("end_at=")
 	builder.WriteString(fmt.Sprintf("%v", a.EndAt))

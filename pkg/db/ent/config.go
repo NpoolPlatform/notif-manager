@@ -29,9 +29,13 @@ type config struct {
 // hooks per client, for fast access.
 type hooks struct {
 	Announcement     []ent.Hook
+	Contact          []ent.Hook
+	EmailTemplate    []ent.Hook
+	FrontendTemplate []ent.Hook
 	Notif            []ent.Hook
 	NotifChannel     []ent.Hook
 	ReadAnnouncement []ent.Hook
+	SMSTemplate      []ent.Hook
 	SendAnnouncement []ent.Hook
 	TxNotifState     []ent.Hook
 	UserAnnouncement []ent.Hook

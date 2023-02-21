@@ -25,7 +25,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/NpoolPlatform/message/npool/third/mgr/v1/usedfor"
+	basetypes "github.com/NpoolPlatform/message/npool/basetypes/v1"
 )
 
 func init() {
@@ -43,7 +43,7 @@ var data = &npool.Notif{
 	UserID:      uuid.NewString(),
 	Notified:    false,
 	LangID:      uuid.NewString(),
-	EventType:   usedfor.UsedFor_KYCApproved,
+	EventType:   basetypes.UsedFor_KYCApproved,
 	UseTemplate: true,
 	Title:       uuid.NewString(),
 	Content:     uuid.NewString(),
@@ -90,7 +90,7 @@ func createNotifs(t *testing.T) {
 			UserID:      uuid.NewString(),
 			Notified:    true,
 			LangID:      uuid.NewString(),
-			EventType:   usedfor.UsedFor_KYCApproved,
+			EventType:   basetypes.UsedFor_KYCApproved,
 			UseTemplate: true,
 			Title:       uuid.NewString(),
 			Content:     uuid.NewString(),
@@ -103,7 +103,7 @@ func createNotifs(t *testing.T) {
 			UserID:      uuid.NewString(),
 			Notified:    true,
 			LangID:      uuid.NewString(),
-			EventType:   usedfor.UsedFor_KYCApproved,
+			EventType:   basetypes.UsedFor_KYCApproved,
 			UseTemplate: true,
 			Title:       uuid.NewString(),
 			Content:     uuid.NewString(),

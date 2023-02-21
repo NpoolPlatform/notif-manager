@@ -16,12 +16,20 @@ type Tx struct {
 	config
 	// Announcement is the client for interacting with the Announcement builders.
 	Announcement *AnnouncementClient
+	// Contact is the client for interacting with the Contact builders.
+	Contact *ContactClient
+	// EmailTemplate is the client for interacting with the EmailTemplate builders.
+	EmailTemplate *EmailTemplateClient
+	// FrontendTemplate is the client for interacting with the FrontendTemplate builders.
+	FrontendTemplate *FrontendTemplateClient
 	// Notif is the client for interacting with the Notif builders.
 	Notif *NotifClient
 	// NotifChannel is the client for interacting with the NotifChannel builders.
 	NotifChannel *NotifChannelClient
 	// ReadAnnouncement is the client for interacting with the ReadAnnouncement builders.
 	ReadAnnouncement *ReadAnnouncementClient
+	// SMSTemplate is the client for interacting with the SMSTemplate builders.
+	SMSTemplate *SMSTemplateClient
 	// SendAnnouncement is the client for interacting with the SendAnnouncement builders.
 	SendAnnouncement *SendAnnouncementClient
 	// TxNotifState is the client for interacting with the TxNotifState builders.
@@ -164,9 +172,13 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Announcement = NewAnnouncementClient(tx.config)
+	tx.Contact = NewContactClient(tx.config)
+	tx.EmailTemplate = NewEmailTemplateClient(tx.config)
+	tx.FrontendTemplate = NewFrontendTemplateClient(tx.config)
 	tx.Notif = NewNotifClient(tx.config)
 	tx.NotifChannel = NewNotifChannelClient(tx.config)
 	tx.ReadAnnouncement = NewReadAnnouncementClient(tx.config)
+	tx.SMSTemplate = NewSMSTemplateClient(tx.config)
 	tx.SendAnnouncement = NewSendAnnouncementClient(tx.config)
 	tx.TxNotifState = NewTxNotifStateClient(tx.config)
 	tx.UserAnnouncement = NewUserAnnouncementClient(tx.config)
