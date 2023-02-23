@@ -143,12 +143,6 @@ func Update(ctx context.Context, in *npool.EmailTemplateReq) (*ent.EmailTemplate
 }
 
 func UpdateSet(u *ent.EmailTemplateUpdateOne, in *npool.EmailTemplateReq) *ent.EmailTemplateUpdateOne {
-	if in.LangID != nil {
-		u.SetLangID(uuid.MustParse(in.GetLangID()))
-	}
-	if in.DefaultToUsername != nil {
-		u.SetDefaultToUsername(in.GetDefaultToUsername())
-	}
 	if in.DefaultToUsername != nil {
 		u.SetDefaultToUsername(in.GetDefaultToUsername())
 	}
