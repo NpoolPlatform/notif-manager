@@ -111,5 +111,11 @@ func validateConds(in *npool.Conds) error {
 			return fmt.Errorf("channel is invalid")
 		}
 	}
+	if in.EventID != nil {
+		if _, err := uuid.Parse(in.GetEventID().GetValue()); err != nil {
+			logger.Sugar().Errorw("validateConds", "EventID", in.GetEventID().GetValue(), "error", err)
+			return err
+		}
+	}
 	return nil
 }

@@ -335,6 +335,14 @@ func SetQueryConds(conds *npool.Conds, cli *ent.Client) (*ent.NotifQuery, error)
 			return nil, fmt.Errorf("invalid notif field")
 		}
 	}
+	if conds.EventID != nil {
+		switch conds.GetEventID().GetOp() {
+		case cruder.EQ:
+			stm.Where(notif.EventID(uuid.MustParse(conds.GetEventID().GetValue())))
+		default:
+			return nil, fmt.Errorf("invalid notif field")
+		}
+	}
 
 	return stm, nil
 }

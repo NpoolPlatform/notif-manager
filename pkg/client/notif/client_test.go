@@ -49,6 +49,7 @@ var data = &npool.Notif{
 	Content:     uuid.NewString(),
 	Channel:     channel.NotifChannel_ChannelSMS,
 	Extra:       uuid.NewString(),
+	EventID:     uuid.NewString(),
 }
 
 var dataReq = &npool.NotifReq{
@@ -63,6 +64,7 @@ var dataReq = &npool.NotifReq{
 	Content:     &data.Content,
 	Channel:     &data.Channel,
 	Extra:       &data.Extra,
+	EventID:     &data.EventID,
 }
 
 func createNotif(t *testing.T) {
