@@ -4001,6 +4001,7 @@ type NotifMutation struct {
 	user_id       *uuid.UUID
 	notified      *bool
 	lang_id       *uuid.UUID
+	event_id      *uuid.UUID
 	event_type    *string
 	use_template  *bool
 	title         *string
@@ -4481,6 +4482,55 @@ func (m *NotifMutation) ResetLangID() {
 	delete(m.clearedFields, notif.FieldLangID)
 }
 
+// SetEventID sets the "event_id" field.
+func (m *NotifMutation) SetEventID(u uuid.UUID) {
+	m.event_id = &u
+}
+
+// EventID returns the value of the "event_id" field in the mutation.
+func (m *NotifMutation) EventID() (r uuid.UUID, exists bool) {
+	v := m.event_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEventID returns the old "event_id" field's value of the Notif entity.
+// If the Notif object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotifMutation) OldEventID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEventID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEventID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEventID: %w", err)
+	}
+	return oldValue.EventID, nil
+}
+
+// ClearEventID clears the value of the "event_id" field.
+func (m *NotifMutation) ClearEventID() {
+	m.event_id = nil
+	m.clearedFields[notif.FieldEventID] = struct{}{}
+}
+
+// EventIDCleared returns if the "event_id" field was cleared in this mutation.
+func (m *NotifMutation) EventIDCleared() bool {
+	_, ok := m.clearedFields[notif.FieldEventID]
+	return ok
+}
+
+// ResetEventID resets all changes to the "event_id" field.
+func (m *NotifMutation) ResetEventID() {
+	m.event_id = nil
+	delete(m.clearedFields, notif.FieldEventID)
+}
+
 // SetEventType sets the "event_type" field.
 func (m *NotifMutation) SetEventType(s string) {
 	m.event_type = &s
@@ -4794,7 +4844,7 @@ func (m *NotifMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NotifMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, notif.FieldCreatedAt)
 	}
@@ -4815,6 +4865,9 @@ func (m *NotifMutation) Fields() []string {
 	}
 	if m.lang_id != nil {
 		fields = append(fields, notif.FieldLangID)
+	}
+	if m.event_id != nil {
+		fields = append(fields, notif.FieldEventID)
 	}
 	if m.event_type != nil {
 		fields = append(fields, notif.FieldEventType)
@@ -4856,6 +4909,8 @@ func (m *NotifMutation) Field(name string) (ent.Value, bool) {
 		return m.Notified()
 	case notif.FieldLangID:
 		return m.LangID()
+	case notif.FieldEventID:
+		return m.EventID()
 	case notif.FieldEventType:
 		return m.EventType()
 	case notif.FieldUseTemplate:
@@ -4891,6 +4946,8 @@ func (m *NotifMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldNotified(ctx)
 	case notif.FieldLangID:
 		return m.OldLangID(ctx)
+	case notif.FieldEventID:
+		return m.OldEventID(ctx)
 	case notif.FieldEventType:
 		return m.OldEventType(ctx)
 	case notif.FieldUseTemplate:
@@ -4960,6 +5017,13 @@ func (m *NotifMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLangID(v)
+		return nil
+	case notif.FieldEventID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEventID(v)
 		return nil
 	case notif.FieldEventType:
 		v, ok := value.(string)
@@ -5084,6 +5148,9 @@ func (m *NotifMutation) ClearedFields() []string {
 	if m.FieldCleared(notif.FieldLangID) {
 		fields = append(fields, notif.FieldLangID)
 	}
+	if m.FieldCleared(notif.FieldEventID) {
+		fields = append(fields, notif.FieldEventID)
+	}
 	if m.FieldCleared(notif.FieldEventType) {
 		fields = append(fields, notif.FieldEventType)
 	}
@@ -5127,6 +5194,9 @@ func (m *NotifMutation) ClearField(name string) error {
 		return nil
 	case notif.FieldLangID:
 		m.ClearLangID()
+		return nil
+	case notif.FieldEventID:
+		m.ClearEventID()
 		return nil
 	case notif.FieldEventType:
 		m.ClearEventType()
@@ -5174,6 +5244,9 @@ func (m *NotifMutation) ResetField(name string) error {
 		return nil
 	case notif.FieldLangID:
 		m.ResetLangID()
+		return nil
+	case notif.FieldEventID:
+		m.ResetEventID()
 		return nil
 	case notif.FieldEventType:
 		m.ResetEventType()

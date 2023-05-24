@@ -128,6 +128,13 @@ func LangID(v uuid.UUID) predicate.Notif {
 	})
 }
 
+// EventID applies equality check predicate on the "event_id" field. It's identical to EventIDEQ.
+func EventID(v uuid.UUID) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEventID), v))
+	})
+}
+
 // EventType applies equality check predicate on the "event_type" field. It's identical to EventTypeEQ.
 func EventType(v string) predicate.Notif {
 	return predicate.Notif(func(s *sql.Selector) {
@@ -621,6 +628,84 @@ func LangIDIsNil() predicate.Notif {
 func LangIDNotNil() predicate.Notif {
 	return predicate.Notif(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldLangID)))
+	})
+}
+
+// EventIDEQ applies the EQ predicate on the "event_id" field.
+func EventIDEQ(v uuid.UUID) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEventID), v))
+	})
+}
+
+// EventIDNEQ applies the NEQ predicate on the "event_id" field.
+func EventIDNEQ(v uuid.UUID) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEventID), v))
+	})
+}
+
+// EventIDIn applies the In predicate on the "event_id" field.
+func EventIDIn(vs ...uuid.UUID) predicate.Notif {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldEventID), v...))
+	})
+}
+
+// EventIDNotIn applies the NotIn predicate on the "event_id" field.
+func EventIDNotIn(vs ...uuid.UUID) predicate.Notif {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldEventID), v...))
+	})
+}
+
+// EventIDGT applies the GT predicate on the "event_id" field.
+func EventIDGT(v uuid.UUID) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldEventID), v))
+	})
+}
+
+// EventIDGTE applies the GTE predicate on the "event_id" field.
+func EventIDGTE(v uuid.UUID) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldEventID), v))
+	})
+}
+
+// EventIDLT applies the LT predicate on the "event_id" field.
+func EventIDLT(v uuid.UUID) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldEventID), v))
+	})
+}
+
+// EventIDLTE applies the LTE predicate on the "event_id" field.
+func EventIDLTE(v uuid.UUID) predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldEventID), v))
+	})
+}
+
+// EventIDIsNil applies the IsNil predicate on the "event_id" field.
+func EventIDIsNil() predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEventID)))
+	})
+}
+
+// EventIDNotNil applies the NotNil predicate on the "event_id" field.
+func EventIDNotNil() predicate.Notif {
+	return predicate.Notif(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEventID)))
 	})
 }
 

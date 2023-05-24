@@ -18,6 +18,7 @@ func Ent2Grpc(row *ent.Notif) *npool.Notif {
 		UserID:      row.UserID.String(),
 		Notified:    row.Notified,
 		LangID:      row.LangID.String(),
+		EventID:     row.EventID.String(),
 		EventType:   basetypes.UsedFor(basetypes.UsedFor_value[row.EventType]),
 		UseTemplate: row.UseTemplate,
 		Title:       row.Title,

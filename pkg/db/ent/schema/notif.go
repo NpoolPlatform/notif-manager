@@ -45,6 +45,12 @@ func (Notif) Fields() []ent.Field {
 			Optional().
 			Default(uuid.New),
 		field.
+			UUID("event_id", uuid.UUID{}).
+			Optional().
+			Default(func() uuid.UUID {
+				return uuid.UUID{}
+			}),
+		field.
 			String("event_type").
 			Optional().
 			Default(basetypes.UsedFor_DefaultUsedFor.String()),

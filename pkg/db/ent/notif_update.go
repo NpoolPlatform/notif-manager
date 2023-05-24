@@ -164,6 +164,26 @@ func (nu *NotifUpdate) ClearLangID() *NotifUpdate {
 	return nu
 }
 
+// SetEventID sets the "event_id" field.
+func (nu *NotifUpdate) SetEventID(u uuid.UUID) *NotifUpdate {
+	nu.mutation.SetEventID(u)
+	return nu
+}
+
+// SetNillableEventID sets the "event_id" field if the given value is not nil.
+func (nu *NotifUpdate) SetNillableEventID(u *uuid.UUID) *NotifUpdate {
+	if u != nil {
+		nu.SetEventID(*u)
+	}
+	return nu
+}
+
+// ClearEventID clears the value of the "event_id" field.
+func (nu *NotifUpdate) ClearEventID() *NotifUpdate {
+	nu.mutation.ClearEventID()
+	return nu
+}
+
 // SetEventType sets the "event_type" field.
 func (nu *NotifUpdate) SetEventType(s string) *NotifUpdate {
 	nu.mutation.SetEventType(s)
@@ -476,6 +496,19 @@ func (nu *NotifUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: notif.FieldLangID,
 		})
 	}
+	if value, ok := nu.mutation.EventID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: notif.FieldEventID,
+		})
+	}
+	if nu.mutation.EventIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: notif.FieldEventID,
+		})
+	}
 	if value, ok := nu.mutation.EventType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -707,6 +740,26 @@ func (nuo *NotifUpdateOne) SetNillableLangID(u *uuid.UUID) *NotifUpdateOne {
 // ClearLangID clears the value of the "lang_id" field.
 func (nuo *NotifUpdateOne) ClearLangID() *NotifUpdateOne {
 	nuo.mutation.ClearLangID()
+	return nuo
+}
+
+// SetEventID sets the "event_id" field.
+func (nuo *NotifUpdateOne) SetEventID(u uuid.UUID) *NotifUpdateOne {
+	nuo.mutation.SetEventID(u)
+	return nuo
+}
+
+// SetNillableEventID sets the "event_id" field if the given value is not nil.
+func (nuo *NotifUpdateOne) SetNillableEventID(u *uuid.UUID) *NotifUpdateOne {
+	if u != nil {
+		nuo.SetEventID(*u)
+	}
+	return nuo
+}
+
+// ClearEventID clears the value of the "event_id" field.
+func (nuo *NotifUpdateOne) ClearEventID() *NotifUpdateOne {
+	nuo.mutation.ClearEventID()
 	return nuo
 }
 
@@ -1050,6 +1103,19 @@ func (nuo *NotifUpdateOne) sqlSave(ctx context.Context) (_node *Notif, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeUUID,
 			Column: notif.FieldLangID,
+		})
+	}
+	if value, ok := nuo.mutation.EventID(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: notif.FieldEventID,
+		})
+	}
+	if nuo.mutation.EventIDCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Column: notif.FieldEventID,
 		})
 	}
 	if value, ok := nuo.mutation.EventType(); ok {

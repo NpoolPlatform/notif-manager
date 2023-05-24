@@ -30,6 +30,8 @@ type Notif struct {
 	Notified bool `json:"notified,omitempty"`
 	// LangID holds the value of the "lang_id" field.
 	LangID uuid.UUID `json:"lang_id,omitempty"`
+	// EventID holds the value of the "event_id" field.
+	EventID uuid.UUID `json:"event_id,omitempty"`
 	// EventType holds the value of the "event_type" field.
 	EventType string `json:"event_type,omitempty"`
 	// UseTemplate holds the value of the "use_template" field.
@@ -55,7 +57,7 @@ func (*Notif) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case notif.FieldEventType, notif.FieldTitle, notif.FieldContent, notif.FieldChannel, notif.FieldExtra:
 			values[i] = new(sql.NullString)
-		case notif.FieldID, notif.FieldAppID, notif.FieldUserID, notif.FieldLangID:
+		case notif.FieldID, notif.FieldAppID, notif.FieldUserID, notif.FieldLangID, notif.FieldEventID:
 			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Notif", columns[i])
@@ -119,6 +121,12 @@ func (n *Notif) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field lang_id", values[i])
 			} else if value != nil {
 				n.LangID = *value
+			}
+		case notif.FieldEventID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field event_id", values[i])
+			} else if value != nil {
+				n.EventID = *value
 			}
 		case notif.FieldEventType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -204,6 +212,9 @@ func (n *Notif) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("lang_id=")
 	builder.WriteString(fmt.Sprintf("%v", n.LangID))
+	builder.WriteString(", ")
+	builder.WriteString("event_id=")
+	builder.WriteString(fmt.Sprintf("%v", n.EventID))
 	builder.WriteString(", ")
 	builder.WriteString("event_type=")
 	builder.WriteString(n.EventType)

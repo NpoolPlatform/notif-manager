@@ -40,6 +40,9 @@ func CreateSet(c *ent.NotifCreate, in *npool.NotifReq) (*ent.NotifCreate, error)
 	if in.LangID != nil {
 		c.SetLangID(uuid.MustParse(in.GetLangID()))
 	}
+	if in.EventID != nil {
+		c.SetEventID(uuid.MustParse(in.GetEventID()))
+	}
 	if in.EventType != nil {
 		c.SetEventType(in.GetEventType().String())
 	}

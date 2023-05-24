@@ -96,6 +96,7 @@ var (
 		{Name: "user_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "notified", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "lang_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "event_id", Type: field.TypeUUID, Nullable: true},
 		{Name: "event_type", Type: field.TypeString, Nullable: true, Default: "DefaultUsedFor"},
 		{Name: "use_template", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "title", Type: field.TypeString, Nullable: true, Default: ""},

@@ -121,6 +121,20 @@ func (nc *NotifCreate) SetNillableLangID(u *uuid.UUID) *NotifCreate {
 	return nc
 }
 
+// SetEventID sets the "event_id" field.
+func (nc *NotifCreate) SetEventID(u uuid.UUID) *NotifCreate {
+	nc.mutation.SetEventID(u)
+	return nc
+}
+
+// SetNillableEventID sets the "event_id" field if the given value is not nil.
+func (nc *NotifCreate) SetNillableEventID(u *uuid.UUID) *NotifCreate {
+	if u != nil {
+		nc.SetEventID(*u)
+	}
+	return nc
+}
+
 // SetEventType sets the "event_type" field.
 func (nc *NotifCreate) SetEventType(s string) *NotifCreate {
 	nc.mutation.SetEventType(s)
@@ -344,6 +358,13 @@ func (nc *NotifCreate) defaults() error {
 		v := notif.DefaultLangID()
 		nc.mutation.SetLangID(v)
 	}
+	if _, ok := nc.mutation.EventID(); !ok {
+		if notif.DefaultEventID == nil {
+			return fmt.Errorf("ent: uninitialized notif.DefaultEventID (forgotten import ent/runtime?)")
+		}
+		v := notif.DefaultEventID()
+		nc.mutation.SetEventID(v)
+	}
 	if _, ok := nc.mutation.EventType(); !ok {
 		v := notif.DefaultEventType
 		nc.mutation.SetEventType(v)
@@ -481,6 +502,14 @@ func (nc *NotifCreate) createSpec() (*Notif, *sqlgraph.CreateSpec) {
 			Column: notif.FieldLangID,
 		})
 		_node.LangID = value
+	}
+	if value, ok := nc.mutation.EventID(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeUUID,
+			Value:  value,
+			Column: notif.FieldEventID,
+		})
+		_node.EventID = value
 	}
 	if value, ok := nc.mutation.EventType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -707,6 +736,24 @@ func (u *NotifUpsert) UpdateLangID() *NotifUpsert {
 // ClearLangID clears the value of the "lang_id" field.
 func (u *NotifUpsert) ClearLangID() *NotifUpsert {
 	u.SetNull(notif.FieldLangID)
+	return u
+}
+
+// SetEventID sets the "event_id" field.
+func (u *NotifUpsert) SetEventID(v uuid.UUID) *NotifUpsert {
+	u.Set(notif.FieldEventID, v)
+	return u
+}
+
+// UpdateEventID sets the "event_id" field to the value that was provided on create.
+func (u *NotifUpsert) UpdateEventID() *NotifUpsert {
+	u.SetExcluded(notif.FieldEventID)
+	return u
+}
+
+// ClearEventID clears the value of the "event_id" field.
+func (u *NotifUpsert) ClearEventID() *NotifUpsert {
+	u.SetNull(notif.FieldEventID)
 	return u
 }
 
@@ -1012,6 +1059,27 @@ func (u *NotifUpsertOne) UpdateLangID() *NotifUpsertOne {
 func (u *NotifUpsertOne) ClearLangID() *NotifUpsertOne {
 	return u.Update(func(s *NotifUpsert) {
 		s.ClearLangID()
+	})
+}
+
+// SetEventID sets the "event_id" field.
+func (u *NotifUpsertOne) SetEventID(v uuid.UUID) *NotifUpsertOne {
+	return u.Update(func(s *NotifUpsert) {
+		s.SetEventID(v)
+	})
+}
+
+// UpdateEventID sets the "event_id" field to the value that was provided on create.
+func (u *NotifUpsertOne) UpdateEventID() *NotifUpsertOne {
+	return u.Update(func(s *NotifUpsert) {
+		s.UpdateEventID()
+	})
+}
+
+// ClearEventID clears the value of the "event_id" field.
+func (u *NotifUpsertOne) ClearEventID() *NotifUpsertOne {
+	return u.Update(func(s *NotifUpsert) {
+		s.ClearEventID()
 	})
 }
 
@@ -1501,6 +1569,27 @@ func (u *NotifUpsertBulk) UpdateLangID() *NotifUpsertBulk {
 func (u *NotifUpsertBulk) ClearLangID() *NotifUpsertBulk {
 	return u.Update(func(s *NotifUpsert) {
 		s.ClearLangID()
+	})
+}
+
+// SetEventID sets the "event_id" field.
+func (u *NotifUpsertBulk) SetEventID(v uuid.UUID) *NotifUpsertBulk {
+	return u.Update(func(s *NotifUpsert) {
+		s.SetEventID(v)
+	})
+}
+
+// UpdateEventID sets the "event_id" field to the value that was provided on create.
+func (u *NotifUpsertBulk) UpdateEventID() *NotifUpsertBulk {
+	return u.Update(func(s *NotifUpsert) {
+		s.UpdateEventID()
+	})
+}
+
+// ClearEventID clears the value of the "event_id" field.
+func (u *NotifUpsertBulk) ClearEventID() *NotifUpsertBulk {
+	return u.Update(func(s *NotifUpsert) {
+		s.ClearEventID()
 	})
 }
 

@@ -26,6 +26,8 @@ const (
 	FieldNotified = "notified"
 	// FieldLangID holds the string denoting the lang_id field in the database.
 	FieldLangID = "lang_id"
+	// FieldEventID holds the string denoting the event_id field in the database.
+	FieldEventID = "event_id"
 	// FieldEventType holds the string denoting the event_type field in the database.
 	FieldEventType = "event_type"
 	// FieldUseTemplate holds the string denoting the use_template field in the database.
@@ -52,6 +54,7 @@ var Columns = []string{
 	FieldUserID,
 	FieldNotified,
 	FieldLangID,
+	FieldEventID,
 	FieldEventType,
 	FieldUseTemplate,
 	FieldTitle,
@@ -95,6 +98,8 @@ var (
 	DefaultNotified bool
 	// DefaultLangID holds the default value on creation for the "lang_id" field.
 	DefaultLangID func() uuid.UUID
+	// DefaultEventID holds the default value on creation for the "event_id" field.
+	DefaultEventID func() uuid.UUID
 	// DefaultEventType holds the default value on creation for the "event_type" field.
 	DefaultEventType string
 	// DefaultUseTemplate holds the default value on creation for the "use_template" field.

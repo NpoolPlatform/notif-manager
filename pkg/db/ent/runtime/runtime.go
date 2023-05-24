@@ -279,28 +279,32 @@ func init() {
 	notifDescLangID := notifFields[4].Descriptor()
 	// notif.DefaultLangID holds the default value on creation for the lang_id field.
 	notif.DefaultLangID = notifDescLangID.Default.(func() uuid.UUID)
+	// notifDescEventID is the schema descriptor for event_id field.
+	notifDescEventID := notifFields[5].Descriptor()
+	// notif.DefaultEventID holds the default value on creation for the event_id field.
+	notif.DefaultEventID = notifDescEventID.Default.(func() uuid.UUID)
 	// notifDescEventType is the schema descriptor for event_type field.
-	notifDescEventType := notifFields[5].Descriptor()
+	notifDescEventType := notifFields[6].Descriptor()
 	// notif.DefaultEventType holds the default value on creation for the event_type field.
 	notif.DefaultEventType = notifDescEventType.Default.(string)
 	// notifDescUseTemplate is the schema descriptor for use_template field.
-	notifDescUseTemplate := notifFields[6].Descriptor()
+	notifDescUseTemplate := notifFields[7].Descriptor()
 	// notif.DefaultUseTemplate holds the default value on creation for the use_template field.
 	notif.DefaultUseTemplate = notifDescUseTemplate.Default.(bool)
 	// notifDescTitle is the schema descriptor for title field.
-	notifDescTitle := notifFields[7].Descriptor()
+	notifDescTitle := notifFields[8].Descriptor()
 	// notif.DefaultTitle holds the default value on creation for the title field.
 	notif.DefaultTitle = notifDescTitle.Default.(string)
 	// notifDescContent is the schema descriptor for content field.
-	notifDescContent := notifFields[8].Descriptor()
+	notifDescContent := notifFields[9].Descriptor()
 	// notif.DefaultContent holds the default value on creation for the content field.
 	notif.DefaultContent = notifDescContent.Default.(string)
 	// notifDescChannel is the schema descriptor for channel field.
-	notifDescChannel := notifFields[9].Descriptor()
+	notifDescChannel := notifFields[10].Descriptor()
 	// notif.DefaultChannel holds the default value on creation for the channel field.
 	notif.DefaultChannel = notifDescChannel.Default.(string)
 	// notifDescExtra is the schema descriptor for extra field.
-	notifDescExtra := notifFields[10].Descriptor()
+	notifDescExtra := notifFields[11].Descriptor()
 	// notif.DefaultExtra holds the default value on creation for the extra field.
 	notif.DefaultExtra = notifDescExtra.Default.(string)
 	// notifDescID is the schema descriptor for id field.

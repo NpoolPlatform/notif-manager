@@ -132,6 +132,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			notif.FieldUserID:      {Type: field.TypeUUID, Column: notif.FieldUserID},
 			notif.FieldNotified:    {Type: field.TypeBool, Column: notif.FieldNotified},
 			notif.FieldLangID:      {Type: field.TypeUUID, Column: notif.FieldLangID},
+			notif.FieldEventID:     {Type: field.TypeUUID, Column: notif.FieldEventID},
 			notif.FieldEventType:   {Type: field.TypeString, Column: notif.FieldEventType},
 			notif.FieldUseTemplate: {Type: field.TypeBool, Column: notif.FieldUseTemplate},
 			notif.FieldTitle:       {Type: field.TypeString, Column: notif.FieldTitle},
@@ -689,6 +690,11 @@ func (f *NotifFilter) WhereNotified(p entql.BoolP) {
 // WhereLangID applies the entql [16]byte predicate on the lang_id field.
 func (f *NotifFilter) WhereLangID(p entql.ValueP) {
 	f.Where(p.Field(notif.FieldLangID))
+}
+
+// WhereEventID applies the entql [16]byte predicate on the event_id field.
+func (f *NotifFilter) WhereEventID(p entql.ValueP) {
+	f.Where(p.Field(notif.FieldEventID))
 }
 
 // WhereEventType applies the entql string predicate on the event_type field.
